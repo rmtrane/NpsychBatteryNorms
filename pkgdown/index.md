@@ -1,4 +1,6 @@
-
+---
+toc-title: Table of contents
+---
 
 # NpsychBatteryNorms
 
@@ -7,11 +9,36 @@ variety of neuropsychological tests using various methods.
 
 ## Installation
 
-``` r
+::: cell
+``` {.r .cell-code}
 # Install remotes if not already installed
 install.packages("remotes")
 remotes::install_github("rmtrane/NpsychBatteryNorms")
 ```
+:::
+
+<div>
+
+> **Disclaimer**
+>
+> This R package started as the backbone of the visualization tool
+> included in the R package `NpsychAssessmentTool`, but we quickly
+> realized it might be of use as a standalone tool for other
+> researchers. It was therefore decided to package the most important
+> tools and methods separately, which resulted in this package. None of
+> the implementations here should be used in commercial products nor as
+> standalone medical advice. Also note this package is distributed under
+> the [MIT Licence](./LICENSE.html), meaning the software is provided
+> "asis" and the authors are not liable for any claim, damages or other
+> liabaility arising from this software. Also, note that the authors
+> behind the T-scores implemented for some test scores request that the
+> scores are not edited, modified, translated or otherwise part of
+> derivative work without the prior written permission of Mayo Clinic.
+> For more, contact [Nikki Stricker](mailto:Stricker.Nikki@mayo.edu)
+> and/or see the [Mayo Clinic Study of Aginin website for more on data
+> sharing](https://www.mayo.edu/research/centers-programs/alzheimers-disease-research-center/research-activities/mayo-clinic-study-aging/for-researchers/data-sharing-resources).
+
+</div>
 
 ## Simple Usage
 
@@ -20,7 +47,8 @@ standardize raw scores. As an example, we can standardize a raw score
 for the MoCA of 21 for a 57 year old male patient with 15 years of
 education using normative data published by NACC:
 
-``` r
+:::: cell
+``` {.r .cell-code}
 library(NpsychBatteryNorms)
 
 std_scores(
@@ -34,27 +62,35 @@ std_scores(
 )
 ```
 
+::: {.cell-output .cell-output-stdout}
     [1] -2.192308
+:::
+::::
 
 We can standardize this score using various methods. For a table showing
 the methods implemented, use `implemented_std_methods`. This shows which
 method/ version combos are available (1) and which are not (0):
 
-``` r
+:::: cell
+``` {.r .cell-code}
 implemented_std_methods("MOCATOTS")
 ```
 
+::: {.cell-output .cell-output-stdout}
           method version available
     1      norms    nacc         1
     2      norms updated         1
     3 regression    nacc         1
     4 regression updated         1
     5    T-score    <NA>         0
+:::
+::::
 
 Standardizing using the NACC published regression model, we get a
 slightly different normative score.
 
-``` r
+:::: cell
+``` {.r .cell-code}
 std_scores(
   raw_scores = 21,
   var_name = "MOCATOTS",
@@ -66,7 +102,10 @@ std_scores(
 )
 ```
 
+::: {.cell-output .cell-output-stdout}
     [1] -2.324629
+:::
+::::
 
 ## For Analysis
 
@@ -75,10 +114,12 @@ data set. One such example is the NACC data, that is obtainable from
 https://www.naccdata.org. We include a demo data set for you to explore
 (see `?demo_data` for more).
 
-``` r
+:::: cell
+``` {.r .cell-code}
 head(demo_data)
 ```
 
+::: {.cell-output .cell-output-stdout}
           NACCID NACCAGE SEX EDUC BIRTHYR BIRTHMO VISITYR VISITMO VISITDAY RACE
     1 NACC092228      59   1    9    1954      11    2013       6       30    1
     2 NACC036444      81   2   20    1928       6    2009       6        2    2
@@ -205,16 +246,22 @@ head(demo_data)
     4     -4     -4       -4
     5      8      8        8
     6      7      0        8
+:::
+::::
 
 We can calculate all standardized scores in one go and have them added
 to the data as `std_{var_name}`:
 
-``` r
+:::::::::::::::::::::::: cell
+``` {.r .cell-code}
 demo_data_w_std <- add_standardized_scores(demo_data)
 ```
 
+::: {.cell-output .cell-output-stderr}
     'methods' not specified. Will use the following defaults:
+:::
 
+::: {.cell-output .cell-output-stderr}
     MOCATOTS: regression (nacc version)
     OTRAILA: regression (updated version)
     OTRAILB: regression (updated version)
@@ -254,7 +301,9 @@ demo_data_w_std <- add_standardized_scores(demo_data)
     DIGIFLEN: regression (nacc version)
     DIGIB: regression (nacc version)
     DIGIBLEN: regression (nacc version)
+:::
 
+::: {.cell-output .cell-output-stdout}
     [1] "Using regression (nacc) for variable MOCATOTS"
     [1] "Using regression (updated) for variable OTRAILA"
     [1] "Using regression (updated) for variable OTRAILB"
@@ -267,6 +316,17 @@ demo_data_w_std <- add_standardized_scores(demo_data)
     [1] "Using regression (nacc) for variable TRAILA"
     [1] "Using regression (nacc) for variable TRAILB"
     [1] "Using T-score (NA) for variable WAIS"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using regression (nacc) for variable MINTTOTS"
     [1] "Using regression (nacc) for variable ANIMALS"
     [1] "Using regression (nacc) for variable VEG"
@@ -280,12 +340,68 @@ demo_data_w_std <- add_standardized_scores(demo_data)
     [1] "Using regression (nacc) for variable CRAFTDVR"
     [1] "Using regression (nacc) for variable CRAFTDRE"
     [1] "Using T-score (NA) for variable REY1REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REY2REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REY3REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REY4REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REY5REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REY6REC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using T-score (NA) for variable REYDREC"
+:::
+
+::: {.cell-output .cell-output-stderr}
+    For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+    For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+:::
+
+::: {.cell-output .cell-output-stdout}
     [1] "Using regression (nacc) for variable NACCMMSE"
     [1] "Using regression (nacc) for variable BOSTON"
     [1] "Using regression (nacc) for variable LOGIMEM"
@@ -294,11 +410,13 @@ demo_data_w_std <- add_standardized_scores(demo_data)
     [1] "Using regression (nacc) for variable DIGIFLEN"
     [1] "Using regression (nacc) for variable DIGIB"
     [1] "Using regression (nacc) for variable DIGIBLEN"
+:::
 
-``` r
+``` {.r .cell-code}
 head(demo_data_w_std)
 ```
 
+::: {.cell-output .cell-output-stdout}
           NACCID NACCAGE SEX EDUC BIRTHYR BIRTHMO VISITYR VISITMO VISITDAY RACE
     1 NACC092228      59   1    9    1954      11    2013       6       30    1
     2 NACC036444      81   2   20    1928       6    2009       6        2    2
@@ -465,118 +583,36 @@ head(demo_data_w_std)
     2           NA -0.6386431    0.8605021  0.2355319           NA
     3           NA         NA           NA         NA           NA
     4           NA         NA           NA         NA           NA
-    5     1.007911         NA   -0.4301093 -0.4453011    0.4857608
-    6     1.604904 -0.1957730    1.2606500 -3.0819332   -2.2921720
+    5     1.103624         NA   -0.4301093 -0.4453011    0.4857608
+    6     1.773810 -0.1957730    1.2606500 -3.0819332   -2.2921720
+:::
+::::::::::::::::::::::::
 
 Some scores are often summarized. For example, the MoCA clock is often
 summed. We can use `add_derived_scores()` to add those of `REYTOTAL`
-(sum of `REY1REC`, …, `REY5REC`), `REYAREC` (REY AVLT Accuracy), `FAS`
+(sum of `REY1REC`, ..., `REY5REC`), `REYAREC` (REY AVLT Accuracy), `FAS`
 (Functional Assessment Score summarized), and `MOCACLOCK` (sum of
 `MOCACLON`, `MOCACLOC`, `MOCACLOH`) that can be calculated based on the
 columns available.
 
-``` r
+::: cell
+``` {.r .cell-code}
 demo_data_w_derived_scores <- add_derived_scores(demo_data)
-demo_data_w_derived_scores_w_std <- add_standardized_scores(demo_data_w_derived_scores)
+demo_data_w_derived_scores_w_std <- add_standardized_scores(demo_data_w_derived_scores, print_messages = F)
 ```
-
-    'methods' not specified. Will use the following defaults:
-
-    MOCATOTS: regression (nacc version)
-    OTRAILA: regression (updated version)
-    OTRAILB: regression (updated version)
-    OTRLARR: regression (updated version)
-    OTRLBRR: regression (updated version)
-    DIGFORCT: regression (nacc version)
-    DIGFORSL: regression (nacc version)
-    DIGBACCT: regression (nacc version)
-    DIGBACLS: regression (nacc version)
-    TRAILA: regression (nacc version)
-    TRAILB: regression (nacc version)
-    WAIS: T-score
-    MINTTOTS: regression (nacc version)
-    ANIMALS: regression (nacc version)
-    VEG: regression (nacc version)
-    UDSVERFC: regression (nacc version)
-    UDSVERLC: regression (nacc version)
-    UDSVERTN: regression (nacc version)
-    UDSBENTC: regression (nacc version)
-    UDSBENTD: regression (nacc version)
-    CRAFTVRS: regression (nacc version)
-    CRAFTURS: regression (nacc version)
-    CRAFTDVR: regression (nacc version)
-    CRAFTDRE: regression (nacc version)
-    REY1REC: T-score
-    REY2REC: T-score
-    REY3REC: T-score
-    REY4REC: T-score
-    REY5REC: T-score
-    REY6REC: T-score
-    REYDREC: T-score
-    REYTOTAL: T-score
-    REYAREC: T-score
-    NACCMMSE: regression (nacc version)
-    BOSTON: regression (nacc version)
-    LOGIMEM: regression (nacc version)
-    MEMUNITS: regression (nacc version)
-    DIGIF: regression (nacc version)
-    DIGIFLEN: regression (nacc version)
-    DIGIB: regression (nacc version)
-    DIGIBLEN: regression (nacc version)
-
-    [1] "Using regression (nacc) for variable MOCATOTS"
-    [1] "Using regression (updated) for variable OTRAILA"
-    [1] "Using regression (updated) for variable OTRAILB"
-    [1] "Using regression (updated) for variable OTRLARR"
-    [1] "Using regression (updated) for variable OTRLBRR"
-    [1] "Using regression (nacc) for variable DIGFORCT"
-    [1] "Using regression (nacc) for variable DIGFORSL"
-    [1] "Using regression (nacc) for variable DIGBACCT"
-    [1] "Using regression (nacc) for variable DIGBACLS"
-    [1] "Using regression (nacc) for variable TRAILA"
-    [1] "Using regression (nacc) for variable TRAILB"
-    [1] "Using T-score (NA) for variable WAIS"
-    [1] "Using regression (nacc) for variable MINTTOTS"
-    [1] "Using regression (nacc) for variable ANIMALS"
-    [1] "Using regression (nacc) for variable VEG"
-    [1] "Using regression (nacc) for variable UDSVERFC"
-    [1] "Using regression (nacc) for variable UDSVERLC"
-    [1] "Using regression (nacc) for variable UDSVERTN"
-    [1] "Using regression (nacc) for variable UDSBENTC"
-    [1] "Using regression (nacc) for variable UDSBENTD"
-    [1] "Using regression (nacc) for variable CRAFTVRS"
-    [1] "Using regression (nacc) for variable CRAFTURS"
-    [1] "Using regression (nacc) for variable CRAFTDVR"
-    [1] "Using regression (nacc) for variable CRAFTDRE"
-    [1] "Using T-score (NA) for variable REY1REC"
-    [1] "Using T-score (NA) for variable REY2REC"
-    [1] "Using T-score (NA) for variable REY3REC"
-    [1] "Using T-score (NA) for variable REY4REC"
-    [1] "Using T-score (NA) for variable REY5REC"
-    [1] "Using T-score (NA) for variable REY6REC"
-    [1] "Using T-score (NA) for variable REYDREC"
-    [1] "Using T-score (NA) for variable REYTOTAL"
-    [1] "Using T-score (NA) for variable REYAREC"
-    [1] "Using regression (nacc) for variable NACCMMSE"
-    [1] "Using regression (nacc) for variable BOSTON"
-    [1] "Using regression (nacc) for variable LOGIMEM"
-    [1] "Using regression (nacc) for variable MEMUNITS"
-    [1] "Using regression (nacc) for variable DIGIF"
-    [1] "Using regression (nacc) for variable DIGIFLEN"
-    [1] "Using regression (nacc) for variable DIGIB"
-    [1] "Using regression (nacc) for variable DIGIBLEN"
+:::
 
 `demo_data_w_derived_scores_w_std` includes a few extra columns compared
-to `demo_data_w_std`:
+to `demo_data_w_std` (only displaying first six rows):
 
-``` r
-head(
-  demo_data_w_derived_scores_w_std[
-    colnames(demo_data_w_derived_scores_w_std)[!colnames(demo_data_w_derived_scores_w_std) %in% colnames(demo_data_w_std)]
-  ]
-)
+:::: cell
+``` {.r .cell-code}
+head(demo_data_w_derived_scores_w_std[
+  colnames(demo_data_w_derived_scores_w_std)[!colnames(demo_data_w_derived_scores_w_std) %in% colnames(demo_data_w_std)]
+])
 ```
 
+::: {.cell-output .cell-output-stdout}
       REYTOTAL REYAREC FAS MOCACLOCK std_REYTOTAL std_REYAREC
     1       NA      NA   3         2           NA          NA
     2       NA      NA   2        NA           NA          NA
@@ -584,3 +620,5 @@ head(
     4       NA      NA   0        NA           NA          NA
     5       NA      NA   3        NA           NA          NA
     6       NA      NA   6        NA           NA          NA
+:::
+::::

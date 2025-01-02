@@ -1,0 +1,26 @@
+---
+title: Introduction to NpsychBatteryNorms
+description: >
+  How to use NpsychBatteryNorms to standardize test scores
+vignette: >
+  %\VignetteIndexEntry{Introduction to NpsychBatteryNorms}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+
+Test test test
+
+```{r}
+#| label: setup
+library(NpsychBatteryNorms)
+```
+
+
+## More 
+
+... test

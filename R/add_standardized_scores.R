@@ -11,10 +11,10 @@
 #' @param age string specifying column with age (in years). Column should be
 #'   a numeric vector.
 #' @param delay string specifying column with delay (in minutes). Column should
-#'   be a numeric vector.
+#'   be a numeric vector. Used when standardizing `MEMUNITS` ("Logical Memory, Delayed")
 #' @param methods NULL (default) or list of named entries specifying which model to use
 #'   for standardizing cognitive scores. If NULL, defaults are applied for all
-#'   variables in the dataset for which methods have been implemented.
+#'   variables in the dataset for which methods have been implemented (see `NpsychBatteryNorms::default_methods`)
 #' @param rename_raw_scores logical; if TRUE, columns with raw scores are renamed
 #'   by adding the prefix "raw_" to the column name.
 #' @param print_messages logical; should messages be printed? If TRUE (default), a message will
@@ -23,6 +23,9 @@
 #' @returns Returns the input data with additional columns of the form `std_varname`
 #'   with the standardized values for variable `varname`
 #'
+#' @examples
+#' add_standardized_scores(demo_data)
+#' 
 #' @export
 
 add_standardized_scores <- function(
@@ -30,7 +33,7 @@ add_standardized_scores <- function(
     sex = "SEX",
     education = "EDUC",
     age = "NACCAGE",
-    delay = NULL,
+    delay = "MEMTIME",
     methods = NULL,
     rename_raw_scores = F,
     print_messages = T
@@ -44,14 +47,15 @@ add_standardized_scores <- function(
     delay = "MEMTIME"
   }
 
-  ## Start by renaming columns
-  # dat <- data.frame(dat)
-
+  ## If nothing is passed to methods...
   if (is.null(methods)) {
+    # ... retrieve the default methods
     methods <- NpsychBatteryNorms::default_methods
-
+    
+    # Remove methods for things not present in supplied data
     methods <- methods[names(methods) %in% colnames(dat)]
 
+    # Stop with 
     stopifnot("No known variables found in the data" = length(methods) > 0)
 
     if (print_messages) {

@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Sum of MOCACLOC, MOCACLON, and MOCACLOH, but applies [valid_values_only()] before
-#' adding values.
+#' adding values. This removes any values not 0 or 1.
 #'
 #' @param MOCACLOC values for clock contour
 #' @param MOCACLON values for clock numbers

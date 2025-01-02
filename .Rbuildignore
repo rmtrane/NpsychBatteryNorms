@@ -7,3 +7,6 @@ data-raw
 scratch
 ^scripts/*$
 ^LICENSE\.md$
+^\.github$
+^vignettes/\.quarto$
+^vignettes/*_files$

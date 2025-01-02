@@ -2,7 +2,6 @@
 #'
 #' @description
 #' Calculates the Functional Assessment Score summary (FAS) from the ten scores of
-#'
 #' * bills
 #' * taxes
 #' * shopping

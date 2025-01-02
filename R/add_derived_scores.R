@@ -4,14 +4,21 @@
 #'
 #' @param dat `data.frame` or `tibble` or `data.table`
 #'
-#' @returns Copy of the input data with the additional variables `REYTOTAL`
-#'   (if `REY1REC`, `REY2REC`, `REY3REC`, `REY4REC`, `REY5REC` are all columns in input)
-#'   `REYAREC` (if `REYTCOR` and `REYFPOS` are both columns in the input), `FAS`
-#'   (if `BILLS`, `TAXES`, `SHOPPING`, `GAMES`, `STOVE`, `MEALPREP`, `EVENTS`, `PAYATTN`, `REMDATES`, `TRAVEL`
-#'   are all columns in the input), and `MOCACLOCK` (if `MOCACLON`, `MOCACLOC`, `MOCACLOH` are all columns in the input).
+#' @returns Copy of the input data with the additional variables 
+#'    * `REYTOTAL` if `REY1REC`, `REY2REC`, `REY3REC`, `REY4REC`, `REY5REC` are all columns in input
+#'    * `REYAREC` if `REYTCOR` and `REYFPOS` are both columns in the input (if `REYTNEG` is present instead of `REYFPOS`, then the latter is added first before `REYAREC`)
+#'    * `FAS` if `BILLS`, `TAXES`, `SHOPPING`, `GAMES`, `STOVE`, `MEALPREP`, `EVENTS`, `PAYATTN`, `REMDATES`, `TRAVEL`
+#'   are all columns in the input
+#'    * `MOCACLOCK` if `MOCACLON`, `MOCACLOC`, `MOCACLOH` are all columns in the input
+#' 
+#' @examples
+#' add_derived_scores(demo_data)
+#' 
 #'
 #' @export
 add_derived_scores <- function(dat) {
+  ## If there isn't already a REYTOTAL in the data, and REY1REC, ..., REY5REC are all present,
+  ## add these up and create REYTOTAL. 
   if (!"REYTOTAL" %in% colnames(dat) & all(paste0("REY", 1:5, "REC") %in% colnames(dat))) {
     dat$REYTOTAL <- with(
       dat,

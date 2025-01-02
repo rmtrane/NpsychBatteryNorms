@@ -15,5 +15,5 @@ calculate_mocaclock(MOCACLOC, MOCACLON, MOCACLOH)
 }
 \description{
 Sum of MOCACLOC, MOCACLON, and MOCACLOH, but applies \code{\link[=valid_values_only]{valid_values_only()}} before
-adding values.
+adding values. This removes any values not 0 or 1.
 }
