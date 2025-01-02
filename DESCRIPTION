@@ -1,0 +1,32 @@
+Package: NpsychBatteryNorms
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 2.10)
+RoxygenNote: 7.3.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RdMacros: Rdpack
+Roxygen: list(markdown = TRUE)
+Imports: 
+    methods,
+    Rdpack,
+    stats
+Authors@R: c(
+    person(
+        given = "Ralph", family = "Møller Trane", 
+        email = "rtrane@wisc.edu", role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0001-7824-1785")
+    ),
+    person(
+        given = "Victoria Jade", family = "Williams", 
+        role = "ctb"
+    )
+  )

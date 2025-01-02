@@ -1,0 +1,68 @@
+#' Demo Data
+#'
+#' A completely made up demo data set meant to mimic the structure of
+#' the NACC data. While IDs look like valid NACC IDs, these are simply the
+#' characters NACC with six random digits. Similarly, birth and visit dates are
+#' randomly created, and so are all scores with the only constraint that
+#' -4's are believable. (For example, if OTRAILA is -4, so is OTRAILB.)
+#'
+#' @format ## `demo_data`
+#' The data set contains the following columns:
+#' \describe{
+#'    \item{NACCID}{Subject ID number}
+#'    \item{NACCAGE}{Subject's age at visit}
+#'    \item{SEX}{Subject's sex}
+#'    \item{EDUC}{Years of education}
+#'    \item{BIRTHYR}{Subject's year of birth}
+#'    \item{BIRTHMO}{Subject's month of birth}
+#'    \item{VISITYR}{Form date - year}
+#'    \item{VISITMO}{Form date - month}
+#'    \item{VISITDAY}{Form date - day}
+#'    \item{RACE}{Race}
+#'    \item{CDRGLOB}{Global CDR}
+#'    \item{MOCATOTS}{MoCA Total Raw Score - uncorrected}
+#'    \item{MOCBTOTS}{MoCA-Blind Total Raw Score � uncorrected}
+#'    \item{TRAILA}{Trail Making Test Part A - Total number of seconds to complete}
+#'    \item{TRAILARR}{Part A - Number of commission errors}
+#'    \item{TRAILALI}{Part A - Number of correct lines}
+#'    \item{OTRAILA}{Oral Trail Making Test Part A � Total number of seconds to complete}
+#'    \item{OTRLARR}{Oral Trail Making Test Part A � Number of commission errors}
+#'    \item{DIGFORCT}{Number Span Test: Forward - Number of correct trials}
+#'    \item{DIGFORSL}{Number Span Test: Forward - Longest span forward}
+#'    \item{DIGBACCT}{Number Span Test: Backward - Number of correct trials}
+#'    \item{DIGBACLS}{Number Span Test: Backward - Longest span backward}
+#'    \item{WAIS}{WAIS-R Digit Symbol}
+#'    \item{MINTTOTS}{Multilingual Naming Test (MINT) - Total score}
+#'    \item{ANIMALS}{Animals - Total number of animals named in 60 seconds}
+#'    \item{VEG}{Vegetables - Total number of vegetables named in 60 seconds}
+#'    \item{UDSVERTN}{Total number of correct F-words and L-words}
+#'    \item{UDSVERFC}{Number of correct F-words generated in 1 minute}
+#'    \item{UDSVERLC}{Number of correct L-words generated in 1 minute}
+#'    \item{UDSBENTC}{Total Score for copy of Benson figure}
+#'    \item{UDSBENTD}{Total score for 10- to 15-minute delayed drawing of Benson figure}
+#'    \item{CRAFTVRS}{Craft Story 21 Recall (Immediate) - Total story units recalled, verbatim scoring}
+#'    \item{CRAFTURS}{Craft Story 21 Recall (Immediate) - Total story units recalled, paraphrase scoring}
+#'    \item{CRAFTDVR}{Craft Story 21 Recall (Delayed) - Total story units recalled, verbatim scoring}
+#'    \item{CRAFTDRE}{Craft Story 21 Recall (Delayed) - Total story units recalled, paraphrase scoring}
+#'    \item{REY1REC}{Rey Auditory Verbal Learning (Immediate) Trial 1 Total recall}
+#'    \item{REY2REC}{Rey Auditory Verbal Learning (Immediate) Trial 2 Total recall}
+#'    \item{REY3REC}{Rey Auditory Verbal Learning (Immediate) Trial 3 Total recall}
+#'    \item{REY4REC}{Rey Auditory Verbal Learning (Immediate) Trial 4 Total recall}
+#'    \item{REY5REC}{Rey Auditory Verbal Learning (Immediate) Trial 5 Total recall}
+#'    \item{REY6REC}{Rey Auditory Verbal Learning (Immediate) Trial 6 Total recall}
+#'    \item{REYDREC}{Rey Auditory Verbal Learning (Delayed)  - Total Recall}
+#'    \item{REYTCOR}{Rey Auditory Verbal Learning (Delayed) Recognition � Total correct}
+#'    \item{TRAILB}{Trail Making Test Part B - Total number of seconds to complete}
+#'    \item{TRAILBRR}{Part B - Number of commission errors}
+#'    \item{MOCACLOC}{MoCA: Visuospatial/executive - Clock contour}
+#'    \item{MOCACLOH}{MoCA: Visuospatial/executive - Clock hands}
+#'    \item{MOCACLON}{MoCA: Visuospatial/executive - Clock numbers}
+#'    \item{OTRAILB}{Oral Trail Making Test Part B �  Total number of seconds to complete}
+#'    \item{OTRLBRR}{Oral Trail Making Test Part B � Number of commission errors}
+#'    \item{OTRLBLI}{Oral Trail Making Test Part B � Number of correct lines}
+#'    \item{NACCGDS}{Total GDS Score}
+#'    \item{CDRSUM}{Standard CDR sum of boxes}
+#'    \item{UDSBENRS}{Benson Complex Figure Recall - Recognized original stimulus among four options}
+#' }
+#'
+"demo_data"

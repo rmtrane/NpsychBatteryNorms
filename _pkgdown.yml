@@ -1,0 +1,60 @@
+url: ~
+
+home:
+  title: Calculate normative scores for neuropsychological test scores
+
+authors:
+  sidebar:
+    roles: [aut, ctb]
+
+template:
+  bootstrap: 5
+  light-switch: true
+  includes:
+    in_header: |
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+reference:
+  - title: "Standardizing Scores"
+    desc: >
+      Functions to standardize scores.
+    contents:
+      - starts_with("std_scores")
+      - add_standardized_scores
+  - title: "Data and Code Objects"
+    desc: >
+      Data sets and code objects used for standardizing scores, to help
+      translate variable names from/to Mayo Normative Studies to/from NACC, and
+      other helper objects.
+    contents:
+      - demo_data
+      - starts_with("normative")
+      - ravlt_trials_m_sd
+      - rdd
+      - reg_coefs
+      - ss
+      - t_score_coefs
+      - default_methods
+      - mns_to_nacc
+      - nacc_to_mns
+  - title: "Helper Functions"
+    desc: >
+      Various functions to be used for intermediate steps, such as calculate summary
+      scores (FAS, MOCA clock, REY AVLT Accuracy), find the age group needed for
+      standardizing, look up scaled scores for T-score calculations, remove invalid
+      scores using the Researchers Data Dictionary (RDD) published by NACC, replace
+      raw score values with labels using the RDD published by NACC.
+    contents:
+      - add_derived_scores
+      - calculate_fas
+      - calculate_mocaclock
+      - calculate_reyarec
+      - get_age_group
+      - get_ss_score
+      - valid_values_only
+      - values_to_labels
+      - implemented_std_methods
+      - std_methods_implemented_for
+      - methods_from_std_data
