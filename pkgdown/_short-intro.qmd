@@ -10,7 +10,7 @@ install.packages("remotes")
 remotes::install_github("rmtrane/NpsychBatteryNorms")
 ```
 
-::: {.callout-warning}
+::: {.callout-warning collapse="true"}
 
 ## Disclaimer
 
