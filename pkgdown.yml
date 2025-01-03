@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   NpsychBatteryNorms: NpsychBatteryNorms.html
-last_built: 2025-01-03T20:44Z
+last_built: 2025-01-03T20:50Z
 urls:
   reference: https://rmtrane.github.io/NpsychBatteryNorms/reference
   article: https://rmtrane.github.io/NpsychBatteryNorms/articles
