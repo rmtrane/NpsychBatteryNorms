@@ -58,3 +58,5 @@ std_scores(
 
 For more details, see the [the package
 website](https://rmtrane.github.io/NpsychBatteryNorms).
+
+Test
