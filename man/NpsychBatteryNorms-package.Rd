@@ -8,6 +8,13 @@
 \description{
 This package implements a number of different methods for standardizing neuropsychological test scores. Most methods are implementations of previously published models. This package is designed to work nicely with the Shiny application included in the R package NpsychAssessmentTools, which can be used to visually represent test scores.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://rmtrane.github.io/NpsychBatteryNorms/}
+}
+
+}
 \author{
 \strong{Maintainer}: Ralph Møller Trane \email{rtrane@wisc.edu} (\href{https://orcid.org/0000-0001-7824-1785}{ORCID})
 

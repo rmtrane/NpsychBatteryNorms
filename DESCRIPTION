@@ -36,4 +36,5 @@ Authors@R: c(
     )
   )
 URL: https://rmtrane.github.io/NpsychBatteryNorms/
-VignetteBuilder: quarto
+VignetteBuilder: 
+    quarto
