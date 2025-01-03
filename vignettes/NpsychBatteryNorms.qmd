@@ -1,29 +1,92 @@
 ---
-title: Introduction to NpsychBatteryNorms
+title: "Introduction to NpsychBatteryNorms"
 description: >
   How to use NpsychBatteryNorms to standardize test scores
 vignette: >
   %\VignetteIndexEntry{Introduction to NpsychBatteryNorms}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
-format:
-  html:
-    toc: true
 knitr:
   opts_chunk:
     collapse: true
     comment: '#>'
 ---
 
+{{< include ../pkgdown/_short-intro.qmd >}}
 
-Test test test
+We can standardize this score using various methods. For a table showing the 
+methods implemented, use `implemented_std_methods`. This shows which method/
+version combos are available (1) and which are not (0):
 
 ```{r}
-#| label: setup
-library(NpsychBatteryNorms)
+implemented_std_methods("MOCATOTS")
 ```
 
+We can also do the reverse lookup: the variables that can be standardized 
+using regression models published by NACC:
 
-## More 
+```{r}
+std_methods_implemented_for("regression", "nacc")
+```
 
-... test
+Standardizing using the NACC published regression model, we get a slightly 
+different normative score.
+
+```{r}
+std_scores(
+  raw_scores = 21,
+  var_name = "MOCATOTS",
+  sex = "m",
+  age = 57,
+  education = 15,
+  method = "regression",
+  version = "nacc"
+)
+```
+
+## For Analysis
+
+In a more realistic use case, we have data on a number of patients in a data set. 
+One such example is the NACC data, that is obtainable from [the NACC data website](https://www.naccdata.org).
+We include a demo data set for you to explore (see `?demo_data` for more).
+
+```{r}
+head(demo_data)
+```
+
+We can calculate all standardized scores in one go and have them added to the data
+as `std_{var_name}`:
+
+```{r}
+demo_data_w_std <- add_standardized_scores(demo_data)
+
+head(demo_data_w_std)
+```
+
+Some scores are often summarized. For example, the MoCA clock is often summed. 
+We can use `add_derived_scores()` to add those of `REYTOTAL` (sum of `REY1REC`, 
+..., `REY5REC`), `REYAREC` (REY AVLT Accuracy), `FAS` (Functional Assessment Score
+summarized), and `MOCACLOCK` (sum of `MOCACLON`, `MOCACLOC`, `MOCACLOH`) that 
+can be calculated based on the columns available. 
+
+```{r}
+demo_data_w_derived_scores <- add_derived_scores(
+  demo_data
+)
+
+demo_data_w_derived_scores_w_std <- add_standardized_scores(
+  demo_data_w_derived_scores, 
+  print_messages = F
+)
+```
+
+`demo_data_w_derived_scores_w_std` includes a few extra columns compared to `demo_data_w_std` (only displaying first six rows):
+
+```{r}
+exclusive_cols <- setdiff(
+  colnames(demo_data_w_derived_scores_w_std),
+  colnames(demo_data_w_std)
+)
+
+head(demo_data_w_derived_scores_w_std[exclusive_cols])
+```
