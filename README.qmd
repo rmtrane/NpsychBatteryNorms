@@ -6,5 +6,3 @@ format:
 {{< include pkgdown/_short-intro.qmd >}}
 
 For more details, see the [the package website](https://rmtrane.github.io/NpsychBatteryNorms).
-
-Test
