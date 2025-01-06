@@ -1,5 +1,10 @@
 
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 NpsychBatteryNorms lets you easily calculate normative scores for a wide
 variety of neuropsychological tests using various methods.
 
