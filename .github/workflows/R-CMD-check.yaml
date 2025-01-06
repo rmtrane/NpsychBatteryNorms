@@ -45,6 +45,13 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Preinstall NpsychBatteryNorms to use in vignettes (only necessary on Windows)
+        if: runner.os == 'Windows'
+        run: |
+          install.packages("devtools")
+          devtools::install(reload=FALSE,quick=TRUE,build=TRUE,dependencies=FALSE,build_vignettes=FALSE)
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
