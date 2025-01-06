@@ -10,3 +10,4 @@ scratch
 ^\.github$
 ^vignettes/\.quarto$
 ^vignettes/*_files$
+README.*

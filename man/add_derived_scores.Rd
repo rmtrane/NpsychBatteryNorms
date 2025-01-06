@@ -25,5 +25,4 @@ Add calculated scores to a data set with NACC variables.
 \examples{
 add_derived_scores(demo_data)
 
-
 }

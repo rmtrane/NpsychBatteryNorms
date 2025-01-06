@@ -24,17 +24,17 @@ std_scores_using_norms <- function(
   stopifnot("'var_name' must be a string" = is.character(var_name) & length(var_name) == 1)
 
   # Age: always needed, but different group types
-  if (substr(var_name, start = 1, stop = 3) == "REY") {
-    age_group_type_needed <- "ravlt_trials"
-  } else {
-    age_group_type_needed <- "nacc"
-  }
+  # if (substr(var_name, start = 1, stop = 3) == "REY") {
+  #   age_group_type_needed <- "ravlt_trials"
+  # } else {
+  #   age_group_type_needed <- "nacc"
+  # }
 
   # Create match_to data.frame with two columns: raw_scores and age groups. (We
   # will later add means and SDs to this data.frame for standardizing raw scores.)
   match_to <- data.frame( # data.table::data.table( # data.frame(
     raw_scores,
-    age_group = get_age_group(age, group_type = age_group_type_needed) #stringr::str_remove(age_group_type_needed, "_age_group"))
+    age_group = get_age_group(age) #, group_type = age_group_type_needed) #stringr::str_remove(age_group_type_needed, "_age_group"))
   )
 
   # Vector to hold columns that should be matches by later

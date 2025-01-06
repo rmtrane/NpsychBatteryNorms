@@ -13,7 +13,6 @@
 #' 
 #' @examples
 #' add_derived_scores(demo_data)
-#' 
 #'
 #' @export
 add_derived_scores <- function(dat) {
@@ -22,11 +21,13 @@ add_derived_scores <- function(dat) {
   if (!"REYTOTAL" %in% colnames(dat) & all(paste0("REY", 1:5, "REC") %in% colnames(dat))) {
     dat$REYTOTAL <- with(
       dat,
-      valid_values_only(REY1REC, "REY1REC", T) +
-        valid_values_only(REY2REC, "REY2REC", T) +
-        valid_values_only(REY3REC, "REY3REC", T) +
-        valid_values_only(REY4REC, "REY4REC", T) +
-        valid_values_only(REY5REC, "REY5REC", T)
+      calculate_reytotal(
+        REY1REC,
+        REY2REC,
+        REY3REC,
+        REY4REC,
+        REY5REC
+      )
     )
   }
 

@@ -51,6 +51,7 @@ reference:
       - calculate_fas
       - calculate_mocaclock
       - calculate_reyarec
+      - calculate_reytotal
       - get_age_group
       - get_ss_score
       - valid_values_only
