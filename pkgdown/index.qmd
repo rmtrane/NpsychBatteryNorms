@@ -6,6 +6,6 @@ format:
 
 # NpsychBatteryNorms
 
-{{< include _short-intro.qmd >}}
+{{< include ../inst/_short-intro.qmd >}}
 
 For more details, see the [Get started page](articles/NpsychBatteryNorms.html)

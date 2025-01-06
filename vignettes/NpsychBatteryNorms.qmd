@@ -12,7 +12,7 @@ knitr:
     comment: '#>'
 ---
 
-{{< include ../pkgdown/_short-intro.qmd >}}
+{{< include ../inst/_short-intro.qmd >}}
 
 We can standardize this score using various methods. For a table showing the 
 methods implemented, use `implemented_std_methods`. This shows which method/
