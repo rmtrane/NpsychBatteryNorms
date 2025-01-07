@@ -82,7 +82,7 @@ add_standardized_scores <- function(
 
     ## Valid methods?
     invalid_methods <- unlist(lapply(names(methods), \(var) {
-      !var %in% std_methods_implemented_for(methods[[var]][['method']], methods[[var]][['version']])
+      !var %in% std_methods(method = methods[[var]][['method']], version = methods[[var]][['version']])
     }))
 
     if (any(invalid_methods)) {

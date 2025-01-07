@@ -99,7 +99,7 @@ std_scores <- function(
     stopifnot("'var_name' is not valid for selected normative version" = 
       any(var_name == names(normative_summaries[[version]])))
 
-    means_and_sds <- normative_summaries$nacc[[var_name]]
+    means_and_sds <- normative_summaries[[version]][[var_name]]
     
     out <- std_scores_using_norms(
       raw_scores,

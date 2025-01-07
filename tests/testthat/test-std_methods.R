@@ -79,21 +79,12 @@ test_that("std_methods", {
         mth_unavail <- 0
       } else {
         mth_unavail <- mean(apply(subset(fun_output, available == 0), 1, \(y) {
-          if (y[1] == "norms") {
-            if (y[2] == "nacc")
-            return(x %in% names(normative_scores_2020))
+          if (y[1] == "norms")
+            return(x %in% names(normative_summaries[[y[2]]]))
             
-            if (y[2] == "updated")
-            return(x %in% names(normative_scores_2024))
-          }
-          
-          if (y[1] == "regression") {
-            if (y[2] == "nacc")
-            return(x %in% reg_coefs$nacc$var_name)
+          if (y[1] == "regression")
+            return(x %in% reg_coefs[[y[2]]]$var_name)
             
-            if (y[2] == "updated")
-            return(x %in% reg_coefs$updated$var_name)
-          }
           
           if (y[1] == "T-score") {
             if (!is.na(y[2]))
