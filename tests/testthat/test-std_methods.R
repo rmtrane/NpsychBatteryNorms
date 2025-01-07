@@ -1,14 +1,32 @@
-test_that("implemented_std_methods", {
-  ## Make sure output is data.frame
+test_that("std_methods", {
+  ## Make sure output is data.frame when var_name supplied
   expect_s3_class(
-    implemented_std_methods("MOCATOTS"),
+    std_methods(var_name = "MOCATOTS"),
     class = "data.frame"
+  )
+
+  ## Check that errors are thrown when expected
+  expect_error(
+    std_methods(var_name = "MOCATOTS", method = "regression")
+  )
+  expect_error(
+    std_methods(var_name = "MOCATOTS", version = "updated")
+  )
+  expect_error(
+    std_methods(version = "updated")
+  )
+  expect_error(
+    std_methods(method = "regression")
+  )
+  expect_error(
+    std_methods(method = "nacc", version = "updated")
   )
 
   ## All variable names that have std methods implemented
   vars <- unique(c(
-    names(normative_scores_2020),
-    names(normative_scores_2024),
+    names(normative_summaries$nacc),
+    names(normative_summaries$updated),
+    names(normative_summaries$ravlt_trials),
     reg_coefs$nacc$var_name,
     reg_coefs$updated_2024$var_name,
     names(t_score_coefs)
@@ -22,17 +40,18 @@ test_that("implemented_std_methods", {
     vars,
     \(x) {
       ## Get output to double check
-      fun_output <- implemented_std_methods(x)
+      fun_output <- std_methods(var_name = x)
 
       ## Check that methods marked as available are available.
       ## Should be 1
       mth_avail <- mean(apply(subset(fun_output, available == 1), 1, \(y) {
         if (y[1] == "norms") {
-          if (y[2] == "nacc")
-            return(x %in% names(normative_scores_2020))
+          return(x %in% names(normative_summaries[[y[2]]]))
+          # if (y[2] == "nacc")
+          #   return(x %in% names(normative_scores_2020))
 
-          if (y[2] == "updated")
-            return(x %in% names(normative_scores_2024))
+          # if (y[2] == "updated")
+          #   return(x %in% names(normative_scores_2024))
         }
 
         if (y[1] == "regression") {
@@ -106,7 +125,7 @@ test_that("implemented_std_methods", {
   )
 })
 
-test_that("std_methods_implemented_for works for valid inputs", {
+test_that("std_methods works for valid inputs of method/version", {
   
   all_method_version_combos <- 
     list(
@@ -121,16 +140,16 @@ test_that("std_methods_implemented_for works for valid inputs", {
     all_method_version_combos,
     \(y) {
       mean(unlist(lapply(
-        std_methods_implemented_for(y[1], y[2]),
+        std_methods(method = y[1], version = y[2]),
         \(x, cur_y = y) {
           if (is.na(cur_y[2]))
             return(subset(
-              implemented_std_methods(x),
+              std_methods(var_name = x),
               method == cur_y[1] & is.na(version)
             )$available)
             
           subset(
-            implemented_std_methods(x),
+            std_methods(var_name = x),
             method == cur_y[1] & version == cur_y[2]
           )$available
         })))

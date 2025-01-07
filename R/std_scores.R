@@ -96,20 +96,11 @@ std_scores <- function(
                 min_educ >= 0 & max_educ <= 31
     )
 
-    if (version == "nacc") {
-      stopifnot("'var_name' is not a valid string. See 'names(normative_scores_2020)' for list of allowed strings" =
-                  any(var_name == names(normative_scores_2020)))
+    stopifnot("'var_name' is not valid for selected normative version" = 
+      any(var_name == names(normative_summaries[[version]])))
 
-      means_and_sds <- normative_scores_2020[[var_name]]
-    }
-
-    if (version == "updated") {
-      stopifnot("'var_name' is not a valid string. See 'names(normative_scores_2020)' for list of allowed strings" =
-                  any(var_name == names(normative_scores_2024)))
-
-      means_and_sds <- normative_scores_2024[[var_name]]
-    }
-
+    means_and_sds <- normative_summaries$nacc[[var_name]]
+    
     out <- std_scores_using_norms(
       raw_scores,
       var_name,

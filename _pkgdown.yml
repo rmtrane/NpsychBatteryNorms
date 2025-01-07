@@ -42,7 +42,7 @@ reference:
   - title: "Helper Functions"
     desc: >
       Various functions to be used for intermediate steps, such as calculate summary
-      scores (FAS, MOCA clock, REY AVLT Accuracy), find the age group needed for
+      scores (FAS, MOCA clock, REY AVLT Accuracy/Total), find the age group needed for
       standardizing, look up scaled scores for T-score calculations, remove invalid
       scores using the Researchers Data Dictionary (RDD) published by NACC, replace
       raw score values with labels using the RDD published by NACC.
@@ -56,6 +56,5 @@ reference:
       - get_ss_score
       - valid_values_only
       - values_to_labels
-      - implemented_std_methods
-      - std_methods_implemented_for
+      - std_methods
       - methods_from_std_data

@@ -19,14 +19,14 @@ methods implemented, use `implemented_std_methods`. This shows which method/
 version combos are available (1) and which are not (0):
 
 ```{r}
-implemented_std_methods("MOCATOTS")
+std_methods(var_name = "MOCATOTS")
 ```
 
 We can also do the reverse lookup: the variables that can be standardized 
 using regression models published by NACC:
 
 ```{r}
-std_methods_implemented_for("regression", "nacc")
+std_methods(method = "regression", version = "nacc")
 ```
 
 Standardizing using the NACC published regression model, we get a slightly 
