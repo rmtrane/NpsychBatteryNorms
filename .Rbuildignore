@@ -11,3 +11,6 @@ scratch
 ^vignettes/\.quarto$
 ^vignettes/*_files$
 README.*
+^vignettes/articles/\.quarto$
+^vignettes/articles/*_files$
+^vignettes/articles$

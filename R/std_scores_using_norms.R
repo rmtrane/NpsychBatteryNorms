@@ -62,7 +62,7 @@ std_scores_using_norms <- function(
     # Some checks
     stopifnot("'eduction' is missing, but needed to standardize this variable" = !missingArg(education))
     stopifnot("'eduction' must be same length as 'raw_scores'" = length(education) == length(raw_scores))
-    stopifnot("'education' must be numeric vector" = is.numeric(education))
+    stopifnot("'education' must be numeric vector" = is.numeric(education) | is.na(education))
 
     # Add education groups to match_to data.frame. These are from "male" and "female"
     # sheets of Excel spreadsheet.
@@ -80,39 +80,12 @@ std_scores_using_norms <- function(
   match_to$id <- 1:nrow(match_to)
 
   # Add means and standard deviations to data.frame so we can standardize raw scores
-  # for_standardizing <- merge(
-  #   match_to,
-  #   m_sd,
-  #   by = merge_by_vars,
-  #   sort = F,
-  #   all.x = T
-  # )
-
-  # for_standardizing <- dplyr::left_join(
-  #   match_to,
-  #   m_sd,
-  #   by = merge_by_vars
-  # )
-
   match_to$for_merge <- do.call(paste, c(as.list(match_to[,merge_by_vars]), sep = "__"))
   m_sd$for_merge <- do.call(paste, c(as.list(m_sd[,merge_by_vars]), sep = "__"))
 
   match_to[,c("n", "m", "sd")] <- m_sd[match(match_to$for_merge, m_sd$for_merge), c("n", "m", "sd")]
 
   for_standardizing <- match_to[order(match_to$id), c("raw_scores", "m", "sd")]
-
-  # Reorder to make sure output matches input
-  # for_standardizing <- for_standardizing[order(for_standardizing$id), ]
-
-  # return(list(match_to, m_sd, merge_by_vars))
-  # m_sd <- data.table::setDT(m_sd)
-  # setkeyv(m_sd, merge_by_vars)
-  # match_to <- data.table::setDT(match_to)
-  # setkeyv(match_to, merge_by_vars)
-
-  # browser()
-
-  # for_standardizing <- match_to[m_sd, on = I(merge_by_vars)]
 
 
   # Get standardized scores. If either time or error, return negative value so

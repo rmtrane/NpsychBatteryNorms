@@ -15,7 +15,7 @@
 #' @param version String specifying version to use. "nacc" = 2020 numbers
 #'   published by NACC. "updated" = numbers calculated using data freeze from
 #'   June of 2024.
-#' @param print_messages Logical (default: TRUE); should messages be printed? 
+#' @param print_messages Logical (default: TRUE); should messages be printed?
 #'
 #' @examples
 #' std_scores(
@@ -39,8 +39,10 @@ std_scores <- function(
     delay = NULL,
     method = c("norms", "regression", "T-score"),
     version = c("nacc", "updated"),
-    print_messages = T
-) {
+    print_messages = T) {
+  if (all(is.na(raw_scores))) {
+    return(rep(NA, length(raw_scores)))
+  }
 
   stopifnot("'raw_scores' must be a numeric vector" = is.numeric(raw_scores))
 
@@ -61,19 +63,22 @@ std_scores <- function(
   max_age <- max(age, na.rm = T)
 
   if (method == "T-score") {
-    if (!is.na(version) & print_messages)
+    if (!is.na(version) & print_messages) {
       message("'version' is ignored for T-score")
+    }
 
     if (min_educ < 8 | max_educ > 20) {
-      if (print_messages)
+      if (print_messages) {
         message("For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.")
+      }
 
       education <- pmin(pmax(education, 8), 20)
     }
 
     if (min_age < 30 | max_age > 91) {
-      if (print_messages)
+      if (print_messages) {
         message("For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.")
+      }
 
       age <- pmin(pmax(age, 30), 91)
     }
@@ -85,22 +90,24 @@ std_scores <- function(
       education,
       sex
     )
-
   } else {
     stopifnot("'version' must be length 1" = length(version) == 1)
     stopifnot("'version' must be one of 'nacc' or 'updated" = version %in% c("nacc", "updated"))
   }
 
   if (method == "norms") {
-    stopifnot("Education must be a numeric vector of values between 0 and 31" =
-                min_educ >= 0 & max_educ <= 31
+    stopifnot(
+      "Education must be a numeric vector of values between 0 and 31" =
+        (min_educ >= 0 & max_educ <= 31)
     )
 
-    stopifnot("'var_name' is not valid for selected normative version" = 
-      any(var_name == names(normative_summaries[[version]])))
+    stopifnot(
+      "'var_name' is not valid for selected normative version" =
+        any(var_name == names(normative_summaries[[version]]))
+    )
 
     means_and_sds <- normative_summaries[[version]][[var_name]]
-    
+
     out <- std_scores_using_norms(
       raw_scores,
       var_name,
@@ -112,17 +119,21 @@ std_scores <- function(
   }
 
   if (method == "regression") {
-    stopifnot("Education must be a numeric vector of values between 0 and 31" =
-                min_educ >= 0 & max_educ <= 31)
+    stopifnot(
+      "Education must be a numeric vector of values between 0 and 31" =
+        min_educ >= 0 & max_educ <= 31
+    )
 
     if (version == "nacc") {
-      stopifnot("'var_name' is not a valid string. See 'nacc_reg$nacc$var_name' for list of allowed strings" =
-                  any(var_name == reg_coefs$nacc$var_name))
+      stopifnot(
+        "'var_name' is not a valid string. See 'nacc_reg$nacc$var_name' for list of allowed strings" =
+          any(var_name == reg_coefs$nacc$var_name)
+      )
 
       coefs_to_use <- reg_coefs$nacc[reg_coefs$nacc$var_name == var_name, c("intercept", "sex", "age", "education", "delay", "rmse")]
       coefs_to_use <- unlist(coefs_to_use)
 
-      if (coefs_to_use['delay'] != 0) {
+      if (coefs_to_use["delay"] != 0) {
         stopifnot("'delay' must be a numeric vector" = is.numeric(delay))
       } else {
         delay <- rep(0, length(sex))
@@ -130,8 +141,10 @@ std_scores <- function(
     }
 
     if (version == "updated") {
-      stopifnot("'var_name' is not a valid string. See 'reg_coefs$updated_2024$var_name' for list of allowed strings" =
-                  any(var_name == reg_coefs$updated_2024$var_name))
+      stopifnot(
+        "'var_name' is not a valid string. See 'reg_coefs$updated_2024$var_name' for list of allowed strings" =
+          any(var_name == reg_coefs$updated_2024$var_name)
+      )
 
       coefs_to_use <- reg_coefs$updated_2024[reg_coefs$updated_2024$var_name == var_name, c("intercept", "sex", "age", "education", "delay", "rmse")]
       coefs_to_use <- unlist(coefs_to_use)
@@ -147,12 +160,7 @@ std_scores <- function(
       sex = as.numeric(sex == "f"),
       sd = coefs_to_use[["rmse"]]
     )
-
   }
 
   out
-
 }
-
-
-

@@ -47,7 +47,7 @@ std_scores(
 ## For Analysis
 
 In a more realistic use case, we have data on a number of patients in a data set. 
-One such example is the NACC data, that is obtainable from [the NACC data website](https://www.naccdata.org).
+One such example is the NACC data that is obtainable from [the NACC data website](https://www.naccdata.org).
 We include a demo data set for you to explore (see `?demo_data` for more).
 
 ```{r}

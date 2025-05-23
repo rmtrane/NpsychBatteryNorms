@@ -41,8 +41,7 @@ calculate_fas <- function(
     EVENTS,
     PAYATTN,
     REMDATES,
-    TRAVEL
-) {
+    TRAVEL) {
   all_vals <- cbind(
     BILLS,
     TAXES,
@@ -70,10 +69,13 @@ calculate_fas <- function(
 
   all_vals[which(!(all_vals == 0 | all_vals == 1 | all_vals == 2), arr.ind = T)] <- 0
 
-  out[rs == 0] <- rowSums(all_vals[rs == 0,], na.rm = T)
+  if (sum(rs == 0) == 1) {
+    out[rs == 0] <- sum(all_vals[rs == 0, ], na.rm = T)
+  } else {
+    out[rs == 0] <- rowSums(all_vals[rs == 0, ], na.rm = T)
+  }
 
   out
-
 }
 
 
@@ -87,7 +89,3 @@ calculate_fas <- function(
 # PAYATTN <- dat$PAYATTN
 # REMDATES <- dat$REMDATES
 # TRAVEL <- dat$TRAVEL
-
-
-
-

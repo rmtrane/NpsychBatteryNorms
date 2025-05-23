@@ -25,37 +25,36 @@
 #'
 #' @examples
 #' add_standardized_scores(demo_data)
-#' 
+#'
 #' @export
 
 add_standardized_scores <- function(
-    dat,
-    sex = "SEX",
-    education = "EDUC",
-    age = "NACCAGE",
-    delay = "MEMTIME",
-    methods = NULL,
-    rename_raw_scores = F,
-    print_messages = T
+  dat,
+  sex = "SEX",
+  education = "EDUC",
+  age = "NACCAGE",
+  delay = "MEMTIME",
+  methods = NULL,
+  rename_raw_scores = F,
+  print_messages = T
 ) {
-
   ## For debugging...
   if (FALSE) {
-    sex = "SEX"
-    education = "EDUC"
-    age = "NACCAGE"
-    delay = "MEMTIME"
+    sex <- "SEX"
+    education <- "EDUC"
+    age <- "NACCAGE"
+    delay <- "MEMTIME"
   }
 
   ## If nothing is passed to methods...
   if (is.null(methods)) {
     # ... retrieve the default methods
     methods <- NpsychBatteryNorms::default_methods
-    
+
     # Remove methods for things not present in supplied data
     methods <- methods[names(methods) %in% colnames(dat)]
 
-    # Stop with 
+    # Stop with
     stopifnot("No known variables found in the data" = length(methods) > 0)
 
     if (print_messages) {
@@ -67,7 +66,14 @@ add_standardized_scores <- function(
           cur_entry <- methods[[i]]
 
           if (sum(!is.na(cur_entry)) == 2) {
-            paste0(names(methods)[i], ": ", cur_entry[["method"]], " (", cur_entry[["version"]], " version)\n")
+            paste0(
+              names(methods)[i],
+              ": ",
+              cur_entry[["method"]],
+              " (",
+              cur_entry[["version"]],
+              " version)\n"
+            )
           } else {
             paste0(names(methods)[i], ": ", cur_entry[["method"]], "\n")
           }
@@ -77,44 +83,67 @@ add_standardized_scores <- function(
   } else {
     stopifnot("'methods' must be a list" = is.list(methods))
 
-    stopifnot("'methods' must be named with names corresponding to variables to standardize" =
-                !is.null(names(methods)) & all(names(methods) %in% colnames(dat)))
+    stopifnot(
+      "'methods' must be named with names corresponding to variables to standardize" = !is.null(names(
+        methods
+      )) &
+        all(names(methods) %in% colnames(dat))
+    )
 
     ## Valid methods?
     invalid_methods <- unlist(lapply(names(methods), \(var) {
-      !var %in% std_methods(method = methods[[var]][['method']], version = methods[[var]][['version']])
+      !var %in%
+        std_methods(
+          method = methods[[var]][["method"]],
+          version = methods[[var]][["version"]]
+        )
     }))
 
     if (any(invalid_methods)) {
       invals <- methods[which(invalid_methods)]
 
-      message(paste0("The methods specified for the following are invalid:\n", paste0(names(invals), " (", lapply(invals, paste, collapse = ", "), ")", collapse = "\n")))
+      message(paste0(
+        "The methods specified for the following are invalid:\n",
+        paste0(
+          names(invals),
+          " (",
+          lapply(invals, paste, collapse = ", "),
+          ")",
+          collapse = "\n"
+        )
+      ))
     }
-
   }
 
   dat <- data.frame(dat)
-
-  # s <- dat[[rlang::as_name(rlang::enquo(sex))]]
   s <- dat[[sex]]
 
-  if (is.numeric(s))
+  if (is.numeric(s)) {
     s <- values_to_labels(s, "SEX")
-
+  }
 
   s <- base::tolower(substr(s, 1, 1))
   a <- valid_values_only(dat[[age]], var_name = "NACCAGE", T)
   e <- valid_values_only(dat[[education]], "EDUC", T)
-  d <- if (is.null(delay)) rep(0, length(s)) else valid_values_only(dat[[delay]], "MEMTIME", T)
+  d <- if (is.null(delay)) rep(0, length(s)) else
+    valid_values_only(dat[[delay]], "MEMTIME", T)
 
   for (i in seq_along(methods)) {
     var <- names(methods)[i]
     specs <- methods[[i]]
 
-    if (print_messages)
-      print(paste0("Using ", specs['method'], " (", specs['version'], ") for variable ", var))
+    if (print_messages) {
+      print(paste0(
+        "Using ",
+        specs["method"],
+        " (",
+        specs["version"],
+        ") for variable ",
+        var
+      ))
+    }
 
-    dat[[paste("std", var, sep = "_")]] <- # suppressMessages(
+    dat[[paste("std", var, sep = "_")]] <-
       std_scores(
         raw_scores = dat[[var]],
         var_name = var,
@@ -122,22 +151,24 @@ add_standardized_scores <- function(
         age = a,
         sex = s,
         delay = d,
-        method = specs[['method']],
-        version = specs[['version']],
+        method = specs[["method"]],
+        version = specs[["version"]],
         print_messages = print_messages
       )
-    #)
+    # )
 
     ## Add attribute to std_{var} specifying the method used.
-    attr(dat[[paste("std", var, sep = "_")]], "method") <- specs[['method']]
+    attr(dat[[paste("std", var, sep = "_")]], "method") <- specs[["method"]]
 
     ## Add attribute to std_{var} specifying the version used (if)
-    if (!is.na(specs[['version']]))
-      attr(dat[[paste("std", var, sep = "_")]], "version") <- specs[['version']]
+    if (!is.na(specs[["version"]])) {
+      attr(dat[[paste("std", var, sep = "_")]], "version") <- specs[["version"]]
+    }
 
     ## Rename column with raw scores to raw_var, if specified to do so
-    if (rename_raw_scores)
+    if (rename_raw_scores) {
       colnames(dat)[colnames(dat) == var] <- paste("raw", var, sep = "_")
+    }
   }
 
   return(dat)
