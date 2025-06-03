@@ -45,7 +45,7 @@ std_methods <- function(var_name, method, version) {
     )
 
     if (method == "T-score" & !(missingArg(version) | is.na(version)))
-      cli::cli_alert_info("'version' ignored for method T-score ({var_name})")
+      cli::cli_alert_info("'version' ignored for method T-score")
 
     if (method != "T-score" & !version %in% c("nacc", "updated"))
       cli::cli_abort(
