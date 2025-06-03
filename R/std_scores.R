@@ -31,26 +31,58 @@
 #' @export
 
 std_scores <- function(
-    raw_scores,
-    var_name,
-    education,
-    age,
-    sex = c("m", "f"),
-    delay = NULL,
-    method = c("norms", "regression", "T-score"),
-    version = c("nacc", "updated"),
-    print_messages = T) {
+  raw_scores,
+  var_name,
+  education,
+  age,
+  sex = c("m", "f"),
+  delay = NULL,
+  method = c("norms", "regression", "T-score"),
+  version = c("nacc", "updated"),
+  print_messages = T
+) {
   if (all(is.na(raw_scores))) {
     return(rep(NA, length(raw_scores)))
   }
 
-  stopifnot("'raw_scores' must be a numeric vector" = is.numeric(raw_scores))
-
   stopifnot("'method' must be length 1" = length(method) == 1)
-  stopifnot("'method' must be one of 'norms', 'regression', or 'T-score'" = any(method == c("norms", "regression", "T-score")))
+  stopifnot(
+    "'method' must be one of 'norms', 'regression', or 'T-score'" = any(
+      method == c("norms", "regression", "T-score")
+    )
+  )
 
   stopifnot("'var_name' must be a string" = is.character(var_name))
   stopifnot("'var_name' must have length 1" = length(var_name) == 1)
+
+  if (!is.numeric(raw_scores)) {
+    ## Check if any non-digit characters in non-na entries of raw_scores
+    digits_only <- grepl("^[0-9]*\\.?[0-9]*$", na.omit(raw_scores), perl = TRUE)
+
+    ## If any entries flagged as containing non-digit characters, abort with error message.
+    if (!all(digits_only)) {
+      cli::cli_abort(
+        message = "'raw_scores' for {var_name} must be a numeric vector. You provided a vector of class {class(raw_scores)}, which contains some non-digit characters, and therefore could not be converted."
+      )
+    }
+
+    ## Convert to numeric
+    raw_scores_numeric <- as.numeric(raw_scores)
+
+    ## Check that no values were converted to NA
+    if (sum(is.na(raw_scores)) == sum(is.na(raw_scores_numeric))) {
+      cli::cli_alert_warning(
+        text = "'raw_scores' for {var_name} must be a numeric vector. You provided a {class(raw_scores)}, but it was successfully converted to numeric."
+      )
+
+      raw_scores <- raw_scores_numeric
+    } else {
+      cli::cli_abort(
+        message = "'raw_scores' for {var_name} must be a numeric vector. You provided a vector of class {class(raw_scores)}. No non-digit characters were found, but converting to numeric using `as.numeric` failed."
+      )
+    }
+  }
+  # stopifnot("'raw_scores' must be a numeric vector" = is.numeric(raw_scores))
 
   ## Replace anything that is not a valid score with NA
   raw_scores <- valid_values_only(raw_scores, var_name, remove_errorcodes = T)
@@ -64,12 +96,14 @@ std_scores <- function(
 
   if (method == "T-score") {
     if (!is.na(version) & print_messages) {
-      message("'version' is ignored for T-score")
+      cli::cli_alert_info("'version' is ignored for T-score")
     }
 
     if (min_educ < 8 | max_educ > 20) {
       if (print_messages) {
-        message("For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.")
+        message(
+          "For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated."
+        )
       }
 
       education <- pmin(pmax(education, 8), 20)
@@ -77,7 +111,9 @@ std_scores <- function(
 
     if (min_age < 30 | max_age > 91) {
       if (print_messages) {
-        message("For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.")
+        message(
+          "For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated."
+        )
       }
 
       age <- pmin(pmax(age, 30), 91)
@@ -92,18 +128,23 @@ std_scores <- function(
     )
   } else {
     stopifnot("'version' must be length 1" = length(version) == 1)
-    stopifnot("'version' must be one of 'nacc' or 'updated" = version %in% c("nacc", "updated"))
+    stopifnot(
+      "'version' must be one of 'nacc' or 'updated" = version %in%
+        c("nacc", "updated")
+    )
   }
 
   if (method == "norms") {
     stopifnot(
-      "Education must be a numeric vector of values between 0 and 31" =
-        (min_educ >= 0 & max_educ <= 31)
+      "Education must be a numeric vector of values between 0 and 31" = (min_educ >=
+        0 &
+        max_educ <= 31)
     )
 
     stopifnot(
-      "'var_name' is not valid for selected normative version" =
-        any(var_name == names(normative_summaries[[version]]))
+      "'var_name' is not valid for selected normative version" = any(
+        var_name == names(normative_summaries[[version]])
+      )
     )
 
     means_and_sds <- normative_summaries[[version]][[var_name]]
@@ -120,17 +161,22 @@ std_scores <- function(
 
   if (method == "regression") {
     stopifnot(
-      "Education must be a numeric vector of values between 0 and 31" =
-        min_educ >= 0 & max_educ <= 31
+      "Education must be a numeric vector of values between 0 and 31" = min_educ >=
+        0 &
+        max_educ <= 31
     )
 
     if (version == "nacc") {
       stopifnot(
-        "'var_name' is not a valid string. See 'nacc_reg$nacc$var_name' for list of allowed strings" =
-          any(var_name == reg_coefs$nacc$var_name)
+        "'var_name' is not a valid string. See 'nacc_reg$nacc$var_name' for list of allowed strings" = any(
+          var_name == reg_coefs$nacc$var_name
+        )
       )
 
-      coefs_to_use <- reg_coefs$nacc[reg_coefs$nacc$var_name == var_name, c("intercept", "sex", "age", "education", "delay", "rmse")]
+      coefs_to_use <- reg_coefs$nacc[
+        reg_coefs$nacc$var_name == var_name,
+        c("intercept", "sex", "age", "education", "delay", "rmse")
+      ]
       coefs_to_use <- unlist(coefs_to_use)
 
       if (coefs_to_use["delay"] != 0) {
@@ -142,18 +188,28 @@ std_scores <- function(
 
     if (version == "updated") {
       stopifnot(
-        "'var_name' is not a valid string. See 'reg_coefs$updated_2024$var_name' for list of allowed strings" =
-          any(var_name == reg_coefs$updated_2024$var_name)
+        "'var_name' is not a valid string. See 'reg_coefs$updated_2024$var_name' for list of allowed strings" = any(
+          var_name == reg_coefs$updated_2024$var_name
+        )
       )
 
-      coefs_to_use <- reg_coefs$updated_2024[reg_coefs$updated_2024$var_name == var_name, c("intercept", "sex", "age", "education", "delay", "rmse")]
+      coefs_to_use <- reg_coefs$updated_2024[
+        reg_coefs$updated_2024$var_name == var_name,
+        c("intercept", "sex", "age", "education", "delay", "rmse")
+      ]
       coefs_to_use <- unlist(coefs_to_use)
     }
 
     out <- std_scores_using_regression(
       raw_scores,
       var_name = var_name,
-      reg_coefs = coefs_to_use[c("intercept", "sex", "age", "education", "delay")],
+      reg_coefs = coefs_to_use[c(
+        "intercept",
+        "sex",
+        "age",
+        "education",
+        "delay"
+      )],
       age,
       education,
       delay,

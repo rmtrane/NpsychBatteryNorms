@@ -21,6 +21,7 @@ Config/testthat/edition: 3
 RdMacros: Rdpack
 Roxygen: list(markdown = TRUE)
 Imports: 
+    cli,
     methods,
     Rdpack,
     stats
