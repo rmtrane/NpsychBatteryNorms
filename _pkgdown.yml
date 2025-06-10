@@ -31,7 +31,6 @@ reference:
     contents:
       - demo_data
       - starts_with("normative")
-      - ravlt_trials_m_sd
       - rdd
       - reg_coefs
       - ss
