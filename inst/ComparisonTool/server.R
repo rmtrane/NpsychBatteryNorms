@@ -307,7 +307,7 @@ server <- function(input, output, session) {
     )
   })
 
-  output$plot <- renderPlotly({
+  output$plot <- plotly::renderPlotly({
     plot_std_scores(
       x_var = input$x_var,
       var_name = input$var_name,

@@ -1,7 +1,3 @@
-library(shiny)
-library(plotly)
-
-
 all_vars <- c(
   "Animal Fluency" = "ANIMALS",
   "Boston Naming Test" = "BOSTON",
@@ -105,7 +101,7 @@ ui <- bslib::page_fluid(
         ),
         # uiOutput("other_selections")
       ),
-      plotlyOutput("plot") #, height = "500px", fill = FALSE)
+      plotly::plotlyOutput("plot") #, height = "500px", fill = FALSE)
     )
   )
 )
