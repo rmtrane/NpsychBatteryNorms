@@ -50,7 +50,10 @@ plot_std_scores <- function(
   sex = "m",
   delay = 0
 ) {
-  methods_avail <- subset(std_methods(var_name = var_name), available == 1)
+  methods_avail <- subset(
+    NpsychBatteryNorms::std_methods(var_name = var_name),
+    available == 1
+  )
   methods_avail$label <- with(methods_avail, {
     ifelse(
       is.na(version),
@@ -73,8 +76,8 @@ plot_std_scores <- function(
   if (x_var == "raw_scores") {
     dat <- data.frame(
       x_var = seq(
-        from = rdd[[var_name]]$range[1],
-        to = rdd[[var_name]]$range[2],
+        from = NpsychBatteryNorms::rdd[[var_name]]$range[1],
+        to = NpsychBatteryNorms::rdd[[var_name]]$range[2],
         by = 1
       )
     )
