@@ -16,7 +16,10 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     quarto,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    shiny,
+    bslib,
+    plotly
 Config/testthat/edition: 3
 RdMacros: Rdpack
 Roxygen: list(markdown = TRUE)

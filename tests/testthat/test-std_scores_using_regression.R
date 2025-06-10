@@ -1,5 +1,4 @@
 testthat::test_that("std_scores_using_regression", {
-
   cfs <- c(intercept = 1, age = 1, sex = 1, education = 1)
 
   expect_equal(
@@ -11,9 +10,9 @@ testthat::test_that("std_scores_using_regression", {
       education = c(15, 15),
       sex = c("m", "f"),
       sd = 1,
-      delay = c(0,0)
+      delay = c(0, 0)
     ),
-    (21 - (1 + 50 + 15 + c(0,1)))/1
+    (21 - (1 + 50 + 15 + c(0, 1))) / 1
   )
 
   ## Test UDS 2 scores using excel template
@@ -46,20 +45,27 @@ testthat::test_that("std_scores_using_regression", {
   )
 
   for (var in colnames(exp_res_tibble)) {
+    print(var)
+
+    reg_coefs_to_use <- reg_coefs$nacc_legacy[
+      reg_coefs$nacc_legacy$var_name == var,
+    ]
+
     expect_equal(
       std_scores_using_regression(
-        test_tibble[[var]],
+        raw_scores = test_tibble[[var]],
         var_name = var,
-        reg_coefs = unlist(reg_coefs$nacc[reg_coefs$nacc$var_name == var, c("intercept", "sex", "age", "education", "delay")]),
+        reg_coefs = unlist(reg_coefs_to_use[
+          c("intercept", "sex", "age", "education", "delay")
+        ]),
         age = test_tibble$NACCAGE,
         education = test_tibble$EDUC,
         sex = test_tibble$SEX,
         delay = test_tibble$MEMTIME,
-        sd = unname(unlist(reg_coefs$nacc[reg_coefs$nacc$var_name == var, "rmse"]))
-      ) |> round(digits = 3),
+        sd = reg_coefs_to_use[["rmse"]]
+      ) |>
+        round(digits = 3),
       exp_res_tibble[[var]]
     )
   }
-
-
 })

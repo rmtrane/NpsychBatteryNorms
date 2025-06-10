@@ -28,13 +28,13 @@ test_that("std_methods", {
     names(normative_summaries$updated),
     names(normative_summaries$ravlt_trials),
     reg_coefs$nacc$var_name,
-    reg_coefs$updated_2024$var_name,
+    reg_coefs$updated$var_name,
     names(t_score_coefs)
   ))
 
-  ## For each var, get methods implemented, and make sure output 
+  ## For each var, get methods implemented, and make sure output
   ## is as expected. That is, make sure the methods/versions
-  ## combos marked as available are actually available, and that 
+  ## combos marked as available are actually available, and that
   ## those marked as unavailable are actually unavailable.
   all_vars_check <- lapply(
     vars,
@@ -55,17 +55,20 @@ test_that("std_methods", {
         }
 
         if (y[1] == "regression") {
-          if (y[2] == "nacc")
+          if (y[2] == "nacc") {
             return(x %in% reg_coefs$nacc$var_name)
+          }
 
-          if (y[2] == "updated")
+          if (y[2] == "updated") {
             return(x %in% reg_coefs$updated$var_name)
+          }
         }
 
         if (y[1] == "T-score") {
-          if (!is.na(y[2]))
+          if (!is.na(y[2])) {
             return(FALSE)
-          
+          }
+
           return(x %in% names(t_score_coefs))
         }
 
@@ -79,24 +82,26 @@ test_that("std_methods", {
         mth_unavail <- 0
       } else {
         mth_unavail <- mean(apply(subset(fun_output, available == 0), 1, \(y) {
-          if (y[1] == "norms")
+          if (y[1] == "norms") {
             return(x %in% names(normative_summaries[[y[2]]]))
-            
-          if (y[1] == "regression")
+          }
+
+          if (y[1] == "regression") {
             return(x %in% reg_coefs[[y[2]]]$var_name)
-            
-          
+          }
+
           if (y[1] == "T-score") {
-            if (!is.na(y[2]))
-            return(TRUE)
-            
+            if (!is.na(y[2])) {
+              return(TRUE)
+            }
+
             return(x %in% names(t_score_coefs))
           }
-          
+
           TRUE
         }))
       }
-      
+
       c(avails = mth_avail, unavails = mth_unavail)
     }
   )
@@ -104,12 +109,12 @@ test_that("std_methods", {
   ## Create expected matrix. That is, two columns, first of all
   ## 1's, second of all 0's. Name columns "avails" and "unavails"
   expected <- matrix(
-    data = rep(c(1,0), length(vars)),
+    data = rep(c(1, 0), length(vars)),
     ncol = 2,
     byrow = T,
     dimnames = list(NULL, c("avails", "unavails"))
   )
-  
+
   expect_equal(
     do.call(rbind, all_vars_check),
     expected
@@ -117,12 +122,12 @@ test_that("std_methods", {
 })
 
 test_that("std_methods works for valid inputs of method/version", {
-  
-  all_method_version_combos <- 
+  all_method_version_combos <-
     list(
       c("norms", "nacc"),
       c("norms", "updated"),
       c("regression", "nacc"),
+      c("regression", "nacc_legacy"),
       c("regression", "updated"),
       c("T-score", NA)
     )
@@ -133,17 +138,21 @@ test_that("std_methods works for valid inputs of method/version", {
       mean(unlist(lapply(
         std_methods(method = y[1], version = y[2]),
         \(x, cur_y = y) {
-          if (is.na(cur_y[2]))
-            return(subset(
-              std_methods(var_name = x),
-              method == cur_y[1] & is.na(version)
-            )$available)
-            
+          if (is.na(cur_y[2])) {
+            return(
+              subset(
+                std_methods(var_name = x),
+                method == cur_y[1] & is.na(version)
+              )$available
+            )
+          }
+
           subset(
             std_methods(var_name = x),
             method == cur_y[1] & version == cur_y[2]
           )$available
-        })))
+        }
+      )))
     }
   )))
 
@@ -151,7 +160,4 @@ test_that("std_methods works for valid inputs of method/version", {
     checks,
     rep(1, length(all_method_version_combos))
   )
-
 })
-
-

@@ -13,5 +13,5 @@ calculate_reyarec(REYTCOR, REYFPOS)
 }
 \description{
 Calculates accuracy from true positives and false positives, but applies \code{valid_values_only()}
-first.
+first. As percentage, i.e. a value of 55 means 55\%.
 }

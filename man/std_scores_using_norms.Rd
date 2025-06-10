@@ -20,7 +20,7 @@ std_scores_using_norms(raw_scores, var_name, education, age, sex, m_sd)
 \item{m_sd}{data.frame or tibble with means and standard deviations to use for
 standardizing the raw scores. Should also include columns for age group,
 education group, and sex (if desired). For examples, see entries in
-\link{normative_summaries} and \link{ravlt_trials_m_sd}.}
+\link{normative_summaries}.}
 }
 \description{
 Returns standardized scores by calculating \code{(raw_score - mean) / sd}. Means

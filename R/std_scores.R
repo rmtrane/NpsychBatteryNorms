@@ -41,22 +41,31 @@ std_scores <- function(
   version = c("nacc", "updated"),
   print_messages = T
 ) {
+  ## If all raw_scores are NA, return a vector of NAs
   if (all(is.na(raw_scores))) {
     return(rep(NA, length(raw_scores)))
   }
 
-  stopifnot("'method' must be length 1" = length(method) == 1)
-  stopifnot(
-    "'method' must be one of 'norms', 'regression', or 'T-score'" = any(
-      method == c("norms", "regression", "T-score")
+  ## Check 'var_name' argument.
+  if (!is.character(var_name) || length(var_name) != 1) {
+    cli::cli_abort(
+      message = "'var_name' must be a single string, not a vector of class {class(var_name)}."
     )
-  )
+  }
 
-  stopifnot("'var_name' must be a string" = is.character(var_name))
-  stopifnot("'var_name' must have length 1" = length(var_name) == 1)
+  ## Check that 'method' is valid
+  if (length(method) != 1) {
+    cli::cli_abort(
+      message = "'method' must be a single string, not a vector of length {length(method)}."
+    )
+  } else if (!method %in% c("norms", "regression", "T-score")) {
+    cli::cli_abort(
+      message = "'method' must be one of 'norms', 'regression', or 'T-score', not {method}."
+    )
+  }
 
+  ## Check that 'raw_scores' is numeric, or if not, that it can be converted to numeric.
   if (!is.numeric(raw_scores)) {
-    ## Check if any non-digit characters in non-na entries of raw_scores
     digits_only <- grepl("^[0-9]*\\.?[0-9]*$", na.omit(raw_scores), perl = TRUE)
 
     ## If any entries flagged as containing non-digit characters, abort with error message.
@@ -82,7 +91,6 @@ std_scores <- function(
       )
     }
   }
-  # stopifnot("'raw_scores' must be a numeric vector" = is.numeric(raw_scores))
 
   ## Replace anything that is not a valid score with NA
   raw_scores <- valid_values_only(raw_scores, var_name, remove_errorcodes = T)
@@ -95,13 +103,15 @@ std_scores <- function(
   max_age <- max(age, na.rm = T)
 
   if (method == "T-score") {
+    ## Check that 'version' is valid
     if (!is.na(version) & print_messages) {
       cli::cli_alert_info("'version' is ignored for T-score")
     }
 
+    ## If education is outside of range, truncate it
     if (min_educ < 8 | max_educ > 20) {
       if (print_messages) {
-        message(
+        cli::cli_alert_warning(
           "For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated."
         )
       }
@@ -109,9 +119,10 @@ std_scores <- function(
       education <- pmin(pmax(education, 8), 20)
     }
 
+    ## If age is outside of range, truncate it
     if (min_age < 30 | max_age > 91) {
       if (print_messages) {
-        message(
+        cli::cli_alert_warning(
           "For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated."
         )
       }
@@ -126,26 +137,25 @@ std_scores <- function(
       education,
       sex
     )
-  } else {
-    stopifnot("'version' must be length 1" = length(version) == 1)
-    stopifnot(
-      "'version' must be one of 'nacc' or 'updated" = version %in%
-        c("nacc", "updated")
-    )
   }
 
   if (method == "norms") {
-    stopifnot(
-      "Education must be a numeric vector of values between 0 and 31" = (min_educ >=
-        0 &
-        max_educ <= 31)
-    )
-
-    stopifnot(
-      "'var_name' is not valid for selected normative version" = any(
-        var_name == names(normative_summaries[[version]])
+    ## Check that 'version' is valid for 'var_name'
+    if (!var_name %in% names(normative_summaries[[version]])) {
+      cli::cli_abort(
+        "{var_name} is not a valid variable for {method} ({version}). Use {.code std_methods(var_name = {var_name})} to get all available methods."
       )
-    )
+    }
+
+    if (min_educ < 0 | max_educ > 31) {
+      education <- pmin(pmax(education, 0), 31)
+
+      if (print_messages) {
+        cli::cli_alert_warning(
+          "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+        )
+      }
+    }
 
     means_and_sds <- normative_summaries[[version]][[var_name]]
 
@@ -160,44 +170,54 @@ std_scores <- function(
   }
 
   if (method == "regression") {
-    stopifnot(
-      "Education must be a numeric vector of values between 0 and 31" = min_educ >=
-        0 &
-        max_educ <= 31
-    )
-
-    if (version == "nacc") {
-      stopifnot(
-        "'var_name' is not a valid string. See 'nacc_reg$nacc$var_name' for list of allowed strings" = any(
-          var_name == reg_coefs$nacc$var_name
+    ## Check that 'version' is valid
+    if (!var_name %in% reg_coefs[[version]]$var_name) {
+      if (version == "nacc" && var_name %in% reg_coefs$nacc_legacy$var_name) {
+        cli::cli_alert_info(
+          "{var_name} is a legacy score. Regression model published by Weintraub et. al (2009) used (links to resources can be found at {.url https://naccdata.org/data-collection/forms-documentation/uds-2})"
         )
-      )
 
-      coefs_to_use <- reg_coefs$nacc[
-        reg_coefs$nacc$var_name == var_name,
-        c("intercept", "sex", "age", "education", "delay", "rmse")
-      ]
-      coefs_to_use <- unlist(coefs_to_use)
-
-      if (coefs_to_use["delay"] != 0) {
-        stopifnot("'delay' must be a numeric vector" = is.numeric(delay))
+        version <- "nacc_legacy"
       } else {
-        delay <- rep(0, length(sex))
+        cli::cli_abort(
+          "{var_name} cannote be standardized using {method} ({version}). Use {.code std_methods(var_name = {var_name})} to get all available methods."
+        )
       }
     }
 
-    if (version == "updated") {
-      stopifnot(
-        "'var_name' is not a valid string. See 'reg_coefs$updated_2024$var_name' for list of allowed strings" = any(
-          var_name == reg_coefs$updated_2024$var_name
-        )
-      )
+    coefs_to_use <- reg_coefs[[version]][
+      reg_coefs[[version]]$var_name == var_name,
+      c("intercept", "sex", "age", "education", "delay", "rmse")
+    ]
+    coefs_to_use <- unlist(coefs_to_use)
 
-      coefs_to_use <- reg_coefs$updated_2024[
-        reg_coefs$updated_2024$var_name == var_name,
-        c("intercept", "sex", "age", "education", "delay", "rmse")
-      ]
-      coefs_to_use <- unlist(coefs_to_use)
+    if (coefs_to_use["delay"] != 0) {
+      stopifnot("'delay' must be a numeric vector" = is.numeric(delay))
+    } else {
+      delay <- rep(0, length(sex))
+    }
+    # }
+
+    # if (version == "updated") {
+    #   stopifnot(
+    #     "'var_name' is not a valid string. See 'reg_coefs$updated$var_name' for list of allowed strings" = any(
+    #       var_name == reg_coefs$updated$var_name
+    #     )
+    #   )
+
+    #   coefs_to_use <- reg_coefs$updated[
+    #     reg_coefs$updated$var_name == var_name,
+    #     c("intercept", "sex", "age", "education", "delay", "rmse")
+    #   ]
+    #   coefs_to_use <- unlist(coefs_to_use)
+    # }
+
+    if (min_educ < 0 | max_educ > 31) {
+      education <- pmin(pmax(education, 0), 31)
+
+      cli::cli_alert_warning(
+        "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+      )
     }
 
     out <- std_scores_using_regression(
