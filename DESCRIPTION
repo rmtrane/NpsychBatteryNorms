@@ -18,17 +18,6 @@ Suggests:
     quarto,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Config/Needs/website:
-    bslib,
-    crosstalk,
-    reactable,
-    purrr,
-    tidyr,
-    dplyr,
-    plotly,
-    shiny,
-    htmltools,
-    stringr
 RdMacros: Rdpack
 Roxygen: list(markdown = TRUE)
 Imports: 
@@ -50,4 +39,15 @@ Authors@R: c(
 URL: https://rmtrane.github.io/NpsychBatteryNorms/
 VignetteBuilder: 
     quarto
-Config/Needs/website: quarto
+Config/Needs/website: 
+    quarto,
+    bslib,
+    crosstalk,
+    reactable,
+    purrr,
+    tidyr,
+    dplyr,
+    plotly,
+    shiny,
+    htmltools,
+    stringr
