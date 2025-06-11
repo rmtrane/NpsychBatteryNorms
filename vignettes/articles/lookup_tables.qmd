@@ -20,9 +20,7 @@ $(document).ready(() => {
 });
 ```
 
-For transparency and completeness, we present tables with the data used for standardization, including tables showing how age and education levels are grouped when applicable.
-
-## Normative Summary Statistics
+<!-- ## Normative Summary Statistics -->
 
 For most variables, we include means and standard deviations stratified by groups of age, education, and sex. 
 
@@ -160,6 +158,7 @@ bslib::card(
     ),
     normative_summaries_sd,
     bordered = F,
+    height = 600,
     columns = list(
       vars_w_labels = colDef(show = FALSE),
       vars_labels = colDef(show = FALSE),
@@ -167,7 +166,7 @@ bslib::card(
         name = "Variable",
         minWidth = 150,
         html = TRUE,
-        cell = function(value, name) {
+        filterMethod = cell = function(value, name) {
           paste0(
             "<span data-bs-original-title='",
             variable_labels[value],

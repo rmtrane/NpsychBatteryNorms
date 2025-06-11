@@ -22,6 +22,8 @@ $(document).ready(() => {
 });
 ```
 
+
+
 ```{r}
 #| label: "packages-and-setup-df"
 #| output: false
@@ -167,6 +169,7 @@ bslib::card(
     ),
     reg_table_sd,
     bordered = F,
+    height = 600,
     columns = list(
       vars_labels = colDef(show = FALSE),
       vars_w_labels = colDef(show = FALSE),
