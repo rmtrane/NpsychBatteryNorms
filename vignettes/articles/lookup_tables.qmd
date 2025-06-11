@@ -166,7 +166,7 @@ bslib::card(
         name = "Variable",
         minWidth = 150,
         html = TRUE,
-        filterMethod = cell = function(value, name) {
+        cell = function(value, name) {
           paste0(
             "<span data-bs-original-title='",
             variable_labels[value],
