@@ -204,7 +204,7 @@ bslib::card(
           //   return { visibility: 'hidden', 'white-space': 'nowrap'}
           // } else {
           return {'white-space': 'nowrap'}
-          }
+          // }
         }"
         )
       ),
