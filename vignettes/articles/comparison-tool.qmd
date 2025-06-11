@@ -11,14 +11,13 @@ execute:
 
 
 ```{r}
-bslib::card(
-  full_screen = T,
-  htmltools::tags$iframe(
-    width = "100%",
-    height = "800px",
-    src = "https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/"
-  )
+# bslib::card(
+# full_screen = T,
+htmltools::tags$iframe(
+  width = "100%",
+  height = "800px",
+  class = "shiny-app",
+  src = "https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/"
 )
+# )
 ```
-
-<iframe width="100%" height="800px" src="https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/" onload="resizeIframe(this)"></iframe>

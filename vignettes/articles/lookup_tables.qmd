@@ -78,6 +78,10 @@ variable_labels <- c(
 library(NpsychBatteryNorms)
 library(crosstalk)
 library(reactable)
+library(purrr)
+library(tidyr)
+library(dplyr)
+library(bslib)
 
 
 normative_summaries_df <- purrr::list_rbind(

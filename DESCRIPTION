@@ -16,11 +16,19 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     quarto,
-    testthat (>= 3.0.0),
-    shiny,
-    bslib,
-    plotly
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/Needs/website:
+    bslib,
+    crosstalk,
+    reactable,
+    purrr,
+    tidyr,
+    dplyr,
+    plotly,
+    shiny,
+    htmltools,
+    stringr
 RdMacros: Rdpack
 Roxygen: list(markdown = TRUE)
 Imports: 
