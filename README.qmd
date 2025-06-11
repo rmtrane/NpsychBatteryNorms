@@ -7,6 +7,7 @@ format:
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/rmtrane/NpsychBatteryNorms/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 {{< include inst/_short-intro.qmd >}}
