@@ -1,0 +1,275 @@
+---
+title: "Lookup Tables"
+format: 
+  html:
+    embed-resources: false
+execute:
+  echo: false
+---
+
+```{js}
+function remove_all_option() {
+    document.getElementById("norms_variable").getElementsByClassName("selectized")[0].selectize.removeOption("");
+    document.getElementById("norms_version").getElementsByClassName("selectized")[0].selectize.removeOption("");
+}
+    
+$(document).ready(() => {
+  remove_all_option();
+  
+  $('#reactable-1').find('[data-bs-original-title]').tooltip({container: 'body'});
+});
+```
+
+For transparency and completeness, we present tables with the data used for standardization, including tables showing how age and education levels are grouped when applicable.
+
+## Normative Summary Statistics
+
+For most variables, we include means and standard deviations stratified by groups of age, education, and sex. 
+
+Notes on data sources, etc.:
+
+* `nacc` versions are obtained from the tables published on the [NACC data website](https://naccdata.org/data-collection/forms-documentation/uds-3) (direct link to pdf [here](https://files.alz.washington.edu/documentation/uds3-means.pdf)). These were created using the data release of September 2020.
+
+* `updated` versions are meant to be direct updates to the `nacc` versions. They are found using the data release of June 2024. 
+
+* `ravlt_trials` versions are only available for a small subset of variables. The source of these numbers are unknown, but these have been used in clinic for some time, and are therefore included here for backwards compatibility.
+
+In @tbl-means-and-sds, you can filter the variables and versions to see the means and standard deviations for all variables available. 
+
+```{r}
+#| label: variable-labels
+variable_labels <- c(
+  "MOCATOTS" = "MoCA",
+  "CRAFTVRS" = "Craft Immediate - Verbatim",
+  "CRAFTURS" = "Craft Immediate - Paraphrase",
+  "CRAFTDVR" = "Craft Delay - Verbatim",
+  "CRAFTDRE" = "Craft Delay - Paraphrase",
+  "UDSBENTC" = "Benson Figure Copy",
+  "UDSBENTD" = "Benson Delay",
+  "DIGFORCT" = "Number Span Forward - Total",
+  "DIGFORSL" = "Number Span Forward - Span Length",
+  "DIGBACCT" = "Number Span Backward - Total",
+  "DIGBACLS" = "Number Span Backward - Span Length",
+  "MINTTOTS" = "MINT",
+  "UDSVERFC" = "F Words",
+  "UDSVERLC" = "L Words",
+  "UDSVERTN" = "F+L Words",
+  "ANIMALS" = "Animal Fluency",
+  "VEG" = "Vegetable Fluency",
+  "TRAILA" = "Trailmaking Part A",
+  "TRAILB" = "Trailmaking Part B",
+  "TRAILARR" = "Trail Making Part A - Errors",
+  "TRAILBRR" = "Trail Making Part B - Errors",
+  "OTRAILA" = "Oral Trailmaking Part A - Completion Time",
+  "OTRAILB" = "Oral Trailmaking Part B - Completion Time",
+  "OTRLARR" = "Oral Trailmaking Part A - Errors",
+  "OTRLBRR" = "Oral Trailmaking Part B - Errors",
+  "REY6REC" = "RAVLT Short Delay",
+  "REYDLIST" = "RAVLT Distractor List",
+  "REYDREC" = "RAVLT Long Delay",
+  "REYTOTAL" = "RAVLT Total Learning"
+)
+```
+
+```{r}
+#| label: "packages-and-setup-df"
+#| output: false
+
+library(NpsychBatteryNorms)
+library(crosstalk)
+library(reactable)
+
+
+normative_summaries_df <- purrr::list_rbind(
+  purrr::imap(
+    normative_summaries,
+    \(x, idx) {
+      out <- dplyr::bind_rows(x, .id = "vars")
+      out$version <- idx
+
+      if (!"n" %in% colnames(out)) {
+        out$n <- NA
+      }
+
+      if (!"sex" %in% colnames(out)) {
+        out <- out |>
+          dplyr::mutate(
+            sex = list(c("f", "m"))
+          ) |>
+          tidyr::unnest_longer(sex)
+      }
+
+      out
+    }
+  )
+) |>
+  tidyr::pivot_wider(
+    values_from = c(n, m, sd),
+    names_from = sex
+  ) |>
+  dplyr::select(
+    version,
+    vars,
+    age_group,
+    edu_group,
+    ends_with("_f"),
+    ends_with("_m")
+  ) |>
+  dplyr::mutate(
+    vars_labels = variable_labels[vars],
+    vars_w_labels = paste0(vars_labels, " (", vars, ")")
+  )
+
+normative_summaries_sd <- SharedData$new(normative_summaries_df)
+```
+
+```{r}
+#| label: tbl-means-and-sds
+#| tbl-cap: "Groupwise means and standard deviations for variables. Note: the columns 'Years of Education' and 'Sex' are empy for some combinations of variable and version. This happens when the given combination does not adjust for these variables."
+#| column: page
+bslib::card(
+  height = 750,
+  full_screen = TRUE,
+  bslib::layout_columns(
+    col_widths = c(6, 6),
+    crosstalk::filter_select(
+      id = "norms_variable",
+      label = "Variable",
+      sharedData = normative_summaries_sd,
+      group = ~vars_w_labels,
+      multiple = TRUE
+    ),
+    crosstalk::filter_select(
+      id = "norms_version",
+      label = "Version",
+      sharedData = normative_summaries_sd,
+      group = ~version,
+      multiple = TRUE
+    )
+  ),
+  htmltools::tags$br(),
+  htmltools::tags$br(),
+  reactable(
+    elementId = "reactable-1",
+    theme = reactableTheme(
+      color = "black"
+    ),
+    normative_summaries_sd,
+    bordered = F,
+    columns = list(
+      vars_w_labels = colDef(show = FALSE),
+      vars_labels = colDef(show = FALSE),
+      vars = colDef(
+        name = "Variable",
+        minWidth = 150,
+        html = TRUE,
+        cell = function(value, name) {
+          paste0(
+            "<span data-bs-original-title='",
+            variable_labels[value],
+            "' style='text-decoration-line: underline; text-decoration-style: dotted; cursor: help;'>",
+            value,
+            "</span>"
+          )
+        },
+        style = JS(
+          "function(rowInfo, column, state) {
+            const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+            
+            if (prevRow && rowInfo.values['vars'] === prevRow['vars']) {
+              return { visibility: 'hidden', 'white-space': 'nowrap' }
+            } else {
+              return { 'white-space': 'nowrap' } ;
+            }
+          }"
+        )
+      ),
+      version = colDef(
+        name = "Version",
+        minWidth = 100,
+        style = JS(
+          "function(rowInfo, column, state) {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+
+          if (prevRow && rowInfo.values['version'] === prevRow['version']) {
+            return { visibility: 'hidden' }
+          }
+        }"
+        )
+      ),
+      age_group = colDef(
+        name = "Age",
+        minWidth = 100,
+        style = JS(
+          "function(rowInfo, column, state) {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+
+          if (prevRow && rowInfo.values['age_group'] === prevRow['age_group']) {
+            return { visibility: 'hidden' }
+          }
+        }"
+        )
+      ),
+      edu_group = colDef(
+        name = "Education (years)",
+        minWidth = 160,
+        style = JS(
+          "function(rowInfo, column, state) {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+
+          if (prevRow && rowInfo.values['edu_group'] === prevRow['edu_group']) {
+            return { visibility: 'hidden' }
+          }
+        }"
+        )
+      ),
+      n_f = colDef(
+        name = "N",
+        minWidth = 55
+      ),
+      m_f = colDef(
+        name = "Mean",
+        minWidth = 75,
+        format = colFormat(digits = 3)
+      ),
+      sd_f = colDef(
+        name = "SD",
+        minWidth = 75,
+        format = colFormat(digits = 3)
+      ),
+      n_m = colDef(
+        name = "N",
+        minWidth = 55
+      ),
+      m_m = colDef(
+        name = "Mean",
+        minWidth = 75,
+        format = colFormat(digits = 3)
+      ),
+      sd_m = colDef(
+        name = "SD",
+        minWidth = 75,
+        format = colFormat(digits = 3)
+      )
+    ),
+    columnGroups = list(
+      colGroup(name = "Female", columns = c("n_f", "m_f", "sd_f")),
+      colGroup(name = "Male", columns = c("n_m", "m_m", "sd_m"))
+    ),
+    sortable = F,
+    pagination = F
+  )
+) |>
+  htmlwidgets::onRender(reactable::JS(
+    "() => {
+      Reactable.onStateChange('reactable-1', function(state) {
+        // Initiate tooltips
+        console.log('Reactable state changed:', state);
+
+        $('#reactable-1').find('[data-bs-original-title]').tooltip({container: 'body'});
+
+      });
+    }"
+  ))
+```
+

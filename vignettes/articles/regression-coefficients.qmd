@@ -1,0 +1,263 @@
+---
+title: "Regression Coefficients"
+format: 
+  html:
+    embed-resources: false
+execute:
+  echo: false
+---
+
+```{js}
+function remove_all_option() {
+    document.getElementById("reg_variable").getElementsByClassName("selectized")[0].selectize.removeOption("");
+    document.getElementById("reg_version").getElementsByClassName("selectized")[0].selectize.removeOption("");
+}
+
+$(document).ready(() => {
+  // remove_all_option();
+  document.getElementById("reg_variable").getElementsByClassName("selectized")[0].selectize.removeOption("");
+  document.getElementById("reg_version").getElementsByClassName("selectized")[0].selectize.removeOption("");
+  
+  // $('#reactable-2').find('[data-bs-original-title]').tooltip({container: 'body'});
+});
+```
+
+```{r}
+#| label: "packages-and-setup-df"
+#| output: false
+library(NpsychBatteryNorms)
+library(crosstalk)
+library(reactable)
+
+
+variable_labels <- c(
+  "ANIMALS" = "Animal Fluency",
+  "BOSTON" = "Boston Naming Test",
+  # "CRAFTCUE" = "Craft Delay - Cue (boy) needed",
+  "CRAFTDRE" = "Craft Delay - Paraphrase",
+  "CRAFTDVR" = "Craft Delay - Verbatim",
+  "CRAFTURS" = "Craft Immediate - Paraphrase",
+  "CRAFTVRS" = "Craft Immediate - Verbatim",
+  "DIGBACCT" = "Number Span Backward - Total",
+  "DIGBACLS" = "Number Span Backward - Span Length",
+  "DIGFORCT" = "Number Span Forward - Total",
+  "DIGFORSL" = "Number Span Forward - Span Length",
+  "DIGIB" = "Digit Span Backward - Total",
+  "DIGIBLEN" = "Digit Span Backward - Span Length",
+  "DIGIF" = "Digit Span Forward - Total",
+  "DIGIFLEN" = "Digit Span Forward - Span Length",
+  "LOGIMEM" = "Logical Memory, Immediate",
+  "MEMUNITS" = "Logical Memory, Delayed",
+  "MINTPCNG" = "MINT - Phonemic cues: Number Given", # check
+  "MINTSCNG" = "MINT - Semantic cues: Number Given",
+  "MINTTOTS" = "MINT",
+  "MINTTOTW" = "MINT - Total correct without semantic cues",
+  "MOCATOTS" = "MoCA",
+  "NACCMMSE" = "MMSE",
+  "OTRAILA" = "Oral Trailmaking Part A - Completion Time",
+  "OTRAILB" = "Oral Trailmaking Part B - Completion Time",
+  "OTRLALI" = "Oral Trailmaking Part A - Number of correct lines",
+  "OTRLARR" = "Oral Trailmaking Part A - Errors",
+  "OTRLBLI" = "Oral Trailmaking Part B - Number of correct lines",
+  "OTRLBRR" = "Oral Trailmaking Part B - Errors",
+  "REY1REC" = "RAVLT Trial 1: Total recall",
+  "REY2REC" = "RAVLT Trial 2: Total recall",
+  "REY3REC" = "RAVLT Trial 3: Total recall",
+  "REY4REC" = "RAVLT Trial 4: Total recall",
+  "REY5REC" = "RAVLT Trial 5: Total recall",
+  "REY6REC" = "RAVLT Short Delay",
+  "REYDREC" = "RAVLT Long Delay",
+  "REYTOTAL" = "RAVLT Total Learning",
+  "TRAILA" = "Trailmaking Part A",
+  "trailaadj" = "Trailmaking Part A - lines / time",
+  "TRAILALI" = "Trailmaking Part A - Number of correct lines",
+  "TRAILARR" = "Trailmaking Part A - Errors",
+  "TRAILB" = "Trailmaking Part B",
+  "trailbadj" = "Trailmaking Part B - lines / time",
+  "TRAILBLI" = "Trailmaking Part B - Number of correct lines",
+  "TRAILBRR" = "Trailmaking Part B - Errors",
+  # "UDSBENRS" = "NA",
+  "UDSBENTC" = "Benson Figure Copy",
+  "UDSBENTD" = "Benson Delay",
+  "UDSVERFC" = "F Words",
+  "UDSVERLC" = "L Words",
+  "UDSVERTE" = "F+L Words - Number of repetition errors",
+  "UDSVERTI" = "Number of non-F/L Words and rule violation errors",
+  "UDSVERTN" = "F+L Words",
+  "VEG" = "Vegetable Fluency"
+)
+
+reg_table <- dplyr::bind_rows(reg_coefs, .id = "version") |>
+  dplyr::filter(var_name %in% names(variable_labels)) |>
+  dplyr::mutate(
+    vars_labels = variable_labels[var_name],
+    vars_w_labels = paste0(vars_labels, " (", var_name, ")")
+  )
+```
+
+## Regression Based Models
+
+```{r}
+#| label: setup-for-table
+header_fct <- function(value, name) {
+  value <- strsplit(value, split = " BR ")[[1]]
+
+  htmltools::tags$span(
+    value[1],
+    htmltools::tags$br(),
+    value[2],
+    style = "white-space: nowrap"
+  )
+}
+
+numeric_cell_fct <- function(value, name) {
+  decimal <- stringr::str_split(value, "\\.")[[1]]
+
+  if (length(decimal) == 2) {
+    decimal <- decimal[2]
+  }
+
+  if (nchar(decimal) > 3) {
+    value <- paste0(
+      '<span data-bs-original-title="',
+      value,
+      '">',
+      sprintf("%.3f", value),
+      "...",
+      "</span>"
+    )
+  }
+
+  value
+}
+
+reg_table_sd <- SharedData$new(reg_table)
+```
+
+```{r}
+#| label: tbl-regression-coefficients
+#| tbl-cap: "Regression coefficients used for standardization. Hover variables to see human readable labels. Hover values ending with '...' to see all decimals."
+#| column: page
+bslib::card(
+  height = 750,
+  full_screen = TRUE,
+  bslib::layout_columns(
+    col_widths = c(6, 6),
+    crosstalk::filter_select(
+      id = "reg_variable",
+      label = "Variable",
+      sharedData = reg_table_sd,
+      group = ~vars_w_labels,
+      multiple = TRUE
+    ),
+    crosstalk::filter_select(
+      id = "reg_version",
+      label = "Version",
+      sharedData = reg_table_sd,
+      group = ~version,
+      multiple = TRUE
+    )
+  ),
+  htmltools::tags$br(),
+  htmltools::tags$br(),
+  reactable(
+    elementId = "reactable-2",
+    theme = reactableTheme(
+      color = "black"
+    ),
+    reg_table,
+    bordered = F,
+    columns = list(
+      vars_labels = colDef(show = FALSE),
+      vars_w_labels = colDef(show = FALSE),
+      version = colDef(
+        name = "Version",
+        style = JS(
+          "function(rowInfo, column, state) {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+
+          if (prevRow && rowInfo.values['version'] === prevRow['version']) {
+            return { visibility: 'hidden'}
+          }
+        }"
+        ),
+        minWidth = 125
+      ),
+      var_name = colDef(
+        name = "Variable",
+        minWidth = 125,
+        html = TRUE,
+        cell = function(value, name) {
+          paste0(
+            "<span data-bs-original-title='",
+            variable_labels[value],
+            "' style='text-decoration-line: underline; text-decoration-style: dotted; cursor: help;'>",
+            value,
+            "</span>"
+          )
+        },
+        style = JS(
+          "function(rowInfo, column, state) {
+          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+
+          if (prevRow && rowInfo.values['var_name'] === prevRow['var_name']) {
+            return { visibility: 'hidden', 'white-space': 'nowrap'}
+          } else {
+            return {'white-space': 'nowrap'}
+          }
+        }"
+        )
+      ),
+      intercept = colDef(
+        name = "Intercept",
+        cell = numeric_cell_fct,
+        style = c("white-space" = "nowrap"),
+        html = TRUE
+      ),
+      sex = colDef(
+        name = "Sex BR (ref: female)",
+        header = header_fct,
+        cell = numeric_cell_fct,
+        style = c("white-space" = "nowrap"),
+        html = TRUE,
+        minWidth = 125
+      ),
+      age = colDef(
+        name = "Age BR (years)",
+        header = header_fct,
+        cell = numeric_cell_fct,
+        html = TRUE,
+        minWidth = 125
+      ),
+      education = colDef(
+        name = "Education BR (years)",
+        header = header_fct,
+        cell = numeric_cell_fct,
+        html = TRUE,
+        minWidth = 125
+      ),
+      delay = colDef(
+        name = "Delay",
+        cell = numeric_cell_fct,
+        html = TRUE
+      ),
+      rmse = colDef(
+        name = "RMSE",
+        cell = numeric_cell_fct,
+        html = TRUE
+      )
+    ),
+    sortable = F,
+    pagination = F
+  ) |>
+    htmlwidgets::onRender(reactable::JS(
+      "() => {
+        Reactable.onStateChange('reactable-2', function(state) {
+          // Initiate tooltips
+          $('#reactable-2').find('[data-bs-original-title]').tooltip({container: 'body'});
+
+        });
+      }"
+    ))
+)
+```

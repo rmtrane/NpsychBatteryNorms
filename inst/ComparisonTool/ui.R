@@ -42,66 +42,64 @@ all_vars <- c(
 )
 
 ui <- bslib::page_fluid(
-  bslib::card(
-    bslib::page_sidebar(
-      sidebar = bslib::sidebar(
-        shiny::selectInput(
-          inputId = "var_name",
-          label = "Score",
-          choices = all_vars,
-          selected = "ANIMALS"
-        ),
-        shiny::radioButtons(
-          inputId = "sex",
-          label = "Sex",
-          choices = c("Male" = "m", "Female" = "f")
-        ),
-        shiny::selectInput(
-          inputId = "x_var",
-          label = "What would you like on the x-axis?",
-          choices = c(
-            "Raw Scores" = "raw_scores",
-            "Education (years)" = "EDUC",
-            "Age (years)" = "NACCAGE"
-          )
-        ),
-        shiny::sliderInput(
-          "raw_scores",
-          label = "Raw Score",
-          value = floor(median(rdd$ANIMALS$range)),
-          min = rdd$ANIMALS$range[1],
-          max = rdd$ANIMALS$range[2],
-          step = 1
-        ),
-        shiny::sliderInput(
-          "educ",
-          label = "Education (years)",
-          value = 14,
-          min = 0,
-          max = 31,
-          step = 1
-        ),
-        shiny::sliderInput(
-          "age",
-          label = "Age (years)",
-          value = 58,
-          min = 18,
-          max = 120,
-          step = 1
-        ),
-        shiny::conditionalPanel(
-          "input.var_name == 'MEMUNITS'",
-          shiny::sliderInput(
-            inputId = "delay",
-            label = "Length of Delay (minutes)",
-            min = 25,
-            value = 25,
-            max = 35
-          )
-        ),
-        # uiOutput("other_selections")
+  bslib::page_sidebar(
+    sidebar = bslib::sidebar(
+      shiny::selectInput(
+        inputId = "var_name",
+        label = "Score",
+        choices = all_vars,
+        selected = "ANIMALS"
       ),
-      plotly::plotlyOutput("plot") #, height = "500px", fill = FALSE)
-    )
+      shiny::radioButtons(
+        inputId = "sex",
+        label = "Sex",
+        choices = c("Male" = "m", "Female" = "f")
+      ),
+      shiny::selectInput(
+        inputId = "x_var",
+        label = "What would you like on the x-axis?",
+        choices = c(
+          "Raw Scores" = "raw_scores",
+          "Education (years)" = "EDUC",
+          "Age (years)" = "NACCAGE"
+        )
+      ),
+      shiny::sliderInput(
+        "raw_scores",
+        label = "Raw Score",
+        value = floor(median(rdd$ANIMALS$range)),
+        min = rdd$ANIMALS$range[1],
+        max = rdd$ANIMALS$range[2],
+        step = 1
+      ),
+      shiny::sliderInput(
+        "educ",
+        label = "Education (years)",
+        value = 14,
+        min = 0,
+        max = 31,
+        step = 1
+      ),
+      shiny::sliderInput(
+        "age",
+        label = "Age (years)",
+        value = 58,
+        min = 18,
+        max = 120,
+        step = 1
+      ),
+      shiny::conditionalPanel(
+        "input.var_name == 'MEMUNITS'",
+        shiny::sliderInput(
+          inputId = "delay",
+          label = "Length of Delay (minutes)",
+          min = 25,
+          value = 25,
+          max = 35
+        )
+      ),
+      # uiOutput("other_selections")
+    ),
+    plotly::plotlyOutput("plot") #, height = "500px", fill = FALSE)
   )
 )

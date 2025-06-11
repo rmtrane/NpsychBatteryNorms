@@ -1,0 +1,24 @@
+---
+title: "Comparison Tool"
+format: 
+  html:
+    embed-resources: false
+execute:
+  echo: false
+---
+
+## Comparison Tool
+
+
+```{r}
+bslib::card(
+  full_screen = T,
+  htmltools::tags$iframe(
+    width = "100%",
+    height = "800px",
+    src = "https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/"
+  )
+)
+```
+
+<iframe width="100%" height="800px" src="https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/" onload="resizeIframe(this)"></iframe>
