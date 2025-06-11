@@ -165,7 +165,7 @@ bslib::card(
     theme = reactableTheme(
       color = "black"
     ),
-    reg_table,
+    reg_table_sd,
     bordered = F,
     columns = list(
       vars_labels = colDef(show = FALSE),
@@ -198,12 +198,12 @@ bslib::card(
         },
         style = JS(
           "function(rowInfo, column, state) {
-          const prevRow = state.pageRows[rowInfo.viewIndex - 1]
+          // const prevRow = state.pageRows[rowInfo.viewIndex - 1]
 
-          if (prevRow && rowInfo.values['var_name'] === prevRow['var_name']) {
-            return { visibility: 'hidden', 'white-space': 'nowrap'}
-          } else {
-            return {'white-space': 'nowrap'}
+          // if (prevRow && rowInfo.values['var_name'] === prevRow['var_name']) {
+          //   return { visibility: 'hidden', 'white-space': 'nowrap'}
+          // } else {
+          return {'white-space': 'nowrap'}
           }
         }"
         )

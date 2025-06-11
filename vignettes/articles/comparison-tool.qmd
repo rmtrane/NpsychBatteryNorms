@@ -7,8 +7,7 @@ execute:
   echo: false
 ---
 
-## Comparison Tool
-
+The R Shiny application embedded below is hosted [here](https://sscc.wisc.edu/shiny/users/rtrane/CompareNpsychBatteryNorms/) (thanks to the [University of Wisconsin--Madison Social Science Computing Cooperative](https://www.sscc.wisc.edu)). 
 
 ```{r}
 # bslib::card(
