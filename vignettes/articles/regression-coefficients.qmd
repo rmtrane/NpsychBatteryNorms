@@ -165,7 +165,7 @@ bslib::card(
   reactable(
     elementId = "reactable-2",
     theme = reactableTheme(
-      color = "black"
+      backgroundColor = "var(--bs-body-bg)"
     ),
     reg_table_sd,
     bordered = F,
