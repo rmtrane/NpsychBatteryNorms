@@ -154,7 +154,6 @@ bslib::card(
   reactable(
     elementId = "reactable-1",
     theme = reactableTheme(
-      # color = "black",
       backgroundColor = "var(--bs-body-bg)"
     ),
     normative_summaries_sd,
