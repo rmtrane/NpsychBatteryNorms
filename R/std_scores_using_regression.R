@@ -40,52 +40,84 @@
 #'   - `age`
 #'   - `education`
 #'   - `sex`
+#'   - `race`
 #'   - `delay`
 #' @param sd estimated standard deviation
 #'
 #' @export
 std_scores_using_regression <- function(
-    raw_scores,
-    var_name,
-    reg_coefs,
-    age,
-    education,
-    sex,
-    delay,
-    sd
-){
-
+  raw_scores,
+  var_name,
+  reg_coefs,
+  age,
+  education,
+  sex,
+  race,
+  delay,
+  sd
+) {
   stopifnot("'reg_coefs' must be numeric" = is.numeric(reg_coefs))
-  stopifnot("'reg_coefs' must be of length between 1 and 5" = length(reg_coefs) %in% 1:5)
-  stopifnot("'reg_coefs' must be named with allowed names being 'intercept', 'age', 'eduation', 'sex', and 'delay'" =
-              all(names(reg_coefs) %in% c('intercept', 'age', 'education', 'sex', 'delay')))
+  stopifnot(
+    "'reg_coefs' must be of length between 1 and 6" = length(reg_coefs) %in% 1:6
+  )
+
+  if ("educ" %in% names(reg_coefs)) {
+    names(reg_coefs)[names(reg_coefs) == "educ"] <- "education"
+  }
+
+  stopifnot(
+    "'reg_coefs' must be named with allowed names being 'intercept', 'age', 'education', 'sex', 'race', and 'delay'" = all(
+      names(reg_coefs) %in%
+        c('intercept', 'age', 'education', 'sex', 'race', 'delay')
+    )
+  )
 
   stopifnot("'raw_scores' must be numeric" = is.numeric(raw_scores))
   stopifnot("'age' must be numeric" = is.numeric(age))
 
-  stopifnot("'raw_scores', 'sex', 'education', 'age' and 'delay' must all have the same length" =
-              length(unique(c(length(raw_scores), length(age), length(education), length(sex), length(delay)))) == 1)
+  stopifnot(
+    "'raw_scores', 'sex', 'education', 'age', 'race', and 'delay' must all have the same length" = length(unique(c(
+      length(raw_scores),
+      length(age),
+      length(education),
+      length(sex),
+      length(race),
+      length(delay)
+    ))) ==
+      1
+  )
 
-  coefs <- c("intercept" = 0, "age" = 0, "education" = 0, "sex" = 0, "delay" = 0)
+  coefs <- c(
+    "intercept" = 0,
+    "age" = 0,
+    "education" = 0,
+    "sex" = 0,
+    "race" = 0,
+    "delay" = 0
+  )
   coefs[names(reg_coefs)] <- reg_coefs
 
-  stopifnot("'sex' must either be a character vector of 'f' and 'm', or a numeric
-            vector of 1 (female) and 0 (male)" = (is.numeric(sex) & all(unique(sex) %in% c(0, 1, NA))) |
-              (is.character(sex) & all(unique(sex) %in% c("f", "m", NA))))
+  stopifnot(
+    "'sex' must either be a character vector of 'f' and 'm', or a numeric
+            vector of 1 (female) and 0 (male)" = (is.numeric(sex) &
+      all(unique(sex) %in% c(0, 1, NA))) |
+      (is.character(sex) & all(unique(sex) %in% c("f", "m", NA)))
+  )
 
-  if (is.character(sex))
+  if (is.character(sex)) {
     sex <- as.numeric(sex == "f")
+  }
 
-  est_mean <- c(cbind(1, age, education, sex, delay) %*% coefs)
+  est_mean <- c(cbind(1, age, education, sex, race, delay) %*% coefs)
 
   # Get standardized scores. If either time or error, return negative value so
   # that higher is always better.
-  if (var_name %in% c("TRAILA", "TRAILB",
-                      "OTRAILA", "OTRAILB",
-                      "OTRLARR", "OTRLBRR")) {
+  if (
+    var_name %in%
+      c("TRAILA", "TRAILB", "OTRAILA", "OTRAILB", "OTRLARR", "OTRLBRR")
+  ) {
     return(-(raw_scores - est_mean) / sd)
   }
 
   (raw_scores - est_mean) / sd
-
 }

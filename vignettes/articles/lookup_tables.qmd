@@ -1,5 +1,5 @@
 ---
-title: "Lookup Tables"
+title: "Means and Standard Deviations"
 format: 
   html:
     embed-resources: false

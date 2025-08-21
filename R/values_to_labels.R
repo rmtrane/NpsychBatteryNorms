@@ -7,24 +7,32 @@
 #'
 #' @export
 values_to_labels <- function(
-    raw_score,
-    var_name = "SEX"
+  raw_score,
+  var_name = "SEX"
 ) {
-
   stopifnot("'raw_score' must be numeric" = is.numeric(raw_score))
-  stopifnot("'var_name' must be one of the named entries of 'rdd'" = var_name %in% names(rdd))
+  stopifnot(
+    "'var_name' must be one of the named entries of 'rdd'" = var_name %in%
+      names(rdd)
+  )
 
   av <- rdd[[var_name]]
 
   codes <- av$codes
 
-  names(codes)[match(as.character(raw_score), codes)]
+  factor(
+    names(codes)[match(as.character(raw_score), codes)],
+    levels = names(codes)
+  )
 }
 
 
 if (FALSE) {
   testthat::expect_equal(
-    stringr::str_replace_all(as.character(raw_score), setNames(names(codes), paste0("^", codes, "$"))),
+    stringr::str_replace_all(
+      as.character(raw_score),
+      setNames(names(codes), paste0("^", codes, "$"))
+    ),
     names(codes)[match(as.character(raw_score), codes)]
   )
 

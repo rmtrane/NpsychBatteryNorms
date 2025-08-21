@@ -10,6 +10,7 @@
 #' @param education Numeric vector with years of education. Used for subset of variables only.
 #' @param age Numeric vector with ages in years
 #' @param sex Character vector with sex of participants. Must be either "m" (for male) or "f" (for female). Used for subset of variables only
+#' @param race Character vector with race of participants. Must be either "Black or African American" or "Other". Used only for updated regression models.
 #' @param delay Only for standardizing `MEMUNITS` ("Logical Memory, Delayed") in which case it is the time of delay in minutes
 #' @param method String specifying method to use for standardization.
 #' @param version String specifying version to use. "nacc" = 2020 numbers
@@ -37,6 +38,7 @@ std_scores <- function(
   age,
   sex = c("m", "f"),
   delay = NULL,
+  race = NULL,
   method = c("norms", "regression", "T-score"),
   version = c("nacc", "updated"),
   print_messages = T
@@ -187,55 +189,111 @@ std_scores <- function(
 
     coefs_to_use <- reg_coefs[[version]][
       reg_coefs[[version]]$var_name == var_name,
-      c("intercept", "sex", "age", "education", "delay", "rmse")
+      c("intercept", "sex", "age", "education", "race", "delay", "rmse")
     ]
-    coefs_to_use <- unlist(coefs_to_use)
 
-    if (coefs_to_use["delay"] != 0) {
-      stopifnot("'delay' must be a numeric vector" = is.numeric(delay))
-    } else {
-      delay <- rep(0, length(sex))
-    }
-    # }
+    if (nrow(coefs_to_use) == 1) {
+      coefs_to_use <- na.omit(unlist(coefs_to_use))
 
-    # if (version == "updated") {
-    #   stopifnot(
-    #     "'var_name' is not a valid string. See 'reg_coefs$updated$var_name' for list of allowed strings" = any(
-    #       var_name == reg_coefs$updated$var_name
-    #     )
-    #   )
+      if (!is.na(coefs_to_use['delay']) && coefs_to_use["delay"] != 0) {
+        stopifnot("'delay' must be a numeric vector" = is.numeric(delay))
+      } else {
+        delay <- rep(0, length(sex))
+      }
 
-    #   coefs_to_use <- reg_coefs$updated[
-    #     reg_coefs$updated$var_name == var_name,
-    #     c("intercept", "sex", "age", "education", "delay", "rmse")
-    #   ]
-    #   coefs_to_use <- unlist(coefs_to_use)
-    # }
+      if (min_educ < 0 | max_educ > 31) {
+        education <- pmin(pmax(education, 0), 31)
 
-    if (min_educ < 0 | max_educ > 31) {
-      education <- pmin(pmax(education, 0), 31)
+        cli::cli_alert_warning(
+          "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+        )
+      }
 
-      cli::cli_alert_warning(
-        "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+      out <- std_scores_using_regression(
+        raw_scores,
+        var_name = var_name,
+        reg_coefs = coefs_to_use[-which(names(coefs_to_use) == "rmse")],
+        age,
+        education,
+        race = rep(0, length(age)), # only updated models use race
+        delay,
+        sex = as.numeric(sex == "f"),
+        sd = coefs_to_use[["rmse"]]
       )
-    }
+    } else {
+      # If more than one set of coefs are given, check that the missing pattern is unique across
+      # rows, i.e. each row specifies a unique model
+      na_coefs <- is.na(coefs_to_use[
+        -which(colnames(coefs_to_use) %in% c("intercept", "rmse"))
+      ])
 
-    out <- std_scores_using_regression(
-      raw_scores,
-      var_name = var_name,
-      reg_coefs = coefs_to_use[c(
-        "intercept",
-        "sex",
-        "age",
-        "education",
-        "delay"
-      )],
-      age,
-      education,
-      delay,
-      sex = as.numeric(sex == "f"),
-      sd = coefs_to_use[["rmse"]]
-    )
+      sex <- as.numeric(sex == "f")
+      race <- as.numeric(race == "Other")
+
+      if (var_name != "MEMUNITS") {
+        delay <- rep(NA, length(sex))
+      }
+
+      colnames(na_coefs) <- paste(colnames(na_coefs), "na", sep = "_")
+
+      if (any(duplicated(na_coefs))) {
+        cli::cli_abort(
+          "More than one set of coefficients given, and the models these specify are not unique."
+        )
+      }
+
+      coefs_to_use <- merge(
+        data.frame(
+          row_id = seq_along(age),
+          sex_na = is.na(sex),
+          age_na = is.na(age),
+          education_na = is.na(education),
+          race_na = is.na(race),
+          delay_na = is.na(delay)
+        ),
+        data.frame(
+          cbind(coefs_to_use, na_coefs)
+        ),
+        by = c(
+          "sex_na",
+          "age_na",
+          "education_na",
+          "race_na",
+          "delay_na"
+        ),
+        sort = F,
+        all.x = TRUE
+      )
+
+      coefs_to_use <- coefs_to_use[order(coefs_to_use$row_id), ]
+      coefs_to_use[is.na(coefs_to_use)] <- 0
+
+      demo_obs <- cbind(1, sex, age, education, race, delay)
+      demo_obs[is.na(demo_obs)] <- 0
+
+      out <- unname(
+        (raw_scores -
+          rowSums(
+            coefs_to_use[, c(
+              "intercept",
+              "sex",
+              "age",
+              "education",
+              "race",
+              "delay"
+            )] *
+              demo_obs
+          )) /
+          coefs_to_use[["rmse"]]
+      )
+
+      if (
+        var_name %in%
+          c("TRAILA", "TRAILB", "OTRAILA", "OTRAILB", "OTRLARR", "OTRLBRR")
+      ) {
+        out <- -out
+      }
+    }
   }
 
   out

@@ -10,16 +10,21 @@
 #'
 #' @export
 valid_values_only <- function(
-    raw_score,
-    var_name = "ANIMALS",
-    remove_errorcodes = FALSE
+  raw_score,
+  var_name = "ANIMALS",
+  remove_errorcodes = FALSE
 ) {
-
   stopifnot("'raw_score' must be numeric" = is.numeric(raw_score))
-  stopifnot("'var_name' must be one of the named entries of 'rdd'" =
-              var_name %in% names(rdd))
-  stopifnot("'remove_errorcodes' must be either logical, or numeric" =
-              is.logical(remove_errorcodes) | is.numeric(remove_errorcodes))
+  stopifnot(
+    "'var_name' must be one of the named entries of 'rdd'" = var_name %in%
+      names(rdd)
+  )
+  stopifnot(
+    "'remove_errorcodes' must be either logical, or numeric" = is.logical(
+      remove_errorcodes
+    ) |
+      is.numeric(remove_errorcodes)
+  )
 
   av <- rdd[[var_name]]
   min_val <- av$range[1]
@@ -28,14 +33,24 @@ valid_values_only <- function(
   error_codes <- av$codes
 
   if (isFALSE(remove_errorcodes)) {
-    raw_score[!((raw_score >= av$range[1] & raw_score <= av$range[2]) | raw_score %in% error_codes)] <- NA
+    raw_score[
+      !((raw_score >= av$range[1] & raw_score <= av$range[2]) |
+        raw_score %in% error_codes)
+    ] <- NA
   } else {
-    if (is.numeric(remove_errorcodes))
-      raw_score[!((raw_score >= av$range[1] & raw_score <= av$range[2]) |
-                    raw_score %in% setdiff(error_codes, remove_errorcodes))] <- NA
+    if (is.numeric(remove_errorcodes)) {
+      raw_score[
+        !((raw_score >= av$range[1] & raw_score <= av$range[2]) |
+          raw_score %in% setdiff(error_codes, remove_errorcodes))
+      ] <- NA
+    }
 
-    if (isTRUE(remove_errorcodes))
-      raw_score[!(raw_score >= av$range[1] & raw_score <= av$range[2])] <- NA
+    if (isTRUE(remove_errorcodes)) {
+      raw_score[
+        !(raw_score >= av$range[1] & raw_score <= av$range[2]) |
+          raw_score %in% error_codes
+      ] <- NA
+    }
   }
 
   raw_score

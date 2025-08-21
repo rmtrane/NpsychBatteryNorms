@@ -89,11 +89,11 @@ std_scores_using_norms <- function(
 
     # Add education groups to match_to data.frame. These are from "male" and "female"
     # sheets of Excel spreadsheet.
-    edu_group <- .bincode(education, c(0, 13, 16, 17, Inf), right = FALSE) # c("<13", "13-15", "16", ">16")[findInterval(education, c(13, 16, 17)) + 1]
-    attr(edu_group, "levels") <- c("<13", "13-15", "16", ">16")
-    class(edu_group) <- "factor"
+    # edu_group <- .bincode(education, c(0, 13, 16, 17, Inf), right = FALSE) # c("<13", "13-15", "16", ">16")[findInterval(education, c(13, 16, 17)) + 1]
+    # attr(edu_group, "levels") <- c("<13", "13-15", "16", ">16")
+    # class(edu_group) <- "factor"
 
-    match_to$edu_group <- edu_group
+    match_to$edu_group <- get_educ_group(education)
 
     # Add "edu_group" to variables to join by
     merge_by_vars <- c(merge_by_vars, "edu_group")

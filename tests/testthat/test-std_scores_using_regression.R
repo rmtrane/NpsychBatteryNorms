@@ -9,6 +9,7 @@ testthat::test_that("std_scores_using_regression", {
       age = c(50, 50),
       education = c(15, 15),
       sex = c("m", "f"),
+      race = c(0, 0),
       sd = 1,
       delay = c(0, 0)
     ),
@@ -22,6 +23,7 @@ testthat::test_that("std_scores_using_regression", {
     NACCAGE = 80,
     EDUC = 12,
     SEX = "f",
+    RACE = 0,
     NACCMMSE = 27,
     BOSTON = 25,
     LOGIMEM = 7,
@@ -47,20 +49,23 @@ testthat::test_that("std_scores_using_regression", {
   for (var in colnames(exp_res_tibble)) {
     print(var)
 
-    reg_coefs_to_use <- reg_coefs$nacc_legacy[
+    reg_coefs_to_use <- na.omit(unlist(reg_coefs$nacc_legacy[
       reg_coefs$nacc_legacy$var_name == var,
-    ]
+      -1
+    ]))
 
     expect_equal(
       std_scores_using_regression(
         raw_scores = test_tibble[[var]],
         var_name = var,
-        reg_coefs = unlist(reg_coefs_to_use[
-          c("intercept", "sex", "age", "education", "delay")
-        ]),
+        reg_coefs = reg_coefs_to_use[-which(names(reg_coefs_to_use) == "rmse")],
+        #   unclass(na.omit(unlist(reg_coefs_to_use[
+        #   c("intercept", "sex", "age", "education", "delay")
+        # ]))),
         age = test_tibble$NACCAGE,
         education = test_tibble$EDUC,
         sex = test_tibble$SEX,
+        race = test_tibble$RACE,
         delay = test_tibble$MEMTIME,
         sd = reg_coefs_to_use[["rmse"]]
       ) |>

@@ -10,6 +10,7 @@
 #'   should be a numeric vector.
 #' @param age string specifying column with age (in years). Column should be
 #'   a numeric vector.
+#' @param race string specifying column with race. Column should be numeric vector with values following the NACC RDD (see `?rdd` for details, and `rdd$RACE` for specifics to the race variable.)
 #' @param delay string specifying column with delay (in minutes). Column should
 #'   be a numeric vector. Used when standardizing `MEMUNITS` ("Logical Memory, Delayed")
 #' @param methods NULL (default) or list of named entries specifying which model to use
@@ -33,6 +34,7 @@ add_standardized_scores <- function(
   sex = "SEX",
   education = "EDUC",
   age = "NACCAGE",
+  race = "RACE",
   delay = "MEMTIME",
   methods = NULL,
   rename_raw_scores = F,
@@ -44,6 +46,7 @@ add_standardized_scores <- function(
     education <- "EDUC"
     age <- "NACCAGE"
     delay <- "MEMTIME"
+    race <- "RACE"
   }
 
   ## If nothing is passed to methods...
@@ -122,11 +125,19 @@ add_standardized_scores <- function(
     s <- values_to_labels(s, "SEX")
   }
 
+  r <- dat[[race]]
+  r <- as.character(values_to_labels(r, "RACE"))
+  r[r == "Unknown"] <- NA
+  r[r != "White"] <- "Other"
+
   s <- base::tolower(substr(s, 1, 1))
   a <- valid_values_only(dat[[age]], var_name = "NACCAGE", T)
   e <- valid_values_only(dat[[education]], "EDUC", T)
-  d <- if (is.null(delay)) rep(0, length(s)) else
+  d <- if (is.null(delay)) {
+    rep(0, length(s))
+  } else {
     valid_values_only(dat[[delay]], "MEMTIME", T)
+  }
 
   for (i in seq_along(methods)) {
     var <- names(methods)[i]
@@ -150,6 +161,7 @@ add_standardized_scores <- function(
         education = e,
         age = a,
         sex = s,
+        race = r,
         delay = d,
         method = specs[["method"]],
         version = specs[["version"]],

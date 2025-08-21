@@ -2,7 +2,7 @@
 title: "Regression Coefficients"
 format: 
   html:
-    embed-resources: false
+    minimal: true
 execute:
   echo: false
 ---
@@ -30,7 +30,6 @@ $(document).ready(() => {
 library(NpsychBatteryNorms)
 library(crosstalk)
 library(reactable)
-
 
 variable_labels <- c(
   "ANIMALS" = "Animal Fluency",

@@ -59,8 +59,12 @@ test_that("std_methods", {
             return(x %in% reg_coefs$nacc$var_name)
           }
 
-          if (y[2] == "updated") {
-            return(x %in% reg_coefs$updated$var_name)
+          if (y[2] == "updated_2024.06") {
+            return(x %in% reg_coefs$updated_2024.06$var_name)
+          }
+
+          if (y[2] == "updated_2025.06") {
+            return(x %in% reg_coefs$updated_2025.06$var_name)
           }
         }
 
@@ -128,7 +132,8 @@ test_that("std_methods works for valid inputs of method/version", {
       c("norms", "updated"),
       c("regression", "nacc"),
       c("regression", "nacc_legacy"),
-      c("regression", "updated"),
+      c("regression", "updated_2024.06"),
+      c("regression", "updated_2025.06"),
       c("T-score", NA)
     )
 

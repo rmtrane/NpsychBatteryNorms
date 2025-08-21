@@ -4,7 +4,7 @@
 #'
 #' @param var_name NACC variable name for which to return available method/version combos (much be omitted if method/version specified)
 #' @param method method to look up. Must be one of `norms`, `regression`, or `T-score`
-#' @param version version of method to look up. Either `nacc` (indicating the use of published methods), `updated` (indicating the use of updated versions of the published methods, using data available as of June 2024), or `nacc_legacy` (only for variables included in UDS-2, but dropped for UDS-3). Ignored if method is `T-score`.
+#' @param version version of method to look up. Either `nacc` (indicating the use of published methods), `updated_*` (indicating the use of updated versions of the published methods), or `nacc_legacy` (only for variables included in UDS-2, but dropped for UDS-3). Ignored if method is `T-score`.
 #'
 #' @export
 std_methods <- function(var_name, method, version) {
@@ -59,11 +59,13 @@ std_methods <- function(var_name, method, version) {
       )
     } else if (method == "T-score" & !(missingArg(version) | is.na(version))) {
       cli::cli_alert_info("'version' ignored for method T-score")
-    } else if (
-      method != "T-score" & !version %in% c("nacc", "nacc_legacy", "updated")
-    ) {
+    } else if (method == "regression" & !version %in% names(reg_coefs)) {
       cli::cli_abort(
-        message = "'version' must be one of 'nacc', 'nacc_legacy' or 'updated', not {version}"
+        message = "{.arg version} must be one of {.val {names(reg_coefs)}}, not {.val {version}}"
+      )
+    } else if (method == "norms" & !version %in% names(normative_summaries)) {
+      cli::cli_abort(
+        message = "{.arg version} must be one of {.val {names(normative_summaries)}}, not {.val {version}}"
       )
     }
 
@@ -72,9 +74,11 @@ std_methods <- function(var_name, method, version) {
     }
 
     if (method == "regression") {
-      return(reg_coefs[[version]]$var_name)
+      return(unique(reg_coefs[[version]]$var_name))
     }
 
-    if (method == "T-score") return(names(t_score_coefs))
+    if (method == "T-score") {
+      return(names(t_score_coefs))
+    }
   }
 }
