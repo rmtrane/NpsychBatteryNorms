@@ -11,6 +11,7 @@ std_scores_using_regression(
   age,
   education,
   sex,
+  race,
   delay,
   sd
 )
@@ -27,6 +28,7 @@ expected score. Can include the following named entries:
 \item \code{age}
 \item \code{education}
 \item \code{sex}
+\item \code{race}
 \item \code{delay}
 }}
 
@@ -35,6 +37,8 @@ expected score. Can include the following named entries:
 \item{education}{Numeric vector with years of education. Used for subset of variables only.}
 
 \item{sex}{Character vector with sex of participants. Must be either "m" (for male) or "f" (for female). Used for subset of variables only}
+
+\item{race}{Character vector with race of participants. Must be either "Black or African American" or "Other". Used only for updated regression models.}
 
 \item{delay}{Only for standardizing \code{MEMUNITS} ("Logical Memory, Delayed") in which case it is the time of delay in minutes}
 

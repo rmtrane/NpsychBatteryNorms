@@ -11,7 +11,7 @@ std_methods(var_name, method, version)
 
 \item{method}{method to look up. Must be one of \code{norms}, \code{regression}, or \code{T-score}}
 
-\item{version}{version of method to look up. Either \code{nacc} (indicating the use of published methods), \code{updated} (indicating the use of updated versions of the published methods, using data available as of June 2024), or \code{nacc_legacy} (only for variables included in UDS-2, but dropped for UDS-3). Ignored if method is \code{T-score}.}
+\item{version}{version of method to look up. Either \code{nacc} (indicating the use of published methods), \verb{updated_*} (indicating the use of updated versions of the published methods), or \code{nacc_legacy} (only for variables included in UDS-2, but dropped for UDS-3). Ignored if method is \code{T-score}.}
 }
 \description{
 Helper function to find implemented methods for specific variable, or find variables that can be standardized using specific method/version combo.

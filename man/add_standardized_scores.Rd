@@ -9,6 +9,7 @@ add_standardized_scores(
   sex = "SEX",
   education = "EDUC",
   age = "NACCAGE",
+  race = "RACE",
   delay = "MEMTIME",
   methods = NULL,
   rename_raw_scores = F,
@@ -26,6 +27,8 @@ should be a numeric vector.}
 
 \item{age}{string specifying column with age (in years). Column should be
 a numeric vector.}
+
+\item{race}{string specifying column with race. Column should be numeric vector with values following the NACC RDD (see \code{?rdd} for details, and \code{rdd$RACE} for specifics to the race variable.)}
 
 \item{delay}{string specifying column with delay (in minutes). Column should
 be a numeric vector. Used when standardizing \code{MEMUNITS} ("Logical Memory, Delayed")}
