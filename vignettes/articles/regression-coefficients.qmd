@@ -112,7 +112,7 @@ header_fct <- function(value, name) {
 }
 
 numeric_cell_fct <- function(value, name) {
-  if (is.na(value)) return(NA)
+  if (is.na(value)) return("&mdash;")
   
   decimal <- stringr::str_split(value, "\\.")[[1]]
 
@@ -171,6 +171,10 @@ bslib::card(
     reg_table_sd,
     bordered = F,
     height = 600,
+    defaultColDef = colDef(
+      na = "&mdash;",
+      html = TRUE
+    ),
     columns = list(
       vars_labels = colDef(show = FALSE),
       vars_w_labels = colDef(show = FALSE),
