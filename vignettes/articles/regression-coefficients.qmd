@@ -112,6 +112,8 @@ header_fct <- function(value, name) {
 }
 
 numeric_cell_fct <- function(value, name) {
+  if (is.na(value)) return(NA)
+  
   decimal <- stringr::str_split(value, "\\.")[[1]]
 
   if (length(decimal) == 2) {
@@ -240,6 +242,11 @@ bslib::card(
       ),
       delay = colDef(
         name = "Delay",
+        cell = numeric_cell_fct,
+        html = TRUE
+      ),
+      race = colDef(
+        name = "Race (ref: White)",
         cell = numeric_cell_fct,
         html = TRUE
       ),
