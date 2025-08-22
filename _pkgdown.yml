@@ -17,11 +17,11 @@ template:
       <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 articles:
-  - title: "Standardization Models"
-    contents: 
-      - articles/norm_sample
-      - articles/normative_summaries
-      - articles/std-cog-scores
+  # - title: "Standardization Models"
+    # contents: 
+    #   - articles/norm_sample
+    #   - articles/normative_summaries
+    #   - articles/std-cog-scores
   - title: "Lookup Tables"
     contents:
       - articles/lookup_tables
