@@ -48,6 +48,7 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          
-          git commit README.md -m "Rebuild README.qmd" || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+
+          git add README.md
+          git commit -m "Rebuild README.qmd"
+          git push origin
