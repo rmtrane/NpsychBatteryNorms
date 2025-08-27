@@ -16,3 +16,4 @@ README.*
 ^vignettes/articles/*_files$
 ^vignettes/articles$
 ^.vscode/*
+^codecov\.yml$
