@@ -12,6 +12,9 @@ name: Render and Publish
 
 jobs:
   build-deploy:
+    permissions:
+      contents: write
+    
     runs-on: macos-latest
     
     steps:
