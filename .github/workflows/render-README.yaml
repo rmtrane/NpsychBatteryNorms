@@ -12,7 +12,7 @@ name: Render and Publish
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     
     steps:
       - name: Check out repository
@@ -31,6 +31,12 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+      
+      - name: Install NpsychBatteryNorms
+        run: |
+          install.packages("devtools")
+          devtools::install(reload=FALSE,quick=TRUE,build=TRUE,dependencies=FALSE,build_vignettes=FALSE)
+        shell: Rscript {0}
       
       - name: Render README.qmd
         uses: quarto-dev/quarto-actions/render@v2
