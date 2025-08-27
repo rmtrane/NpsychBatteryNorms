@@ -25,7 +25,7 @@ jobs:
       
       - name: Render README.qmd
         uses: quarto-dev/quarto-actions/render@v2
-        inputs:
+        with:
           to: gfm
           path: README.qmd
 
