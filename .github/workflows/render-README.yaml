@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - main
+
+name: Render and Publish
+
+# you need these permissions to publish to GitHub pages
+# permissions: 
+#     contents: write
+#     pages: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Render README.qmd
+        uses: quarto-dev/quarto-actions/render@v2
+        inputs:
+          to: gfm
+          path: README.qmd
+
+      - name: Commit results
+        run: |
+          git commit README.md -m "Rebuild README.qmd" || echo "No changes to commit"
+          git push origin || echo "No changes to commit"
