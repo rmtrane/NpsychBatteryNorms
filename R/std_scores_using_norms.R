@@ -105,16 +105,17 @@ std_scores_using_norms <- function(
   # Add means and standard deviations to data.frame so we can standardize raw scores
   match_to$for_merge <- do.call(
     paste,
-    c(as.list(match_to[, merge_by_vars]), sep = "__")
+    c(as.list(match_to[, merge_by_vars, drop = F]), sep = "__")
   )
   m_sd$for_merge <- do.call(
     paste,
-    c(as.list(m_sd[, merge_by_vars]), sep = "__")
+    c(as.list(m_sd[, merge_by_vars, drop = F]), sep = "__")
   )
 
-  match_to[, c("n", "m", "sd")] <- m_sd[
+  match_to[, intersect(c("n", "m", "sd"), colnames(m_sd))] <- m_sd[
     match(match_to$for_merge, m_sd$for_merge),
-    c("n", "m", "sd")
+    # c("n", "m", "sd")
+    intersect(c("n", "m", "sd"), colnames(m_sd))
   ]
 
   for_standardizing <- match_to[order(match_to$id), c("raw_scores", "m", "sd")]

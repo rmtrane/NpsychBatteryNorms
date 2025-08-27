@@ -21,6 +21,17 @@ test_that("std_methods", {
   expect_error(
     std_methods(method = "nacc", version = "updated")
   )
+  expect_error(
+    std_methods(method = "norms", version = "test")
+  )
+  expect_error(
+    std_methods(method = "regression", version = "test")
+  )
+
+  expect_message(
+    std_methods(method = "T-score", version = "test"),
+    regexp = "'version' ignored for method T-score"
+  )
 
   ## All variable names that have std methods implemented
   vars <- unique(c(

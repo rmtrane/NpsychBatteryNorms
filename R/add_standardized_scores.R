@@ -105,16 +105,20 @@ add_standardized_scores <- function(
     if (any(invalid_methods)) {
       invals <- methods[which(invalid_methods)]
 
-      message(paste0(
-        "The methods specified for the following are invalid:\n",
-        paste0(
-          names(invals),
-          " (",
-          lapply(invals, paste, collapse = ", "),
-          ")",
-          collapse = "\n"
+      cli::cli_abort(
+        message = c(
+          "x" = "The methods specified for the following are invalid:",
+          setNames(
+            paste0(
+              names(invals),
+              " (",
+              lapply(invals, paste, collapse = ", "),
+              ")"
+            ),
+            rep("i", length(invals))
+          )
         )
-      ))
+      )
     }
   }
 

@@ -16,6 +16,23 @@ testthat::test_that("std_scores_using_regression", {
     (21 - (1 + 50 + 15 + c(0, 1))) / 1
   )
 
+  cfs <- c(intercept = 1, age = 1, sex = 1, educ = 1)
+
+  expect_equal(
+    std_scores_using_regression(
+      c(21, 21),
+      "MOCATOTS",
+      reg_coefs = cfs,
+      age = c(50, 50),
+      education = c(15, 15),
+      sex = c("m", "f"),
+      race = c(0, 0),
+      sd = 1,
+      delay = c(0, 0)
+    ),
+    (21 - (1 + 50 + 15 + c(0, 1))) / 1
+  )
+
   ## Test UDS 2 scores using excel template
   # Setup test tibble
   test_tibble <- data.frame(

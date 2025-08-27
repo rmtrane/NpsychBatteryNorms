@@ -149,15 +149,15 @@ std_scores <- function(
       )
     }
 
-    if (min_educ < 0 | max_educ > 31) {
-      education <- pmin(pmax(education, 0), 31)
+    # if (min_educ < 0 | max_educ > 31) {
+    #   education <- pmin(pmax(education, 0), 31)
 
-      if (print_messages) {
-        cli::cli_alert_warning(
-          "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
-        )
-      }
-    }
+    #   if (print_messages) {
+    #     cli::cli_alert_warning(
+    #       "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+    #     )
+    #   }
+    # }
 
     means_and_sds <- normative_summaries[[version]][[var_name]]
 
@@ -182,7 +182,7 @@ std_scores <- function(
         version <- "nacc_legacy"
       } else {
         cli::cli_abort(
-          "{var_name} cannote be standardized using {method} ({version}). Use {.code std_methods(var_name = {var_name})} to get all available methods."
+          "{var_name} cannot be standardized using {method} ({version}). Use {.code std_methods(var_name = {var_name})} to get all available methods."
         )
       }
     }

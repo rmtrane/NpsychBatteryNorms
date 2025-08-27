@@ -6,7 +6,6 @@
 #'
 #' @export
 methods_from_std_data <- function(std_data, std_cols) {
-
   ## If no columns are specified, we find columns named 'std_'
   if (missingArg(std_cols)) {
     method_attrs <- lapply(std_data, attr, "method")
@@ -14,10 +13,16 @@ methods_from_std_data <- function(std_data, std_cols) {
   }
 
   ## Get attributes for standardized columns
-  methods <- lapply(std_data[, std_cols], \(x) c(method = attr(x, "method"), version = attr(x, "version")))
+  methods <- lapply(std_data[, std_cols, drop = F], \(x) {
+    c(method = attr(x, "method"), version = attr(x, "version"))
+  })
 
   ## Remove prefix from names
-  names(methods) <- gsub(x = names(methods), pattern = "^std_", replacement = "")
+  names(methods) <- gsub(
+    x = names(methods),
+    pattern = "^std_",
+    replacement = ""
+  )
 
   return(methods)
 }

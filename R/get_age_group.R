@@ -27,14 +27,15 @@ get_age_group <- function(
   if (group_type == "ravlt_trials") {
     out <- .bincode(
       age,
+      c(0, 20, 30, 40, 50, 60, 70, 80, Inf),
       # c(0, 16, 20, 30, 40, 50, 60, 70, 80, Inf),
-      c(0, 16, 20, 30, 40, 50, 60, 70, 80, Inf),
       right = FALSE
     )
 
     attr(out, "levels") <- c(
-      "<16",
-      "16-19",
+      # "<16",
+      # "16-19",
+      "<20",
       "20-29",
       "30-39",
       "40-49",
