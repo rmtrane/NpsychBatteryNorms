@@ -22,6 +22,7 @@ RdMacros: Rdpack
 Roxygen: list(markdown = TRUE)
 Imports: 
     cli,
+    data.table,
     methods,
     Rdpack,
     stats

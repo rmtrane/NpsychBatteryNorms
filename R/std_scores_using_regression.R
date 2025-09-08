@@ -108,16 +108,22 @@ std_scores_using_regression <- function(
     sex <- as.numeric(sex == "f")
   }
 
-  est_mean <- c(cbind(1, age, education, sex, race, delay) %*% coefs)
+  # est_mean <- c(cbind(1, age, education, sex, race, delay) %*% coefs)
+  ## Note: below much faster than above!!
+  raw_scores <- (raw_scores -
+    (coefs[[1]] +
+      age * coefs[[2]] +
+      education * coefs[[3]] +
+      sex * coefs[[4]] +
+      race * coefs[[5]] +
+      delay * coefs[[6]])) /
+    sd
 
   # Get standardized scores. If either time or error, return negative value so
   # that higher is always better.
-  if (
-    var_name %in%
+  (-1)^sum(
+    var_name ==
       c("TRAILA", "TRAILB", "OTRAILA", "OTRAILB", "OTRLARR", "OTRLBRR")
-  ) {
-    return(-(raw_scores - est_mean) / sd)
-  }
-
-  (raw_scores - est_mean) / sd
+  ) *
+    raw_scores
 }

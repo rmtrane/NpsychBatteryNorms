@@ -10,7 +10,7 @@
 #' @param education Numeric vector with years of education. Used for subset of variables only.
 #' @param age Numeric vector with ages in years
 #' @param sex Character vector with sex of participants. Must be either "m" (for male) or "f" (for female). Used for subset of variables only
-#' @param race Character vector with race of participants. Must be either "Black or African American" or "Other". Used only for updated regression models.
+#' @param race Character vector with race of participants. Must be either "White" or "Other". Used only for updated regression models.
 #' @param delay Only for standardizing `MEMUNITS` ("Logical Memory, Delayed") in which case it is the time of delay in minutes
 #' @param method String specifying method to use for standardization.
 #' @param version String specifying version to use. "nacc" = 2020 numbers
@@ -82,9 +82,11 @@ std_scores <- function(
 
     ## Check that no values were converted to NA
     if (sum(is.na(raw_scores)) == sum(is.na(raw_scores_numeric))) {
-      cli::cli_alert_warning(
-        text = "'raw_scores' for {var_name} must be a numeric vector. You provided a {class(raw_scores)}, but it was successfully converted to numeric."
-      )
+      if (print_messages) {
+        cli::cli_alert_warning(
+          text = "'raw_scores' for {var_name} must be a numeric vector. You provided a {class(raw_scores)}, but it was successfully converted to numeric."
+        )
+      }
 
       raw_scores <- raw_scores_numeric
     } else {
@@ -132,13 +134,13 @@ std_scores <- function(
       age <- pmin(pmax(age, 30), 91)
     }
 
-    out <- std_scores_using_T(
+    return(std_scores_using_T(
       raw_scores,
       var_name,
       age,
       education,
       sex
-    )
+    ))
   }
 
   if (method == "norms") {
@@ -161,14 +163,14 @@ std_scores <- function(
 
     means_and_sds <- normative_summaries[[version]][[var_name]]
 
-    out <- std_scores_using_norms(
+    return(std_scores_using_norms(
       raw_scores,
       var_name,
       education,
       age,
       sex,
       means_and_sds
-    )
+    ))
   }
 
   if (method == "regression") {
@@ -204,12 +206,14 @@ std_scores <- function(
       if (min_educ < 0 | max_educ > 31) {
         education <- pmin(pmax(education, 0), 31)
 
-        cli::cli_alert_warning(
-          "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
-        )
+        if (print_messages) {
+          cli::cli_alert_warning(
+            "For regression based standardization, education must be a numeric vector of values between 0 and 31. Values outside this range have been truncated."
+          )
+        }
       }
 
-      out <- std_scores_using_regression(
+      return(std_scores_using_regression(
         raw_scores,
         var_name = var_name,
         reg_coefs = coefs_to_use[-which(names(coefs_to_use) == "rmse")],
@@ -219,7 +223,7 @@ std_scores <- function(
         delay,
         sex = as.numeric(sex == "f"),
         sd = coefs_to_use[["rmse"]]
-      )
+      ))
     } else {
       # If more than one set of coefs are given, check that the missing pattern is unique across
       # rows, i.e. each row specifies a unique model
@@ -228,7 +232,7 @@ std_scores <- function(
       ])
 
       sex <- as.numeric(sex == "f")
-      race <- as.numeric(race == "Other")
+      race <- as.character(race) == "Other"
 
       if (var_name != "MEMUNITS") {
         delay <- rep(NA, length(sex))
@@ -242,8 +246,11 @@ std_scores <- function(
         )
       }
 
-      coefs_to_use <- merge(
-        data.frame(
+      ## To avoid NOTE in R CMD CHECK
+      row_id <- NULL
+
+      coefs_to_use <- data.table::merge.data.table(
+        data.table::data.table(
           row_id = seq_along(age),
           sex_na = is.na(sex),
           age_na = is.na(age),
@@ -251,7 +258,7 @@ std_scores <- function(
           race_na = is.na(race),
           delay_na = is.na(delay)
         ),
-        data.frame(
+        data.table::data.table(
           cbind(coefs_to_use, na_coefs)
         ),
         by = c(
@@ -265,36 +272,72 @@ std_scores <- function(
         all.x = TRUE
       )
 
-      coefs_to_use <- coefs_to_use[order(coefs_to_use$row_id), ]
-      coefs_to_use[is.na(coefs_to_use)] <- 0
+      data.table::setorder(coefs_to_use, row_id)
 
-      demo_obs <- cbind(1, sex, age, education, race, delay)
-      demo_obs[is.na(demo_obs)] <- 0
-
-      out <- unname(
-        (raw_scores -
-          rowSums(
-            coefs_to_use[, c(
-              "intercept",
-              "sex",
-              "age",
-              "education",
-              "race",
-              "delay"
-            )] *
-              demo_obs
-          )) /
-          coefs_to_use[["rmse"]]
+      data.table::setnafill(
+        coefs_to_use,
+        fill = 0,
+        cols = c(
+          "intercept",
+          "age",
+          "sex",
+          "education",
+          "race",
+          "delay",
+          "rmse"
+        )
       )
+
+      # coefs_to_use <- coefs_to_use[order(coefs_to_use$row_id), ]
+      # coefs_to_use[is.na(coefs_to_use)] <- 0
+      demo_obs <- data.table::data.table(
+        intercept = 1,
+        sex,
+        age,
+        education,
+        race = as.numeric(race),
+        delay = as.numeric(delay)
+      )
+      data.table::setnafill(demo_obs, fill = 0)
 
       if (
         var_name %in%
           c("TRAILA", "TRAILB", "OTRAILA", "OTRAILB", "OTRLARR", "OTRLBRR")
       ) {
-        out <- -out
+        return(
+          -unname(
+            (raw_scores -
+              rowSums(
+                coefs_to_use[, c(
+                  "intercept",
+                  "sex",
+                  "age",
+                  "education",
+                  "race",
+                  "delay"
+                )] *
+                  demo_obs
+              )) /
+              coefs_to_use[["rmse"]]
+          )
+        )
+      } else {
+        return(unname(
+          (raw_scores -
+            rowSums(
+              coefs_to_use[, c(
+                "intercept",
+                "sex",
+                "age",
+                "education",
+                "race",
+                "delay"
+              )] *
+                demo_obs
+            )) /
+            coefs_to_use[["rmse"]]
+        ))
       }
     }
   }
-
-  out
 }

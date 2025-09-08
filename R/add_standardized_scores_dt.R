@@ -29,7 +29,7 @@
 #'
 #' @export
 
-add_standardized_scores <- function(
+add_standardized_scores_dt <- function(
   dat,
   sex = "SEX",
   education = "EDUC",
@@ -122,23 +122,83 @@ add_standardized_scores <- function(
     }
   }
 
-  dat <- data.frame(dat)
-  s <- dat[[sex]]
+  # dat <- data.frame(dat)
+  # s <- dat[[sex]]
 
-  if (is.numeric(s)) {
-    s <- values_to_labels(s, "SEX")
-  }
+  # data.table::setnames(
+  #   dat,
+  #   c(sex, education, age, race, delay),
+  #   c("SEX", "EDUC", "AGE", "RACE", "DELAY"),
+  #   skip_absent = TRUE
+  # )
 
-  r <- get_race_group(dat[[race]])
+  data.table::set(
+    dat,
+    j = "new_SEX",
+    value = tolower(substr(
+      values_to_labels(valid_values_only(dat[[sex]], "SEX", T), "SEX"),
+      1,
+      1
+    ))
+  )
+  data.table::set(
+    dat,
+    j = "new_AGE",
+    value = valid_values_only(dat[[age]], "NACCAGE", T)
+  )
+  data.table::set(
+    dat,
+    j = "new_EDUC",
+    value = valid_values_only(dat[[education]], "EDUC", T)
+  )
+  data.table::set(dat, j = "new_RACE", value = get_race_group(dat[[race]]))
+  data.table::set(
+    dat,
+    j = "new_DELAY",
+    value = if (is.null(delay)) {
+      0
+    } else {
+      valid_values_only(dat[[delay]], "MEMTIME", T)
+    }
+  )
 
-  s <- base::tolower(substr(s, 1, 1))
-  a <- valid_values_only(dat[[age]], var_name = "NACCAGE", T)
-  e <- valid_values_only(dat[[education]], "EDUC", T)
-  d <- if (is.null(delay)) {
-    rep(0, length(s))
-  } else {
-    valid_values_only(dat[[delay]], "MEMTIME", T)
-  }
+  # browser()
+
+  # dat[
+  #   ,
+  #   c(
+  #     "SEX",
+  #     "AGE",
+  #     "EDUC",
+  #     "RACE",
+  #     "DELAY"
+  #   ) := list(
+  #     tolower(substr(values_to_labels(valid_values_only(SEX, "SEX", T), "SEX"), 1, 1)),
+
+  #     valid_values_only(EDUC, "EDUC", T),
+  #     get_race_group(RACE),
+  #     if (is.null(DELAY)) 0 else valid_values_only(DELAY, "MEMTIME", T)
+  #   )
+  # ]
+
+  # dat[
+  #   ,
+  #   paste0("std_", names(.SD)) := purrr::map2(.SD, names(.SD), \(x,y) {
+  #     std_scores(
+  #       raw_scores = x,
+  #       var_name = y,
+  #       education = EDUC,
+  #       age = AGE,
+  #       sex = SEX,
+  #       race = RACE,
+  #       delay = DELAY,
+  #       method = methods[[y]][["method"]],
+  #       version = methods[[y]][["version"]],
+  #       print_messages = print_messages
+  #     )
+  #   }),
+  #   .SDcols = names(methods)
+  # ]
 
   for (i in seq_along(methods)) {
     var <- names(methods)[i]
@@ -155,33 +215,51 @@ add_standardized_scores <- function(
       ))
     }
 
-    dat[[paste("std", var, sep = "_")]] <-
-      std_scores(
+    data.table::set(
+      dat,
+      j = paste0("std_", var),
+      value = std_scores(
         raw_scores = dat[[var]],
         var_name = var,
-        education = e,
-        age = a,
-        sex = s,
-        race = r,
-        delay = d,
-        method = specs[["method"]],
-        version = specs[["version"]],
+        education = dat$new_EDUC,
+        age = dat$new_AGE,
+        sex = dat$new_SEX,
+        race = dat$new_RACE,
+        delay = dat$new_DELAY,
+        method = methods[[var]][["method"]],
+        version = methods[[var]][["version"]],
         print_messages = print_messages
       )
-    # )
+    )
 
     ## Add attribute to std_{var} specifying the method used.
-    attr(dat[[paste("std", var, sep = "_")]], "method") <- specs[["method"]]
+    data.table::setattr(
+      dat[[paste("std", var, sep = "_")]],
+      "method",
+      specs[["method"]]
+    )
 
     ## Add attribute to std_{var} specifying the version used (if)
     if (!is.na(specs[["version"]])) {
-      attr(dat[[paste("std", var, sep = "_")]], "version") <- specs[["version"]]
+      data.table::setattr(
+        dat[[paste("std", var, sep = "_")]],
+        "version",
+        specs[["version"]]
+      )
     }
+  }
 
-    ## Rename column with raw scores to raw_var, if specified to do so
-    if (rename_raw_scores) {
-      colnames(dat)[colnames(dat) == var] <- paste("raw", var, sep = "_")
-    }
+  for (var in names(dat)[grepl("^new_", names(dat))]) {
+    data.table::set(dat, j = var, value = NULL)
+  }
+
+  ## Rename column with raw scores to raw_var, if specified to do so
+  if (rename_raw_scores) {
+    data.table::setnames(
+      dat,
+      old = names(methods),
+      new = paste("raw", names(methods), sep = "_")
+    )
   }
 
   return(dat)
