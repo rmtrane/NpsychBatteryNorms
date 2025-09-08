@@ -104,4 +104,15 @@ test_that("add_standardized_scores_dt", {
         )
     )
   )
+
+  for_dt <- data.table::copy(demo_data)
+
+  add_standardized_scores_dt(for_dt)
+
+  expected <- data.table::data.table(add_standardized_scores(demo_data))
+
+  expect_equal(
+    for_dt,
+    expected
+  )
 })

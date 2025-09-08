@@ -1,7 +1,9 @@
 #' Add Standardized Scores to Data
 #'
 #' This functions adds a plethora of standardized scores to a dataset containing
-#' raw scores.
+#' raw scores. This function uses the `data.table` package to modify the input
+#' data without creating a copy. As such, the input is modified in place. If
+#' you require a copy of the input, make sure to create this first.
 #'
 #' @param dat `data.table` holding the data
 #' @param sex string specifying column with sex. Column should be a character
@@ -27,7 +29,17 @@
 #' @rdname add_standardized_scores
 #'
 #' @examples
-#' add_standardized_scores_dt(demo_data)
+#'
+#' ## Create copy to compare to modify
+#' new_demo_data <- data.table::copy(demo_data)
+#'
+#' ## Add std_ cols
+#' add_standardized_scores_dt(new_demo_data)
+#'
+#' ## Check number of columns of data w/ standardized scores
+#' ncol(new_demo_data)
+#' ## Check number of columns of original demo_data
+#' ncol(demo_data)
 #'
 #' @export
 
