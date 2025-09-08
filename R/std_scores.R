@@ -232,10 +232,15 @@ std_scores <- function(
       ])
 
       sex <- as.numeric(sex == "f")
-      race <- as.character(race) == "Other"
 
-      if (var_name != "MEMUNITS") {
-        delay <- rep(NA, length(sex))
+      if (missingArg(race) || is.null(race)) {
+        race <- rep(NA, length(age))
+      } else {
+        race <- as.character(race) == "Other"
+      }
+
+      if ((missingArg(delay) || is.null(delay)) | var_name != "MEMUNITS") {
+        delay <- rep(NA, length(age))
       }
 
       colnames(na_coefs) <- paste(colnames(na_coefs), "na", sep = "_")

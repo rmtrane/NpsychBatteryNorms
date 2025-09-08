@@ -40,4 +40,33 @@ test_that("add_standardized_scores", {
     ),
     regexp = "The methods specified for the following are invalid"
   )
+
+  mthds_to_test <- head(default_methods)
+
+  expected <- colnames(demo_data)
+  expected[grepl(
+    pattern = paste(names(mthds_to_test), collapse = "|"),
+    x = expected
+  )] <- paste0(
+    "raw_",
+    expected[grepl(
+      pattern = paste(names(mthds_to_test), collapse = "|"),
+      x = expected
+    )]
+  )
+
+  expected <- c(
+    expected,
+    paste0("std_", names(mthds_to_test))
+  )
+
+  expect_equal(
+    colnames(add_standardized_scores(
+      demo_data,
+      rename_raw_scores = T,
+      methods = mthds_to_test,
+      print_messages = F
+    )),
+    expected
+  )
 })

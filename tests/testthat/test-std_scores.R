@@ -307,12 +307,45 @@ test_that("std_scores works", {
       education = 14,
       age = 52,
       sex = "f",
-      version = "nacc"
+      race = NA,
+      delay = NA,
+      version = "updated_2025.06"
+    ),
+    std_scores(
+      raw_scores = 25,
+      var_name = "ANIMALS",
+      method = "regression",
+      education = 14,
+      age = 52,
+      sex = "f",
+      version = "updated_2025.06"
+    )
+  )
+
+  expect_equal(
+    std_scores(
+      raw_scores = 25,
+      var_name = "ANIMALS",
+      method = "regression",
+      education = 14,
+      age = 52,
+      sex = "f",
+      race = NA,
+      delay = NA,
+      version = "updated_2025.06"
     ),
     std_scores_using_regression(
       raw_scores = 25,
       var_name = "ANIMALS",
-      reg_coefs = unlist(subset(reg_coefs$nacc, var_name == "ANIMALS")[, c(
+      reg_coefs = unlist(subset(
+        reg_coefs$updated_2025.06,
+        var_name == "ANIMALS" &
+          is.na(race) &
+          is.na(delay) &
+          !is.na(age) &
+          !is.na(education) &
+          !is.na(sex)
+      )[, c(
         "intercept",
         "sex",
         "age",
@@ -323,7 +356,15 @@ test_that("std_scores works", {
       sex = "f",
       race = 0,
       delay = 0,
-      sd = subset(reg_coefs$nacc, var_name == "ANIMALS")$rmse
+      sd = subset(
+        reg_coefs$updated_2025.06,
+        var_name == "ANIMALS" &
+          is.na(race) &
+          is.na(delay) &
+          !is.na(age) &
+          !is.na(education) &
+          !is.na(sex)
+      )$rmse
     )
   )
 })
