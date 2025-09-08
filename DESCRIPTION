@@ -1,7 +1,7 @@
 Package: NpsychBatteryNorms
 Type: Package
 Title: Calculate Normative Score for Neuropsychological Test Scores
-Version: 0.1.0
+Version: 0.2.0
 Description: This package implements a number of different methods for 
     standardizing neuropsychological test scores. Most methods are implementations
     of previously published models. This package is designed to work nicely with
