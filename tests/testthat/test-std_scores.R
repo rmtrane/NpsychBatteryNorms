@@ -298,4 +298,32 @@ test_that("std_scores works", {
       m_sd = normative_summaries$nacc$ANIMALS
     )
   )
+
+  expect_equal(
+    std_scores(
+      raw_scores = 25,
+      var_name = "ANIMALS",
+      method = "regression",
+      education = 14,
+      age = 52,
+      sex = "f",
+      version = "nacc"
+    ),
+    std_scores_using_regression(
+      raw_scores = 25,
+      var_name = "ANIMALS",
+      reg_coefs = unlist(subset(reg_coefs$nacc, var_name == "ANIMALS")[, c(
+        "intercept",
+        "sex",
+        "age",
+        "education"
+      )]),
+      age = 52,
+      education = 14,
+      sex = "f",
+      race = 0,
+      delay = 0,
+      sd = subset(reg_coefs$nacc, var_name == "ANIMALS")$rmse
+    )
+  )
 })

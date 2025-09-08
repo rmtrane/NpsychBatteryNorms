@@ -1,5 +1,10 @@
 test_that("add_standardized_scores_dt", {
   expect_error(
+    add_standardized_scores_dt(dat = data.frame()),
+    regexp = "`dat` must be of class"
+  )
+
+  expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
       methods = "test"

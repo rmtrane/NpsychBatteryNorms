@@ -3,7 +3,7 @@
 #' This functions adds a plethora of standardized scores to a dataset containing
 #' raw scores.
 #'
-#' @param dat `tibble` or `data.frame` or `data.table` holding the data
+#' @param dat `data.table` holding the data
 #' @param sex string specifying column with sex. Column should be a character
 #'   vector with entries "m" (for male) or "f" (for female)
 #' @param education string specifying column with years of education. Column
@@ -24,8 +24,10 @@
 #' @returns Returns the input data with additional columns of the form `std_varname`
 #'   with the standardized values for variable `varname`
 #'
+#' @rdname add_standardized_scores
+#'
 #' @examples
-#' add_standardized_scores(demo_data)
+#' add_standardized_scores_dt(demo_data)
 #'
 #' @export
 
@@ -47,6 +49,12 @@ add_standardized_scores_dt <- function(
     age <- "NACCAGE"
     delay <- "MEMTIME"
     race <- "RACE"
+  }
+
+  if (!data.table::is.data.table(dat)) {
+    cli::cli_abort(
+      "{.arg dat} must be of class {.cls data.table}, but is {.cls {class(dat)}}."
+    )
   }
 
   ## If nothing is passed to methods...

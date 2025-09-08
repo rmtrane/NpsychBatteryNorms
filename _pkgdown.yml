@@ -37,6 +37,7 @@ reference:
     contents:
       - starts_with("std_scores")
       - add_standardized_scores
+      - add_standardized_scores_dt
   - title: "Data and Code Objects"
     desc: >
       Data sets and code objects used for standardizing scores, to help
