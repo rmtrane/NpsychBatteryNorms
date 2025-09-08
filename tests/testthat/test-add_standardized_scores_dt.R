@@ -54,7 +54,7 @@ test_that("add_standardized_scores_dt", {
       age = demo_data$NACCAGE,
       sex = c("m", "f")[demo_data$SEX],
       delay = valid_values_only(demo_data$MEMTIME, "MEMTIME", T),
-      race = get_race_groups(demo_data$RACE),
+      race = get_race_group(demo_data$RACE),
       method = default_methods[[var]][["method"]],
       version = default_methods[[var]][["version"]],
       print_messages = F

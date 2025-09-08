@@ -129,7 +129,7 @@ add_standardized_scores <- function(
     s <- values_to_labels(s, "SEX")
   }
 
-  r <- get_race_groups(dat[[race]])
+  r <- get_race_group(dat[[race]])
 
   s <- base::tolower(substr(s, 1, 1))
   a <- valid_values_only(dat[[age]], var_name = "NACCAGE", T)

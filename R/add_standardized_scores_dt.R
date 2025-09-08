@@ -151,7 +151,7 @@ add_standardized_scores_dt <- function(
     j = "new_EDUC",
     value = valid_values_only(dat[[education]], "EDUC", T)
   )
-  data.table::set(dat, j = "new_RACE", value = get_race_groups(dat[[race]]))
+  data.table::set(dat, j = "new_RACE", value = get_race_group(dat[[race]]))
   data.table::set(
     dat,
     j = "new_DELAY",

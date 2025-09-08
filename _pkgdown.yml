@@ -67,6 +67,7 @@ reference:
       - calculate_reytotal
       - get_age_group
       - get_educ_group
+      - get_race_group
       - get_ss_score
       - valid_values_only
       - values_to_labels

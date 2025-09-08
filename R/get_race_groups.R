@@ -1,11 +1,11 @@
-#' Get Race Groups for Standardized Scores
+#' Get Race Group for Standardized Scores
 #'
-#' Get race groups for finding standardized scores.
+#' Get race group for finding standardized scores.
 #'
 #' @param race numeric vector with race (according to NACC; see `rdd$RACE` for details) to be converted to groups
 #'
 #' @export
-get_race_groups <- function(
+get_race_group <- function(
   race
 ) {
   stopifnot("'race' must be numeric vector" = is.numeric(race))
