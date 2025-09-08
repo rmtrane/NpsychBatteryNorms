@@ -122,6 +122,16 @@ add_standardized_scores <- function(
     }
   }
 
+  if (!all(c(sex, age, education, race) %in% colnames(dat))) {
+    wh_missing <- c(sex = sex, age = age, education = education, race = race)[
+      !c(sex, age, education, race) %in% colnames(dat)
+    ]
+
+    cli::cli_abort(
+      "{.val {wh_missing}} {?is/are} not {?a/} column{?s} in {.arg dat}, but {?is/are} specified to be used for {.val {names(wh_missing)}}{?, respectively}."
+    )
+  }
+
   dat <- data.frame(dat)
   s <- dat[[sex]]
 

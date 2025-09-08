@@ -1,5 +1,24 @@
 test_that("add_standardized_scores_dt", {
   expect_error(
+    add_standardized_scores_dt(
+      dat = data.table::data.table(demo_data),
+      sex = "sex",
+      print_messages = F
+    ),
+    regexp = ' is not a column in '
+  )
+
+  expect_error(
+    add_standardized_scores_dt(
+      dat = demo_data,
+      sex = "sex",
+      race = "race",
+      print_messages = F
+    ),
+    regexp = ' are not columns in '
+  )
+
+  expect_error(
     add_standardized_scores_dt(dat = data.frame()),
     regexp = "`dat` must be of class"
   )

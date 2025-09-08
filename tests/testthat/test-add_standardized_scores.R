@@ -41,6 +41,25 @@ test_that("add_standardized_scores", {
     regexp = "The methods specified for the following are invalid"
   )
 
+  expect_error(
+    add_standardized_scores(
+      dat = demo_data,
+      sex = "sex",
+      print_messages = F
+    ),
+    regexp = ' is not a column in '
+  )
+
+  expect_error(
+    add_standardized_scores(
+      dat = demo_data,
+      sex = "sex",
+      race = "race",
+      print_messages = F
+    ),
+    regexp = ' are not columns in '
+  )
+
   mthds_to_test <- head(default_methods)
 
   expected <- colnames(demo_data)
