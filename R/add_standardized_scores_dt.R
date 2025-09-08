@@ -162,44 +162,6 @@ add_standardized_scores_dt <- function(
     }
   )
 
-  # browser()
-
-  # dat[
-  #   ,
-  #   c(
-  #     "SEX",
-  #     "AGE",
-  #     "EDUC",
-  #     "RACE",
-  #     "DELAY"
-  #   ) := list(
-  #     tolower(substr(values_to_labels(valid_values_only(SEX, "SEX", T), "SEX"), 1, 1)),
-
-  #     valid_values_only(EDUC, "EDUC", T),
-  #     get_race_groups(RACE),
-  #     if (is.null(DELAY)) 0 else valid_values_only(DELAY, "MEMTIME", T)
-  #   )
-  # ]
-
-  # dat[
-  #   ,
-  #   paste0("std_", names(.SD)) := purrr::map2(.SD, names(.SD), \(x,y) {
-  #     std_scores(
-  #       raw_scores = x,
-  #       var_name = y,
-  #       education = EDUC,
-  #       age = AGE,
-  #       sex = SEX,
-  #       race = RACE,
-  #       delay = DELAY,
-  #       method = methods[[y]][["method"]],
-  #       version = methods[[y]][["version"]],
-  #       print_messages = print_messages
-  #     )
-  #   }),
-  #   .SDcols = names(methods)
-  # ]
-
   for (i in seq_along(methods)) {
     var <- names(methods)[i]
     specs <- methods[[i]]
