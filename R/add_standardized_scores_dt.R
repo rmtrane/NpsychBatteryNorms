@@ -34,7 +34,14 @@
 #' new_demo_data <- data.table::copy(demo_data)
 #'
 #' ## Add std_ cols
-#' add_standardized_scores_dt(new_demo_data)
+#' add_standardized_scores_dt(
+#'   new_demo_data,
+#'   sex = "SEX",
+#'   education = "EDUC",
+#'   age = "NACCAGE",
+#'   race = "RACE",
+#'   delay = "MEMTIME"
+#' )
 #'
 #' ## Check number of columns of data w/ standardized scores
 #' ncol(new_demo_data)

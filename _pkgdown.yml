@@ -5,6 +5,7 @@ home:
 
 authors:
   sidebar:
+    
     roles: [aut, ctb]
 
 template:

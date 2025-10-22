@@ -58,7 +58,14 @@ We can calculate all standardized scores in one go and have them added to the da
 as `std_{var_name}`:
 
 ```{r}
-demo_data_w_std <- add_standardized_scores(demo_data)
+demo_data_w_std <- add_standardized_scores(
+  demo_data,
+  sex = "SEX",
+  education = "EDUC",
+  age = "NACCAGE",
+  race = "RACE",
+  delay = "MEMTIME"
+)
 
 head(demo_data_w_std)
 ```
@@ -76,6 +83,11 @@ demo_data_w_derived_scores <- add_derived_scores(
 
 demo_data_w_derived_scores_w_std <- add_standardized_scores(
   demo_data_w_derived_scores, 
+  sex = "SEX",
+  education = "EDUC",
+  age = "NACCAGE",
+  race = "RACE",
+  delay = "MEMTIME",
   print_messages = F
 )
 ```
