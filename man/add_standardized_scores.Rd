@@ -20,11 +20,11 @@ add_standardized_scores(
 
 add_standardized_scores_dt(
   dat,
-  sex = "SEX",
-  education = "EDUC",
-  age = "NACCAGE",
-  race = "RACE",
-  delay = "MEMTIME",
+  sex,
+  education,
+  age,
+  race = NULL,
+  delay = NULL,
   methods = NULL,
   rename_raw_scores = F,
   print_messages = T

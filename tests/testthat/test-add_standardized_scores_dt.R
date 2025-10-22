@@ -3,6 +3,8 @@ test_that("add_standardized_scores_dt", {
     add_standardized_scores_dt(
       dat = data.table::data.table(demo_data),
       sex = "sex",
+      age = "NACCAGE",
+      education = "EDUC",
       print_messages = F
     ),
     regexp = ' is not a column in '
@@ -13,6 +15,8 @@ test_that("add_standardized_scores_dt", {
       dat = demo_data,
       sex = "sex",
       race = "race",
+      age = "age",
+      education = "education",
       print_messages = F
     ),
     regexp = ' are not columns in '
@@ -26,6 +30,9 @@ test_that("add_standardized_scores_dt", {
   expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
+      sex = "SEX",
+      age = "NACCAGE",
+      education = "EDUC",
       methods = "test"
     ),
     regexp = "'methods' must be a list"
@@ -34,6 +41,9 @@ test_that("add_standardized_scores_dt", {
   expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
+      sex = "SEX",
+      age = "NACCAGE",
+      education = "EDUC",
       methods = list("test" = "test")
     ),
     regexp = "'methods' must be named with names corresponding to variables to standardize"
@@ -42,6 +52,9 @@ test_that("add_standardized_scores_dt", {
   expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
+      sex = "SEX",
+      age = "NACCAGE",
+      education = "EDUC",
       methods = list("TRAILA" = c("method" = "wrong"))
     ),
     regexp = 'must be one of "norm", "regression", or "T-score"'
@@ -50,6 +63,9 @@ test_that("add_standardized_scores_dt", {
   expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
+      sex = "SEX",
+      age = "NACCAGE",
+      education = "EDUC",
       methods = list("TRAILA" = c(method = "regression", version = "wrong"))
     ),
     regexp = 'must be one of '
@@ -58,6 +74,9 @@ test_that("add_standardized_scores_dt", {
   expect_error(
     add_standardized_scores_dt(
       dat = demo_data,
+      sex = "SEX",
+      age = "NACCAGE",
+      education = "EDUC",
       methods = list(
         "TRAILA" = c(method = "regression", version = "nacc_legacy")
       )
@@ -67,6 +86,11 @@ test_that("add_standardized_scores_dt", {
 
   actual <- add_standardized_scores_dt(
     data.table::data.table(demo_data),
+    sex = "SEX",
+    education = "EDUC",
+    age = "NACCAGE",
+    race = "RACE",
+    delay = "MEMTIME",
     print_messages = F
   )
 
@@ -103,6 +127,11 @@ test_that("add_standardized_scores_dt", {
   expect_message(
     add_standardized_scores_dt(
       data.table::data.table(demo_data),
+      sex = "SEX",
+      education = "EDUC",
+      age = "NACCAGE",
+      race = "RACE",
+      delay = "MEMTIME",
       print_messages = T
     )
   )
@@ -117,6 +146,11 @@ test_that("add_standardized_scores_dt", {
         colnames(
           add_standardized_scores_dt(
             data.table::data.table(demo_data),
+            sex = "SEX",
+            age = "NACCAGE",
+            education = "EDUC",
+            race = "RACE",
+            delay = "MEMTIME",
             rename_raw_scores = T,
             print_messages = F
           )
@@ -126,9 +160,18 @@ test_that("add_standardized_scores_dt", {
 
   for_dt <- data.table::copy(demo_data)
 
-  add_standardized_scores_dt(for_dt)
+  add_standardized_scores_dt(
+    for_dt,
+    sex = "SEX",
+    age = "NACCAGE",
+    education = "EDUC",
+    race = "RACE",
+    delay = "MEMTIME"
+  )
 
-  expected <- data.table::data.table(add_standardized_scores(demo_data))
+  expected <- data.table::data.table(
+    add_standardized_scores(demo_data)
+  )
 
   expect_equal(
     for_dt,

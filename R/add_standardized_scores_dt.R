@@ -45,9 +45,9 @@
 
 add_standardized_scores_dt <- function(
   dat,
-  sex = "SEX",
-  education = "EDUC",
-  age = "NACCAGE",
+  sex,
+  education,
+  age,
   race = NULL,
   delay = NULL,
   methods = NULL,
@@ -66,6 +66,44 @@ add_standardized_scores_dt <- function(
   if (!data.table::is.data.table(dat)) {
     cli::cli_abort(
       "{.arg dat} must be of class {.cls data.table}, but is {.cls {class(dat)}}."
+    )
+  }
+
+  missing_cols <- c()
+
+  if (missingArg(sex) || is.null(sex)) {
+    cli::cli_abort(
+      "{.arg sex} must be specified."
+    )
+  } else {
+    if (!sex %in% colnames(dat)) {
+      missing_cols <- c(missing_cols, sex = sex)
+    }
+  }
+
+  if (missingArg(age) || is.null(age)) {
+    cli::cli_abort(
+      "{.arg age} must be specified."
+    )
+  } else {
+    if (!age %in% colnames(dat)) {
+      missing_cols <- c(missing_cols, age = age)
+    }
+  }
+
+  if (missingArg(education) || is.null(education)) {
+    cli::cli_abort(
+      "{.arg education} must be specified."
+    )
+  } else {
+    if (!education %in% colnames(dat)) {
+      missing_cols <- c(missing_cols, education = education)
+    }
+  }
+
+  if (length(missing_cols) > 0) {
+    cli::cli_abort(
+      "{.val {missing_cols}} {?is/are} not {?a/} column{?s} in {.arg dat}, but {?is/are} specified to be used for {.val {names(missing_cols)}}{?, respectively}."
     )
   }
 
@@ -154,15 +192,15 @@ add_standardized_scores_dt <- function(
     }
   }
 
-  if (!all(c(sex, age, education, race) %in% colnames(dat))) {
-    wh_missing <- c(sex = sex, age = age, education = education, race = race)[
-      !c(sex, age, education, race) %in% colnames(dat)
-    ]
+  # if (!all(c(sex, age, education, race) %in% colnames(dat))) {
+  #   wh_missing <- c(sex = sex, age = age, education = education, race = race)[
+  #     !c(sex, age, education, race) %in% colnames(dat)
+  #   ]
 
-    cli::cli_abort(
-      "{.val {wh_missing}} {?is/are} not {?a/} column{?s} in {.arg dat}, but {?is/are} specified to be used for {.val {names(wh_missing)}}{?, respectively}."
-    )
-  }
+  #   cli::cli_abort(
+  #     "{.val {wh_missing}} {?is/are} not {?a/} column{?s} in {.arg dat}, but {?is/are} specified to be used for {.val {names(wh_missing)}}{?, respectively}."
+  #   )
+  # }
 
   data.table::set(
     dat,
