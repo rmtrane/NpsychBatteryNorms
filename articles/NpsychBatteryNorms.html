@@ -290,7 +290,14 @@
 <p>We can calculate all standardized scores in one go and have them added to the data as <code>std_{var_name}</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">demo_data_w_std</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_standardized_scores.html">add_standardized_scores</a></span><span class="op">(</span><span class="va">demo_data</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">demo_data_w_std</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_standardized_scores.html">add_standardized_scores</a></span><span class="op">(</span></span>
+<span>  <span class="va">demo_data</span>,</span>
+<span>  sex <span class="op">=</span> <span class="st">"SEX"</span>,</span>
+<span>  education <span class="op">=</span> <span class="st">"EDUC"</span>,</span>
+<span>  age <span class="op">=</span> <span class="st">"NACCAGE"</span>,</span>
+<span>  race <span class="op">=</span> <span class="st">"RACE"</span>,</span>
+<span>  delay <span class="op">=</span> <span class="st">"MEMTIME"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'methods' not specified. Will use the following defaults:</span></span>
 <span><span class="co">#&gt; MOCATOTS: regression (nacc version)</span></span>
 <span><span class="co">#&gt; OTRAILA: regression (updated_2025.06 version)</span></span>
@@ -559,6 +566,11 @@
 <span></span>
 <span><span class="va">demo_data_w_derived_scores_w_std</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_standardized_scores.html">add_standardized_scores</a></span><span class="op">(</span></span>
 <span>  <span class="va">demo_data_w_derived_scores</span>, </span>
+<span>  sex <span class="op">=</span> <span class="st">"SEX"</span>,</span>
+<span>  education <span class="op">=</span> <span class="st">"EDUC"</span>,</span>
+<span>  age <span class="op">=</span> <span class="st">"NACCAGE"</span>,</span>
+<span>  race <span class="op">=</span> <span class="st">"RACE"</span>,</span>
+<span>  delay <span class="op">=</span> <span class="st">"MEMTIME"</span>,</span>
 <span>  print_messages <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
