@@ -48,8 +48,8 @@ add_standardized_scores_dt <- function(
   sex = "SEX",
   education = "EDUC",
   age = "NACCAGE",
-  race = "RACE",
-  delay = "MEMTIME",
+  race = NULL,
+  delay = NULL,
   methods = NULL,
   rename_raw_scores = F,
   print_messages = T
@@ -113,6 +113,18 @@ add_standardized_scores_dt <- function(
         all(names(methods) %in% colnames(dat))
     )
 
+    ## If version not set for any methods, set to NA
+    methods <- lapply(
+      methods,
+      \(x) {
+        if (!"version" %in% names(x)) {
+          x <- c(x, version = NA)
+        }
+
+        x
+      }
+    )
+
     ## Valid methods?
     invalid_methods <- unlist(lapply(names(methods), \(var) {
       !var %in%
@@ -171,11 +183,21 @@ add_standardized_scores_dt <- function(
     j = "new_EDUC",
     value = valid_values_only(dat[[education]], "EDUC", T)
   )
-  data.table::set(dat, j = "new_RACE", value = get_race_group(dat[[race]]))
+
+  data.table::set(
+    dat,
+    j = "new_RACE",
+    value = if (missingArg(race) || is.null(race)) {
+      NA
+    } else {
+      get_race_group(dat[[race]])
+    }
+  )
+
   data.table::set(
     dat,
     j = "new_DELAY",
-    value = if (is.null(delay)) {
+    value = if (missingArg(delay) || is.null(delay)) {
       0
     } else {
       valid_values_only(dat[[delay]], "MEMTIME", T)
