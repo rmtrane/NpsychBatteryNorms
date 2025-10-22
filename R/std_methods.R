@@ -7,7 +7,11 @@
 #' @param version version of method to look up. Either `nacc` (indicating the use of published methods), `updated_*` (indicating the use of updated versions of the published methods), or `nacc_legacy` (only for variables included in UDS-2, but dropped for UDS-3). Ignored if method is `T-score`.
 #'
 #' @export
-std_methods <- function(var_name, method, version) {
+std_methods <- function(
+  var_name,
+  method,
+  version
+) {
   if (!missingArg(var_name)) {
     if (!missingArg(method) | !missingArg(version)) {
       cli::cli_abort(
@@ -53,17 +57,23 @@ std_methods <- function(var_name, method, version) {
       cli::cli_abort(
         "{.arg method} must be one of \"norm\", \"regression\", or \"T-score\", not {method}"
       )
-    } else if (method != "T-score" && missingArg(version)) {
+    } else if (method != "T-score" & missingArg(version)) {
       cli::cli_abort(
         "{.arg version} must be provided when {.arg method} is not \"T-score\" (in this call, {.arg method = \"{method}\"})."
       )
-    } else if (method == "T-score" & !(missingArg(version) | is.na(version))) {
+    } else if (method == "T-score" & !(missingArg(version) || is.na(version))) {
       cli::cli_alert_info("'version' ignored for method T-score")
-    } else if (method == "regression" & !version %in% names(reg_coefs)) {
+    } else if (
+      method == "regression" &
+        (missingArg(version) || !version %in% names(reg_coefs))
+    ) {
       cli::cli_abort(
         message = "{.arg version} must be one of {.val {names(reg_coefs)}}, not {.val {version}}"
       )
-    } else if (method == "norms" & !version %in% names(normative_summaries)) {
+    } else if (
+      method == "norms" &
+        (missingArg(version) || !version %in% names(normative_summaries))
+    ) {
       cli::cli_abort(
         message = "{.arg version} must be one of {.val {names(normative_summaries)}}, not {.val {version}}"
       )
