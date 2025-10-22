@@ -108,7 +108,7 @@ std_scores <- function(
 
   if (method == "T-score") {
     ## Check that 'version' is valid
-    if (!is.na(version) & print_messages) {
+    if (!(missingArg(version) || is.na(version)) & print_messages) {
       cli::cli_alert_info("'version' is ignored for T-score")
     }
 
