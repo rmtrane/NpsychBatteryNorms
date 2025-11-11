@@ -1,0 +1,9597 @@
+# Add Standardized Scores to Data
+
+This functions adds a plethora of standardized scores to a dataset
+containing raw scores.
+
+This functions adds a plethora of standardized scores to a dataset
+containing raw scores. This function uses the `data.table` package to
+modify the input data without creating a copy. As such, the input is
+modified in place. If you require a copy of the input, make sure to
+create this first.
+
+## Usage
+
+``` r
+add_standardized_scores(
+  dat,
+  sex = "SEX",
+  education = "EDUC",
+  age = "NACCAGE",
+  race = "RACE",
+  delay = "MEMTIME",
+  methods = NULL,
+  rename_raw_scores = F,
+  print_messages = T
+)
+
+add_standardized_scores_dt(
+  dat,
+  sex,
+  education,
+  age,
+  race = NULL,
+  delay = NULL,
+  methods = NULL,
+  rename_raw_scores = F,
+  print_messages = T
+)
+```
+
+## Arguments
+
+- dat:
+
+  `data.table` holding the data
+
+- sex:
+
+  string specifying column with sex. Column should be a character vector
+  with entries "m" (for male) or "f" (for female)
+
+- education:
+
+  string specifying column with years of education. Column should be a
+  numeric vector.
+
+- age:
+
+  string specifying column with age (in years). Column should be a
+  numeric vector.
+
+- race:
+
+  string specifying column with race. Column should be numeric vector
+  with values following the NACC RDD (see
+  [`?rdd`](https://rmtrane.github.io/NpsychBatteryNorms/reference/rdd.md)
+  for details, and `rdd$RACE` for specifics to the race variable.)
+
+- delay:
+
+  string specifying column with delay (in minutes). Column should be a
+  numeric vector. Used when standardizing `MEMUNITS` ("Logical Memory,
+  Delayed")
+
+- methods:
+
+  NULL (default) or list of named entries specifying which model to use
+  for standardizing cognitive scores. If NULL, defaults are applied for
+  all variables in the dataset for which methods have been implemented
+  (see
+  [`NpsychBatteryNorms::default_methods`](https://rmtrane.github.io/NpsychBatteryNorms/reference/default_methods.md))
+
+- rename_raw_scores:
+
+  logical; if TRUE, columns with raw scores are renamed by adding the
+  prefix "raw\_" to the column name.
+
+- print_messages:
+
+  logical; should messages be printed? If TRUE (default), a message will
+  be print with the methods used if methods is omitted (or NULL)
+
+## Value
+
+Returns the input data with additional columns of the form `std_varname`
+with the standardized values for variable `varname`
+
+Returns the input data with additional columns of the form `std_varname`
+with the standardized values for variable `varname`
+
+## Examples
+
+``` r
+add_standardized_scores(demo_data)
+#> 'methods' not specified. Will use the following defaults:
+#> MOCATOTS: regression (updated_2025.06 version)
+#> OTRAILA: regression (updated_2025.06 version)
+#> OTRAILB: regression (updated_2025.06 version)
+#> OTRLARR: regression (updated_2025.06 version)
+#> OTRLBRR: regression (updated_2025.06 version)
+#> DIGFORCT: regression (updated_2025.06 version)
+#> DIGFORSL: regression (updated_2025.06 version)
+#> DIGBACCT: regression (updated_2025.06 version)
+#> DIGBACLS: regression (updated_2025.06 version)
+#> TRAILA: regression (updated_2025.06 version)
+#> TRAILB: regression (updated_2025.06 version)
+#> WAIS: T-score
+#> MINTTOTS: regression (updated_2025.06 version)
+#> ANIMALS: regression (updated_2025.06 version)
+#> VEG: regression (updated_2025.06 version)
+#> UDSVERFC: regression (updated_2025.06 version)
+#> UDSVERLC: regression (updated_2025.06 version)
+#> UDSVERTN: regression (updated_2025.06 version)
+#> UDSBENTC: regression (updated_2025.06 version)
+#> UDSBENTD: regression (updated_2025.06 version)
+#> CRAFTVRS: regression (updated_2025.06 version)
+#> CRAFTURS: regression (updated_2025.06 version)
+#> CRAFTDVR: regression (updated_2025.06 version)
+#> CRAFTDRE: regression (updated_2025.06 version)
+#> REY1REC: T-score
+#> REY2REC: T-score
+#> REY3REC: T-score
+#> REY4REC: T-score
+#> REY5REC: T-score
+#> REY6REC: T-score
+#> REYDREC: T-score
+#> NACCMMSE: regression (nacc_legacy version)
+#> BOSTON: regression (nacc_legacy version)
+#> LOGIMEM: regression (nacc_legacy version)
+#> MEMUNITS: regression (nacc_legacy version)
+#> DIGIF: regression (nacc_legacy version)
+#> DIGIFLEN: regression (nacc_legacy version)
+#> DIGIB: regression (nacc_legacy version)
+#> DIGIBLEN: regression (nacc_legacy version)
+#> [1] "Using regression (updated_2025.06) for variable MOCATOTS"
+#> [1] "Using regression (updated_2025.06) for variable OTRAILA"
+#> [1] "Using regression (updated_2025.06) for variable OTRAILB"
+#> [1] "Using regression (updated_2025.06) for variable OTRLARR"
+#> [1] "Using regression (updated_2025.06) for variable OTRLBRR"
+#> [1] "Using regression (updated_2025.06) for variable DIGFORCT"
+#> [1] "Using regression (updated_2025.06) for variable DIGFORSL"
+#> [1] "Using regression (updated_2025.06) for variable DIGBACCT"
+#> [1] "Using regression (updated_2025.06) for variable DIGBACLS"
+#> [1] "Using regression (updated_2025.06) for variable TRAILA"
+#> [1] "Using regression (updated_2025.06) for variable TRAILB"
+#> [1] "Using T-score (NA) for variable WAIS"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using regression (updated_2025.06) for variable MINTTOTS"
+#> [1] "Using regression (updated_2025.06) for variable ANIMALS"
+#> [1] "Using regression (updated_2025.06) for variable VEG"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERFC"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERLC"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERTN"
+#> [1] "Using regression (updated_2025.06) for variable UDSBENTC"
+#> [1] "Using regression (updated_2025.06) for variable UDSBENTD"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTVRS"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTURS"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTDVR"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTDRE"
+#> [1] "Using T-score (NA) for variable REY1REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY2REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY3REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY4REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY5REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY6REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REYDREC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using regression (nacc_legacy) for variable NACCMMSE"
+#> [1] "Using regression (nacc_legacy) for variable BOSTON"
+#> [1] "Using regression (nacc_legacy) for variable LOGIMEM"
+#> [1] "Using regression (nacc_legacy) for variable MEMUNITS"
+#> [1] "Using regression (nacc_legacy) for variable DIGIF"
+#> [1] "Using regression (nacc_legacy) for variable DIGIFLEN"
+#> [1] "Using regression (nacc_legacy) for variable DIGIB"
+#> [1] "Using regression (nacc_legacy) for variable DIGIBLEN"
+#>         NACCID NACCAGE SEX EDUC BIRTHYR BIRTHMO VISITYR VISITMO VISITDAY RACE
+#> 1   NACC074283      84   2   18    1927       3    2011      10        5    1
+#> 2   NACC005366      65   2   16    1957       7    2023       5       10    1
+#> 3   NACC005366      51   2   16    1957       7    2009       5       15    1
+#> 4   NACC005366      56   2   16    1957       7    2013       9        4    1
+#> 5   NACC005366      58   2   16    1957       7    2015      10       27    1
+#> 6   NACC005366      62   2   16    1957       7    2020       1        5    1
+#> 7   NACC005366      62   2   16    1957       7    2019       7        8    1
+#> 8   NACC005366      59   2   16    1957       7    2016      11        3    1
+#> 9   NACC012002      55   2   17    1963      12    2019       9       13    1
+#> 10  NACC042117      72   2   18    1934       9    2007       8        3    1
+#> 11  NACC052785      71   2   18    1935      12    2007       9        8    1
+#> 12  NACC052785      72   2   18    1935      12    2008       4       19    1
+#> 13  NACC084961      78   1   12    1936       5    2014       8        5    1
+#> 14  NACC084961      82   1   12    1936       5    2019       4       22    1
+#> 15  NACC084961      80   1   12    1936       5    2017       3        7    1
+#> 16  NACC093132      63   2   18    1943      12    2007       4       18    1
+#> 17  NACC093132      64   2   18    1943      12    2008       2       28    1
+#> 18  NACC093132      71   2   18    1943      12    2015       1       10    1
+#> 19  NACC094028      85   1   18    1933       8    2019       5       19    1
+#> 20  NACC094028      76   1   18    1933       8    2009       9       29    1
+#> 21  NACC094028      79   1   18    1933       8    2013       6       12    1
+#> 22  NACC075672      74   1   20    1931      10    2006       9       19    1
+#> 23  NACC078283     103   1   16    1919      12    2023       3       20    1
+#> 24  NACC063429      70   2   18    1952       3    2022      12       27    2
+#> 25  NACC069976      85   2   17    1934      12    2020       2       28    1
+#> 26  NACC069976      75   2   17    1934      12    2009      12        9    1
+#> 27  NACC069976      82   2   17    1934      12    2017       5       29    1
+#> 28  NACC069976      75   2   17    1934      12    2009      12       21    1
+#> 29  NACC069976      79   2   17    1934      12    2014       5       24    1
+#> 30  NACC069976      78   2   17    1934      12    2013       9       23    1
+#> 31  NACC069976      80   2   17    1934      12    2015       3       17    1
+#> 32  NACC069976      85   2   17    1934      12    2020       2       21    1
+#> 33  NACC069976      82   2   17    1934      12    2017       8        5    1
+#> 34  NACC069976      70   2   17    1934      12    2005       9        2    1
+#> 35  NACC088338      81   2   13    1938       7    2019       9       29    1
+#> 36  NACC088338      83   2   13    1938       7    2021       9        9    1
+#> 37  NACC088338      69   2   13    1938       7    2008       1       11    1
+#> 38  NACC088338      84   2   13    1938       7    2022      11       17    1
+#> 39  NACC088338      79   2   13    1938       7    2017       7       29    1
+#> 40  NACC088767      89   1   16    1934      11    2023      12        8    1
+#> 41  NACC088767      83   1   16    1934      11    2018       4       24    1
+#> 42  NACC088767      88   1   16    1934      11    2023       7       17    1
+#> 43  NACC062595      67   1   16    1946       8    2013       8       31    1
+#> 44  NACC090002      86   2   16    1921       4    2007       8       24    1
+#> 45  NACC090002     102   2   16    1921       4    2023       5       19    1
+#> 46  NACC099019      73   1   12    1943       7    2017       1        2    1
+#> 47  NACC059084      95   1   18    1918       6    2013       9       12    2
+#> 48  NACC033173      71   2    6    1948       7    2019       8       30    1
+#> 49  NACC005683     102   1   12    1919       2    2021       4       27   99
+#> 50  NACC005683      90   1   12    1919       2    2009       6       13   99
+#> 51  NACC005683      94   1   12    1919       2    2013       5       25   99
+#> 52  NACC070949      49   2   14    1964       9    2014       2       15    5
+#> 53  NACC070949      43   2   14    1964       9    2008       3       23    5
+#> 54  NACC070949      50   2   14    1964       9    2014      12        5    5
+#> 55  NACC081531      53   1   18    1958       8    2011       8       14    2
+#> 56  NACC081531      46   1   18    1958       8    2005       6       24    2
+#> 57  NACC081531      53   1   18    1958       8    2011      11       19    2
+#> 58  NACC037530      49   2   18    1957      10    2006      11       15    1
+#> 59  NACC079270      65   1   16    1953       5    2018      12       11    1
+#> 60  NACC074163      85   1   18    1932      11    2018      10       20    1
+#> 61  NACC074163      77   1   18    1932      11    2010       6       22    1
+#> 62  NACC074163      76   1   18    1932      11    2009       2       23    1
+#> 63  NACC060266      83   2   12    1937      10    2020      11       20   50
+#> 64  NACC060266      68   2   12    1937      10    2006       9       23   50
+#> 65  NACC070591      76   2   20    1934       9    2011       4       28    1
+#> 66  NACC058102      84   1   18    1924      11    2009       2       11    1
+#> 67  NACC058102      90   1   18    1924      11    2015       6       24    1
+#> 68  NACC058102      83   1   18    1924      11    2008       4       25    1
+#> 69  NACC058102      92   1   18    1924      11    2017       8       20    1
+#> 70  NACC058102      85   1   18    1924      11    2010       3       10    1
+#> 71  NACC058102      97   1   18    1924      11    2022       8       22    1
+#> 72  NACC018843      70   1   16    1938       9    2009       7       13    3
+#> 73  NACC018843      70   1   16    1938       9    2009       5        9    3
+#> 74  NACC018843      77   1   16    1938       9    2016       3       26    3
+#> 75  NACC033168      83   2   18    1940       5    2023       5       12    2
+#> 76  NACC033168      70   2   18    1940       5    2011       4       25    2
+#> 77  NACC033168      67   2   18    1940       5    2007       8       10    2
+#> 78  NACC047260      73   1   15    1938      12    2012      10        4    5
+#> 79  NACC003344      79   2   15    1938       6    2017       8        9    1
+#> 80  NACC003344      72   2   15    1938       6    2010       9       21    1
+#> 81  NACC003344      70   2   15    1938       6    2009       5       19    1
+#> 82  NACC077375      60   1   19    1947       3    2007       5        3    1
+#> 83  NACC072941      58   2   18    1949       1    2007       7       27    1
+#> 84  NACC072941      62   2   18    1949       1    2011       4       17    1
+#> 85  NACC072941      70   2   18    1949       1    2019      11        5    1
+#> 86  NACC072941      61   2   18    1949       1    2010       3        2    1
+#> 87  NACC072941      60   2   18    1949       1    2009       6       26    1
+#> 88  NACC072941      60   2   18    1949       1    2009       1       18    1
+#> 89  NACC072941      74   2   18    1949       1    2023      11       20    1
+#> 90  NACC072941      69   2   18    1949       1    2018       7       22    1
+#> 91  NACC072941      61   2   18    1949       1    2010       5        7    1
+#> 92  NACC072941      61   2   18    1949       1    2010       8       21    1
+#> 93  NACC072941      70   2   18    1949       1    2019       2       28    1
+#> 94  NACC072941      64   2   18    1949       1    2013       4        2    1
+#> 95  NACC072941      59   2   18    1949       1    2008       6       13    1
+#> 96  NACC072941      60   2   18    1949       1    2009      12       12    1
+#> 97  NACC029390      62   2   16    1946       7    2009       1       23    1
+#> 98  NACC029390      71   2   16    1946       7    2018       5       11    1
+#> 99  NACC029390      68   2   16    1946       7    2014       8        2    1
+#> 100 NACC029390      60   2   16    1946       7    2007       5       24    1
+#> 101 NACC029390      69   2   16    1946       7    2015      10        1    1
+#> 102 NACC029390      61   2   16    1946       7    2008       1       15    1
+#> 103 NACC029390      64   2   16    1946       7    2010      10        2    1
+#> 104 NACC029390      72   2   16    1946       7    2018      12       13    1
+#> 105 NACC092964      71   1   18    1943      11    2015       6        1    2
+#> 106 NACC092964      67   1   18    1943      11    2011       3        1    2
+#> 107 NACC092964      74   1   18    1943      11    2018       2       26    2
+#> 108 NACC092964      77   1   18    1943      11    2021       2        2    2
+#> 109 NACC092964      76   1   18    1943      11    2020       1       30    2
+#> 110 NACC092964      67   1   18    1943      11    2011      10       12    2
+#> 111 NACC092964      66   1   18    1943      11    2010      10       30    2
+#> 112 NACC092964      68   1   18    1943      11    2012       4        1    2
+#> 113 NACC092964      67   1   18    1943      11    2010      12       30    2
+#> 114 NACC092964      64   1   18    1943      11    2008       9        2    2
+#> 115 NACC092964      78   1   18    1943      11    2022       9       14    2
+#> 116 NACC007873      77   2    7    1937      10    2015       5       22    1
+#> 117 NACC007873      76   2    7    1937      10    2014       1        3    1
+#> 118 NACC073307      68   2   12    1941       4    2009       8       25    1
+#> 119 NACC073307      69   2   12    1941       4    2011       3       14    1
+#> 120 NACC073307      73   2   12    1941       4    2014      11        2    1
+#> 121 NACC073307      72   2   12    1941       4    2013      10        7    1
+#> 122 NACC073307      77   2   12    1941       4    2019       2        4    1
+#> 123 NACC073307      68   2   12    1941       4    2010       3        7    1
+#> 124 NACC073307      65   2   12    1941       4    2007       1       18    1
+#> 125 NACC094086      62   1   19    1945       7    2008       6       25    1
+#> 126 NACC094086      63   1   19    1945       7    2009       3        2    1
+#> 127 NACC094086      74   1   19    1945       7    2019      12        2    1
+#> 128 NACC078221      53   2   20    1957       4    2010       7       11    1
+#> 129 NACC078221      60   2   20    1957       4    2017       9       17    1
+#> 130 NACC078221      56   2   20    1957       4    2014       4        1    1
+#> 131 NACC062019      79   2   20    1929       7    2008       7       30    1
+#> 132 NACC062019      80   2   20    1929       7    2010       1        7    1
+#> 133 NACC062019      77   2   20    1929       7    2006      12       11    1
+#> 134 NACC062019      91   2   20    1929       7    2021       1       29    1
+#> 135 NACC062019      84   2   20    1929       7    2013      11       14    1
+#> 136 NACC062019      94   2   20    1929       7    2024       6       26    1
+#> 137 NACC062019      84   2   20    1929       7    2013      10       13    1
+#> 138 NACC062019      79   2   20    1929       7    2008       8        4    1
+#> 139 NACC003654      64   1   16    1952       8    2017       5        8    1
+#> 140 NACC003654      68   1   16    1952       8    2021       5       12    1
+#> 141 NACC003654      64   1   16    1952       8    2017       3        2    1
+#> 142 NACC050867      66   1   14    1944      12    2011       1       28    1
+#> 143 NACC050867      72   1   14    1944      12    2017      11        5    1
+#> 144 NACC050867      62   1   14    1944      12    2007       6       16    1
+#> 145 NACC048543      62   2   19    1948       4    2010       8        2    1
+#> 146 NACC048543      74   2   19    1948       4    2022       5        9    1
+#> 147 NACC048543      70   2   19    1948       4    2019       3       23    1
+#> 148 NACC058742      79   2   16    1943      11    2023       1       27    1
+#> 149 NACC058742      66   2   16    1943      11    2010       3       17    1
+#> 150 NACC058742      70   2   16    1943      11    2014       4        5    1
+#> 151 NACC058742      78   2   16    1943      11    2022       8       29    1
+#> 152 NACC058742      62   2   16    1943      11    2006       1       28    1
+#> 153 NACC004410      53   2   14    1954       6    2008       3       22    1
+#> 154 NACC004410      55   2   14    1954       6    2009       6       14    1
+#> 155 NACC004410      55   2   14    1954       6    2009      12       15    1
+#> 156 NACC004410      61   2   14    1954       6    2015      12        4    1
+#> 157 NACC004410      59   2   14    1954       6    2014       4       24    1
+#> 158 NACC004410      63   2   14    1954       6    2017       9       29    1
+#> 159 NACC004410      60   2   14    1954       6    2014      12       22    1
+#> 160 NACC081497      74   2   10    1943      12    2018       3       20    1
+#> 161 NACC081497      73   2   10    1943      12    2017       5       10    1
+#> 162 NACC011853      93   2   16    1930      10    2023      10       30    1
+#> 163 NACC011853      92   2   16    1930      10    2023       5       19    1
+#> 164 NACC011853      88   2   16    1930      10    2018      11       12    1
+#> 165 NACC011853      85   2   16    1930      10    2015      12       29    1
+#> 166 NACC011853      87   2   16    1930      10    2017      10       13    1
+#> 167 NACC011853      87   2   16    1930      10    2018       2       18    1
+#> 168 NACC011853      78   2   16    1930      10    2009       4       24    1
+#> 169 NACC011853      92   2   16    1930      10    2023       8       15    1
+#> 170 NACC022895      66   2   18    1940       3    2006       7       15    1
+#> 171 NACC022895      73   2   18    1940       3    2013      12       30    1
+#> 172 NACC073543      77   1   18    1943       4    2020       8        5    1
+#> 173 NACC028148      81   2   20    1941       7    2022       8        7    2
+#> 174 NACC028148      69   2   20    1941       7    2010      10        1    2
+#> 175 NACC028148      68   2   20    1941       7    2010       3        6    2
+#> 176 NACC028148      64   2   20    1941       7    2006       5        1    2
+#> 177 NACC028148      72   2   20    1941       7    2014       6       14    2
+#> 178 NACC082330      89   1   13    1918       8    2008       3       19    1
+#> 179 NACC053190     100   2   12    1918      10    2018      11       12    2
+#> 180 NACC077126      76   2   12    1938       8    2015       6        5    5
+#> 181 NACC010800      61   2   18    1946      12    2008       7       15    2
+#> 182 NACC018176      83   1   12    1938       8    2021      10        3    1
+#> 183 NACC038843      40   1   16    1970       8    2010      12       11    1
+#> 184 NACC038843      42   1   16    1970       8    2012      12       30    1
+#> 185 NACC038843      48   1   16    1970       8    2018      11       13    1
+#> 186 NACC038843      41   1   16    1970       8    2012       3       10    1
+#> 187 NACC038843      44   1   16    1970       8    2015       2       11    1
+#> 188 NACC059254      79   1   20    1933       8    2012      12        8    1
+#> 189 NACC096201     108   1   12    1909       4    2017      10        4    1
+#> 190 NACC075118      75   1   12    1941       2    2016       7       27    2
+#> 191 NACC075118      80   1   12    1941       2    2021       3       18    2
+#> 192 NACC075118      73   1   12    1941       2    2015       1       24    2
+#> 193 NACC073168      61   2   14    1954       9    2016       4       16    1
+#> 194 NACC076010      61   1   18    1962       3    2023       8       11    1
+#> 195 NACC076010      56   1   18    1962       3    2018       5       24    1
+#> 196 NACC076010      49   1   18    1962       3    2011      12       18    1
+#> 197 NACC076010      61   1   18    1962       3    2023       3       15    1
+#> 198 NACC076010      52   1   18    1962       3    2015       1       20    1
+#> 199 NACC044109      67   2   16    1938       9    2006       5        3    1
+#> 200 NACC031015      64   2   18    1944       9    2008      12        1    1
+#> 201 NACC031015      68   2   18    1944       9    2013       6       15    1
+#> 202 NACC031015      70   2   18    1944       9    2014      11       15    1
+#> 203 NACC031015      65   2   18    1944       9    2010       7       27    1
+#> 204 NACC031015      72   2   18    1944       9    2016       9       28    1
+#> 205 NACC031015      67   2   18    1944       9    2011      12       22    1
+#> 206 NACC031015      66   2   18    1944       9    2011       3       27    1
+#> 207 NACC031015      67   2   18    1944       9    2011      12       22    1
+#> 208 NACC031015      71   2   18    1944       9    2015      11        1    1
+#> 209 NACC031015      65   2   18    1944       9    2010       4       12    1
+#> 210 NACC031015      63   2   18    1944       9    2008       8       11    1
+#> 211 NACC021008      92   1   12    1927       1    2019       7       13    1
+#> 212 NACC021008      94   1   12    1927       1    2021       9        4    1
+#> 213 NACC051206      64   2   18    1947      11    2012       6       20    1
+#> 214 NACC051206      68   2   18    1947      11    2016       1       15    1
+#> 215 NACC051206      73   2   18    1947      11    2021       6       14    1
+#> 216 NACC082251      75   1   20    1941       8    2016      10       11    2
+#> 217 NACC082251      77   1   20    1941       8    2019       3       14    2
+#> 218 NACC082251      73   1   20    1941       8    2015       2        4    2
+#> 219 NACC082251      72   1   20    1941       8    2013       9       17    2
+#> 220 NACC082251      66   1   20    1941       8    2007      10       25    2
+#> 221 NACC082251      66   1   20    1941       8    2008       7        8    2
+#> 222 NACC031691      72   2   18    1934       4    2007       1       22    2
+#> 223 NACC031691      88   2   18    1934       4    2022       5        5    2
+#> 224 NACC031691      81   2   18    1934       4    2016       1       26    2
+#> 225 NACC031691      84   2   18    1934       4    2019       3        8    2
+#> 226 NACC089265      73   2   16    1948       2    2021       9       21    1
+#> 227 NACC050098      65   1   16    1948       7    2014       4       19    1
+#> 228 NACC005713      91   2   16    1928       7    2019       7       22    1
+#> 229 NACC005713      89   2   16    1928       7    2018       1        7    1
+#> 230 NACC005713      82   2   16    1928       7    2010      10       25    1
+#> 231 NACC005713      83   2   16    1928       7    2011      10       10    1
+#> 232 NACC005713      80   2   16    1928       7    2009       5       10    1
+#> 233 NACC005713      80   2   16    1928       7    2008      11       17    1
+#> 234 NACC005713      89   2   16    1928       7    2018       6        8    1
+#> 235 NACC076499      72   1    6    1946       5    2018      12        2    1
+#> 236 NACC073835      81   1   17    1927       2    2008      12       11    1
+#> 237 NACC073835      90   1   17    1927       2    2017       3       25    1
+#> 238 NACC073835      84   1   17    1927       2    2011       5       23    1
+#> 239 NACC073835      81   1   17    1927       2    2008       7        6    1
+#> 240 NACC073835      83   1   17    1927       2    2010      10        3    1
+#> 241 NACC073835      90   1   17    1927       2    2018       1       21    1
+#> 242 NACC073835      86   1   17    1927       2    2013       6       15    1
+#> 243 NACC017140      76   2   16    1947      12    2023      12       11    1
+#> 244 NACC067960      67   2   12    1951       2    2018       8       23    1
+#> 245 NACC025896      81   1   18    1928       8    2009      10       18    1
+#> 246 NACC025896      79   1   18    1928       8    2008       5       12    1
+#> 247 NACC025896      84   1   18    1928       8    2013       5        1    1
+#> 248 NACC025896      85   1   18    1928       8    2014       5        4    1
+#> 249 NACC003789      74   2   18    1942      10    2017       7        4    2
+#> 250 NACC003789      66   2   18    1942      10    2008      10       14    2
+#> 251 NACC003789      73   2   18    1942      10    2016       8       24    2
+#> 252 NACC003789      67   2   18    1942      10    2010       2       19    2
+#> 253 NACC003789      70   2   18    1942      10    2013       7        5    2
+#> 254 NACC003789      72   2   18    1942      10    2015       5       12    2
+#> 255 NACC003789      74   2   18    1942      10    2017       7       13    2
+#> 256 NACC003789      78   2   18    1942      10    2021       6       21    2
+#> 257 NACC003789      79   2   18    1942      10    2022       8       15    2
+#> 258 NACC003789      66   2   18    1942      10    2008      10       23    2
+#> 259 NACC021078      59   2   10    1952       2    2011      10       19    1
+#> 260 NACC077225      66   2   16    1942       6    2009       3       20    1
+#> 261 NACC077225      77   2   16    1942       6    2020       3       20    1
+#> 262 NACC077225      75   2   16    1942       6    2017      12       20    1
+#> 263 NACC077225      78   2   16    1942       6    2021       3       31    1
+#> 264 NACC077225      73   2   16    1942       6    2016       2        3    1
+#> 265 NACC077225      80   2   16    1942       6    2022       8       24    1
+#> 266 NACC077225      72   2   16    1942       6    2014      10        8    1
+#> 267 NACC096468      64   2   16    1956      10    2020      10        3    2
+#> 268 NACC096468      58   2   16    1956      10    2015       7       19    2
+#> 269 NACC096468      56   2   16    1956      10    2013       9       11    2
+#> 270 NACC023479      77   1   18    1946       8    2024       3        2    1
+#> 271 NACC023479      73   1   18    1946       8    2020       4       24    1
+#> 272 NACC023479      65   1   18    1946       8    2012       5       16    1
+#> 273 NACC023479      65   1   18    1946       8    2011       9       12    1
+#> 274 NACC022653      82   1   13    1936       3    2018      12       17    2
+#> 275 NACC022653      77   1   13    1936       3    2013       3       18    2
+#> 276 NACC022653      71   1   13    1936       3    2007      10        1    2
+#> 277 NACC041651      68   2   12    1949       9    2018       7        7    1
+#> 278 NACC017767      92   1   14    1932       5    2024      12       17    1
+#> 279 NACC017767      91   1   14    1932       5    2023       7       13    1
+#> 280 NACC017767      87   1   14    1932       5    2019      10       24    1
+#> 281 NACC017767      92   1   14    1932       5    2024       7       16    1
+#> 282 NACC017767      89   1   14    1932       5    2022       3       11    1
+#> 283 NACC017767      80   1   14    1932       5    2012       5       14    1
+#> 284 NACC017767      82   1   14    1932       5    2015       3        1    1
+#> 285 NACC017767      76   1   14    1932       5    2008      12        3    1
+#> 286 NACC017767      89   1   14    1932       5    2021      11       21    1
+#> 287 NACC017767      85   1   14    1932       5    2017       6       21    1
+#> 288 NACC017767      84   1   14    1932       5    2016      11        7    1
+#> 289 NACC017767      87   1   14    1932       5    2019       8        9    1
+#> 290 NACC017767      83   1   14    1932       5    2016       2        4    1
+#> 291 NACC017767      76   1   14    1932       5    2009       2       21    1
+#> 292 NACC017767      88   1   14    1932       5    2021       3       28    1
+#> 293 NACC017767      84   1   14    1932       5    2016       5        7    1
+#> 294 NACC090853      79   2   16    1926      12    2006       7        7    3
+#> 295 NACC090853      87   2   16    1926      12    2014       5       19    3
+#> 296 NACC090853      80   2   16    1926      12    2007       4       19    3
+#> 297 NACC090853      89   2   16    1926      12    2016      10       13    3
+#> 298 NACC090853      96   2   16    1926      12    2023       8        2    3
+#> 299 NACC032786      84   2   18    1929      11    2013      11        1    1
+#> 300 NACC057347      71   1   12    1938       4    2009      11        1    1
+#> 301 NACC065804      67   2   12    1945       8    2012       8       29    1
+#> 302 NACC065804      66   2   12    1945       8    2011      12       20    1
+#> 303 NACC037230      84   1   12    1933       6    2017      10       24    1
+#> 304 NACC037230      80   1   12    1933       6    2014       1       12    1
+#> 305 NACC037230      80   1   12    1933       6    2013      12        4    1
+#> 306 NACC009140      95   2   12    1916       4    2011       6       20    5
+#> 307 NACC009140     104   2   12    1916       4    2020       7       10    5
+#> 308 NACC025711     102   1   16    1918      10    2020      11        9    1
+#> 309 NACC050016      74   1   12    1941      10    2016       6       19    5
+#> 310 NACC050016      67   1   12    1941      10    2009       6       13    5
+#> 311 NACC050016      65   1   12    1941      10    2006      11       28    5
+#> 312 NACC050016      68   1   12    1941      10    2010       8       10    5
+#> 313 NACC094951      65   2   10    1956      10    2022       3       28    1
+#> 314 NACC070029      53   2   15    1958      10    2012       4       24    1
+#> 315 NACC070029      58   2   15    1958      10    2017       5        1    1
+#> 316 NACC070029      55   2   15    1958      10    2013      12       19    1
+#> 317 NACC029337      75   1    1    1942       2    2017       2        8    1
+#> 318 NACC029337      80   1    1    1942       2    2022       7       26    1
+#> 319 NACC029337      65   1    1    1942       2    2007      12       27    1
+#> 320 NACC019436      77   1   12    1940       3    2017       8       11    1
+#> 321 NACC019436      83   1   12    1940       3    2023       7       18    1
+#> 322 NACC019436      82   1   12    1940       3    2022      11       29    1
+#> 323 NACC019436      67   1   12    1940       3    2007       4       23    1
+#> 324 NACC019436      78   1   12    1940       3    2019       2       25    1
+#> 325 NACC087836      76   1   14    1930       1    2006       5       10    1
+#> 326 NACC087836      80   1   14    1930       1    2010       8       14    1
+#> 327 NACC087836      76   1   14    1930       1    2006       1        1    1
+#> 328 NACC087836      79   1   14    1930       1    2009       1       27    1
+#> 329 NACC087836      85   1   14    1930       1    2015      11       13    1
+#> 330 NACC087836      91   1   14    1930       1    2021      10       11    1
+#> 331 NACC072337      78   2   18    1934       9    2013       2        5    1
+#> 332 NACC029923      48   2   12    1962      10    2011       7       30    1
+#> 333 NACC005149      84   2   18    1924       8    2008      11       30    1
+#> 334 NACC005149      91   2   18    1924       8    2015       8       24    1
+#> 335 NACC005149      86   2   18    1924       8    2011       5        4    1
+#> 336 NACC005149      82   2   18    1924       8    2007       3        1    1
+#> 337 NACC005149      93   2   18    1924       8    2017      10       27    1
+#> 338 NACC005149      83   2   18    1924       8    2008       3       23    1
+#> 339 NACC005149      81   2   18    1924       8    2006       4        6    1
+#> 340 NACC005149      91   2   18    1924       8    2016       3       21    1
+#> 341 NACC005149      89   2   18    1924       8    2013      10       11    1
+#> 342 NACC005149      92   2   18    1924       8    2016      10       22    1
+#> 343 NACC005149      83   2   18    1924       8    2008       2       28    1
+#> 344 NACC005149      91   2   18    1924       8    2016       6       11    1
+#>     HANDED CDRGLOB MOCATOTS MOCBTOTS TRAILA TRAILARR TRAILALI OTRAILA OTRLARR
+#> 1        2     1.0       -4       -4     27       -4       -4      -4      -4
+#> 2        2     0.5       -4       -4     31        0       24      -4      -4
+#> 3        2     0.5       -4       -4     27        0       24      -4      -4
+#> 4        2     2.0       -4       -4    100        0       24      -4      -4
+#> 5        2     0.0       -4       -4     30        0       24      -4      -4
+#> 6        2     0.0       -4       -4    996        0       24      -4      -4
+#> 7        2     0.5       -4       -4     90        0       24      -4      -4
+#> 8        2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 9        2     0.5       -4       -4     33        0       13      -4      -4
+#> 10       2     1.0       -4       -4     37        0       24      -4      -4
+#> 11       2     0.0       22       -4     75        0       24      -4      -4
+#> 12       2     3.0       -4       -4     -4       -4       -4      -4      -4
+#> 13       2     0.0       -4       -4     22        0       24      -4      -4
+#> 14       2     0.5       -4       -4    121        0       24      -4      -4
+#> 15       2     0.5       -4       -4     33        0       24      -4      -4
+#> 16       2     0.0       -4       -4    996        0       24      -4      -4
+#> 17       2     0.0       28       -4     28        0       24      -4      -4
+#> 18       2     0.0       30       -4    996        0       24      -4      -4
+#> 19       2     0.0       -4       -4     32        0       97      -4      -4
+#> 20       2     1.0       -4       -4     34        0       97      -4      -4
+#> 21       2     1.0       -4       -4     24        0       97      -4      -4
+#> 22       2     0.5       27       -4     43        0       24      -4      -4
+#> 23       2     0.5       14       -4     35        1       24      -4      -4
+#> 24       2     0.0       -4       -4    112        0       24      -4      -4
+#> 25       2     0.0       -4       -4     20       -4       -4      -4      -4
+#> 26       2     1.0       -4       -4     42        0       97      -4      -4
+#> 27       2     0.5       -4       -4     39        0       24      -4      -4
+#> 28       2     0.5       -4       -4     48        0       24      -4      -4
+#> 29       2     0.5       -4       -4     36        2       24      -4      -4
+#> 30       2     0.0       -4       -4     21        0       24      -4      -4
+#> 31       2     0.5       -4       -4     28        0       24      -4      -4
+#> 32       2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 33       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 34       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 35       2     3.0       88       -4    147        0       16      -4      -4
+#> 36       2     0.0       30       -4     34        0       24      -4      -4
+#> 37       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 38       2     3.0       22       -4     31        0       24      -4      -4
+#> 39       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 40       2     0.5       -4       -4     51       -4       -4      -4      -4
+#> 41       2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 42       2     3.0       -4       -4     -4       -4       -4      -4      -4
+#> 43       2     0.5       -4       -4     28       96       24      -4      -4
+#> 44       2     0.5       -4       -4     37        1       24      -4      -4
+#> 45       2     0.5       -4       -4     44        1        6      -4      -4
+#> 46       2     1.0       16       -4     21        0       24      -4      -4
+#> 47       2     0.0       12       -4     27        0       24      -4      -4
+#> 48       2     0.0       -4       -4     28       -4       -4      -4      -4
+#> 49       2     1.0       27       -4     28        0       24      -4      -4
+#> 50       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 51       2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 52       3     0.0       -4       -4    997        0       24      -4      -4
+#> 53       3     0.0       -4       -4     20        0       24      -4      -4
+#> 54       3     1.0       24       -4     49        0       24      -4      -4
+#> 55       2     2.0       -4       -4     35       -4       -4      -4      -4
+#> 56       2     1.0       -4       -4     40       -4       -4      -4      -4
+#> 57       2     2.0       -4       -4     61        1       24      -4      -4
+#> 58       2     0.0       -4       -4     28       -4       -4      -4      -4
+#> 59       1     1.0       -4       -4    150       -4       -4      -4      -4
+#> 60       2     0.0       -4       -4     37       -4       -4      -4      -4
+#> 61       2     0.0       -4       -4     17       -4       -4      -4      -4
+#> 62       2     1.0       -4       -4     35        0       17      -4      -4
+#> 63       2     0.5       -4       -4    996        0       24      -4      -4
+#> 64       2     2.0       -4       -4     34        0       24      -4      -4
+#> 65       2     0.5       -4       -4     74       -4       -4      -4      -4
+#> 66       2     1.0       -4       -4     21        0       24      -4      -4
+#> 67       2     1.0       -4       -4     32        0       24      -4      -4
+#> 68       2     3.0       -4       -4     69        0       97      -4      -4
+#> 69       2     1.0       -4       -4     26        0       24      -4      -4
+#> 70       2     0.0       25       -4     35        0       24      -4      -4
+#> 71       2     1.0       26       -4     84        0       24      -4      -4
+#> 72       2     0.0       -4       -4     52        0       24      -4      -4
+#> 73       2     0.5       -4       -4     22        0       24      -4      -4
+#> 74       2     2.0       -4       -4     21        0       24      -4      -4
+#> 75       2     2.0       -4       -4     39       -4       -4      -4      -4
+#> 76       2     0.0       -4       -4     55        0       24      -4      -4
+#> 77       2     0.0       -4       -4     26        0       24      -4      -4
+#> 78       2     1.0       23       -4     36        0       24      -4      -4
+#> 79       2     0.5       21       -4    997        0       24      -4      -4
+#> 80       2     0.5       88       -4     30        0       24      -4      -4
+#> 81       2     1.0       19       -4    150        4       24      -4      -4
+#> 82       2     0.0       -4       -4     85       -4       -4      -4      -4
+#> 83       2     0.0       -4       -4     51       -4       -4      -4      -4
+#> 84       2     0.5       -4       -4     24       -4       -4      -4      -4
+#> 85       2     0.0       -4       -4     70        1       24      -4      -4
+#> 86       2     0.0       -4       -4    119        0       24      -4      -4
+#> 87       2     0.0       -4       -4     21        0       24      -4      -4
+#> 88       2     0.0       -4       -4    995        1       24      -4      -4
+#> 89       2     0.0       -4       -4    996        2       24      -4      -4
+#> 90       2     0.0       -4       -4     32        0       24      -4      -4
+#> 91       2     1.0       -4       -4     39        0       24      -4      -4
+#> 92       2     2.0       17       -4    997        0       24      -4      -4
+#> 93       2     0.5       28       -4     41        0       24      -4      -4
+#> 94       2     0.0       88       -4     24       96       24      -4      -4
+#> 95       2     0.0       27       -4     19       97       24      -4      -4
+#> 96       2     0.0       26       -4     88        0       24      -4      -4
+#> 97       2     0.0       -4       -4     22        0       24      -4      -4
+#> 98       2     0.0       -4       -4    997        0       24      -4      -4
+#> 99       2     0.0       -4       -4     22        0       24      -4      -4
+#> 100      2     2.0       -4       -4     26        0       97      -4      -4
+#> 101      2     0.0       -4       -4    150        0       24      -4      -4
+#> 102      2     0.5       -4       -4     62        0       24      -4      -4
+#> 103      2     0.0       25       -4     28        0       14      -4      -4
+#> 104      2     1.0       17       -4     38        0       24      -4      -4
+#> 105      2     0.5       -4       -4     45       -4       -4      -4      -4
+#> 106      2     0.5       -4       -4     25       -4       -4      -4      -4
+#> 107      2     1.0       -4       -4     58        0       96      -4      -4
+#> 108      2     3.0       -4       -4     49       97       24      -4      -4
+#> 109      2     0.5       -4       -4     17        0       24      -4      -4
+#> 110      2     0.0       -4       -4     22        1       24      -4      -4
+#> 111      2     0.5       -4       -4     25        0       24      -4      -4
+#> 112      2     0.0       -4       -4     49        0       24      -4      -4
+#> 113      2     0.5       26       -4     28        0       24      -4      -4
+#> 114      2     0.0       25       -4     46        0       24      -4      -4
+#> 115      2     3.0       28       -4     36        0       24      -4      -4
+#> 116      2     1.0       -4       -4     19        0       24      -4      -4
+#> 117      2     0.5       -4       -4     21        0       24      -4      -4
+#> 118      2     0.5       20       -4    101        0       24      -4      -4
+#> 119      2     1.0       29       -4     56        0       97      -4      -4
+#> 120      2     0.5       26       -4     50        1       24      -4      -4
+#> 121      2     0.0       19       -4     38        0       24      -4      -4
+#> 122      2     0.0       -4       20     -4       -4       -4       9       0
+#> 123      2     0.5       26       -4    996        0       24      -4      -4
+#> 124      2     1.0       23       -4    150        0       24      -4      -4
+#> 125      2     0.5       28       -4     57        0       96      -4      -4
+#> 126      2     0.5       18       -4     50        0       24      -4      -4
+#> 127      2     0.0       24       -4     19        0       24      -4      -4
+#> 128      2     0.0       -4       -4     26        0       24      -4      -4
+#> 129      2     0.5       -4       -4     58        0       24      -4      -4
+#> 130      2     3.0       -4       -4     50       97       24      -4      -4
+#> 131      2     0.5       -4       -4     21        0       24      -4      -4
+#> 132      2     0.0       22       -4     39        1       24      -4      -4
+#> 133      2     2.0       24       -4    996       96       24      -4      -4
+#> 134      2     0.0       25       -4     19        0       24      -4      -4
+#> 135      2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 136      2     0.0       28       -4     37        1       24      -4      -4
+#> 137      2     0.5       26       -4     52        0       24      -4      -4
+#> 138      2     3.0       29       -4     52        1       24      -4      -4
+#> 139      2     0.0       -4       -4     46       95       95      -4      -4
+#> 140      2     0.0       -4       -4     29        0       24      -4      -4
+#> 141      2     1.0       -4       -4     21        0       24      -4      -4
+#> 142      2     2.0       16       -4     25        0       97      -4      -4
+#> 143      2     3.0       28       -4     50        0       24      -4      -4
+#> 144      2     3.0       27       -4     37        0       24      -4      -4
+#> 145      2     0.5       27       -4     33        0       24      -4      -4
+#> 146      2     1.0       -4       21     -4       -4       -4     888       0
+#> 147      2     0.0       22       -4     19        0       24      -4      -4
+#> 148      1     0.5       25       -4     38        0       24      -4      -4
+#> 149      1     0.5       17       -4     70        0       24      -4      -4
+#> 150      1     2.0       -4       -4     -4       -4       -4      -4      -4
+#> 151      1     0.0       -4       88     -4       -4       -4     888       0
+#> 152      1     0.5       21       -4    996        0       24      -4      -4
+#> 153      2     0.5       -4       -4     24       -4       -4      -4      -4
+#> 154      2     0.0       -4       -4     72       -4       -4      -4      -4
+#> 155      2     0.0       -4       -4     57       -4       -4      -4      -4
+#> 156      2     0.0       -4       -4     47        0        6      -4      -4
+#> 157      2     0.5       -4       -4     14        0       24      -4      -4
+#> 158      2     0.0       -4       -4    997        0       24      -4      -4
+#> 159      2     0.5       -4       -4     30        3       24      -4      -4
+#> 160      2     2.0       -4       -4    103        0       97      -4      -4
+#> 161      2     0.0       -4       -4     70       98       24      -4      -4
+#> 162      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 163      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 164      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 165      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 166      2     1.0       -4       -4     -4       -4       -4      -4      -4
+#> 167      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 168      2     1.0       -4       -4     39        0       24      -4      -4
+#> 169      2     0.5       -4       -4    996        0       24      -4      -4
+#> 170      2     0.5       -4       -4     84       -4       -4      -4      -4
+#> 171      2     2.0       -4       -4    129       -4       -4      -4      -4
+#> 172      2     0.0       10       -4     16        0       24      -4      -4
+#> 173      2     0.5       88       -4     63        0       24      -4      -4
+#> 174      2     0.0       28       -4     30        0       24      -4      -4
+#> 175      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 176      2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 177      2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 178      1     0.0       26       -4    100       96       97      -4      -4
+#> 179      2     0.5       -4       -4     31       -4       -4      -4      -4
+#> 180      2     0.0       -4       -4    998       -4       -4      -4      -4
+#> 181      2     0.0       -4       -4    105        0       24      -4      -4
+#> 182      2     0.0       -4       -4     34       -4       -4      -4      -4
+#> 183      2     0.5       -4       -4     49        0       24      -4      -4
+#> 184      2     0.0       -4       -4     34        0       24      -4      -4
+#> 185      2     1.0       -4       -4     -4       -4       -4      -4      -4
+#> 186      2     0.0       29       -4    997        0       24      -4      -4
+#> 187      2     2.0       -4       -4     -4       -4       -4      -4      -4
+#> 188      2     0.5       -4       -4     32        5       24      -4      -4
+#> 189      2     0.0       -4       -4     45       -4       -4      -4      -4
+#> 190      2     0.0       -4       -4    996        0       97      -4      -4
+#> 191      2     0.0       -4       -4     65       97       96      -4      -4
+#> 192      2     0.0       -4       -4     27        0       24      -4      -4
+#> 193      2     0.0       -4       -4     69        0       24      -4      -4
+#> 194      2     0.0       -4       -4     22       -4       -4      -4      -4
+#> 195      2     0.0       -4       -4     26        2       24      -4      -4
+#> 196      2     0.5       -4       -4     35        0       24      -4      -4
+#> 197      2     0.5       -4       -4    110        0       24      -4      -4
+#> 198      2     0.0       -4       -4     42        0       24      -4      -4
+#> 199      2     0.0       26       -4     67        0       24      -4      -4
+#> 200      2     0.0       -4       -4     34        0       24      -4      -4
+#> 201      2     0.0       -4       -4     36        0       24      -4      -4
+#> 202      2     1.0       -4       -4     30       96       24      -4      -4
+#> 203      2     0.0       -4       -4     60        0       24      -4      -4
+#> 204      2     0.5        4       -4     44        0       24      -4      -4
+#> 205      2     0.0        7       -4     54       96       24      -4      -4
+#> 206      2     0.0       24       -4    108        0       24      -4      -4
+#> 207      2     0.0       25       -4     22        0       24      -4      -4
+#> 208      2     0.5       -4       20     -4       -4       -4      10       0
+#> 209      2     1.0       -4       17     -4       -4       -4      12       0
+#> 210      2     3.0       28       -4     27        0       24      -4      -4
+#> 211      2     0.5       -4       -4     31       -4       -4      -4      -4
+#> 212      2     0.0       -4       -4     22        0       97      -4      -4
+#> 213      2     0.0       -4       -4    997       -4       -4      -4      -4
+#> 214      2     2.0       -4       -4    122        0       24      -4      -4
+#> 215      2     0.0       -4       -4     31        0       24      -4      -4
+#> 216      2     0.0       -4       -4     42        0       24      -4      -4
+#> 217      2     0.5       13       -4     28        0       24      -4      -4
+#> 218      2     2.0       11       -4     32       97       24      -4      -4
+#> 219      2     0.5       25       -4     24        0       97      -4      -4
+#> 220      2     0.0       28       -4     32        0       24      -4      -4
+#> 221      2     0.0       88       -4     43        0       24      -4      -4
+#> 222      2     0.0       27       -4     20       96       24      -4      -4
+#> 223      2     0.5       28       -4     33        0       24      -4      -4
+#> 224      2     1.0       -4       22     -4       -4       -4       9      88
+#> 225      2     0.0        8       -4     30        0       24      -4      -4
+#> 226      2     0.5       -4       -4    996        0       96      -4      -4
+#> 227      2     0.0       27       -4     31       97       97      -4      -4
+#> 228      2     0.5       -4       -4     23        0       96      -4      -4
+#> 229      2     1.0       -4       -4     34        0       24      -4      -4
+#> 230      2     3.0       -4       -4     41        0       24      -4      -4
+#> 231      2     3.0       -4       -4     27       95       24      -4      -4
+#> 232      2     0.5       -4       -4     22        0       97      -4      -4
+#> 233      2     0.5       -4       -4     19        0       24      -4      -4
+#> 234      2     2.0       -4       -4    125        0       24      -4      -4
+#> 235      2     0.5       19       -4     34        0       24      -4      -4
+#> 236      2     0.0       26       -4     64        0       24      -4      -4
+#> 237      2     1.0       28       -4     29       97       24      -4      -4
+#> 238      2     0.0       24       -4     24        0       24      -4      -4
+#> 239      2     0.5       30       -4     25        0       24      -4      -4
+#> 240      2     3.0       27       -4     42        0       16      -4      -4
+#> 241      2     0.0       25       -4     29       98       24      -4      -4
+#> 242      2     0.5       22       -4     40        1       24      -4      -4
+#> 243      2     0.5       -4       -4     29        0       24      -4      -4
+#> 244      2     0.0       -4       -4     37       -4       -4      -4      -4
+#> 245      2     0.0       25       -4     15        1       24      -4      -4
+#> 246      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 247      2     0.0       30       -4     25        0       24      -4      -4
+#> 248      2     2.0       -4       -4     -4       -4       -4      -4      -4
+#> 249      2     0.5       -4       -4     34       -4       -4      -4      -4
+#> 250      2     0.0       -4       -4     33        1       24      -4      -4
+#> 251      2     0.0       -4       -4    997        0       24      -4      -4
+#> 252      2     0.0       -4       -4     50        2       24      -4      -4
+#> 253      2     0.0       -4       -4     34        0       24      -4      -4
+#> 254      2     1.0       -4       -4     33        0       24      -4      -4
+#> 255      2     0.0       -4       -4     63        0       24      -4      -4
+#> 256      2     0.0       -4       -4     24        0       24      -4      -4
+#> 257      2     0.5       21       -4     33        0       95      -4      -4
+#> 258      2     0.0       28       -4     25       97       24      -4      -4
+#> 259      2     0.0       20       -4     39        0       24      -4      -4
+#> 260      2     0.5       -4       -4     38        0       24      -4      -4
+#> 261      2     0.5       -4       -4     18        0       24      -4      -4
+#> 262      2     0.0       -4       -4     32        0       24      -4      -4
+#> 263      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 264      2     2.0       -4       -4     -4       -4       -4      -4      -4
+#> 265      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 266      2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 267      2     0.5       29       -4     24        0       24      -4      -4
+#> 268      2     3.0       -4       21     -4       -4       -4       9      97
+#> 269      2     2.0       24       -4    997        0       19      -4      -4
+#> 270      2     2.0       -4       -4     36        0       24      -4      -4
+#> 271      2     0.5       -4       -4     29        0       24      -4      -4
+#> 272      2     0.5        9       -4     28        1       24      -4      -4
+#> 273      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 274      2     0.5       26       -4    147        0       24      -4      -4
+#> 275      2     0.0       -4       -4     -4       -4       -4      -4      -4
+#> 276      2     0.5       13       -4    996        0       24      -4      -4
+#> 277      2     0.5       -4       -4     53       -4       -4      -4      -4
+#> 278      2     0.0       -4       -4     24       -4       -4      -4      -4
+#> 279      2     1.0       -4       -4     53       -4       -4      -4      -4
+#> 280      2     0.5       -4       -4     40        0       24      -4      -4
+#> 281      2     0.5       -4       -4     30        0       24      -4      -4
+#> 282      2     0.0       -4       -4     45        0       24      -4      -4
+#> 283      2     0.0       -4       -4     26        0       24      -4      -4
+#> 284      2     0.0       -4       -4     27        0       24      -4      -4
+#> 285      2     0.0       -4       -4     28        0       24      -4      -4
+#> 286      2     0.0       -4       -4     42       97       24      -4      -4
+#> 287      2     0.0       -4       -4     51       97       24      -4      -4
+#> 288      2     1.0       28       -4    997        0       24      -4      -4
+#> 289      2     0.5       25       -4     50        0       24      -4      -4
+#> 290      2     1.0       25       -4    150        0       24      -4      -4
+#> 291      2     0.0       -4       22     -4       -4       -4     997       0
+#> 292      2     0.0       -4       22     -4       -4       -4      11      88
+#> 293      2     0.0       17       -4     41        0       24      -4      -4
+#> 294      2     3.0       -4       -4     30       96       24      -4      -4
+#> 295      2     0.5       -4       -4     20        1       24      -4      -4
+#> 296      2     0.0       -4       -4     29        0       24      -4      -4
+#> 297      2     0.5       24       -4     20        0       24      -4      -4
+#> 298      2     1.0       20       -4     44        0       24      -4      -4
+#> 299      1     0.5       23       -4     20        0       24      -4      -4
+#> 300      2     0.5       27       -4     45        0       24      -4      -4
+#> 301      2     0.0       -4       -4    150       -4       -4      -4      -4
+#> 302      2     3.0       -4       -4     22       -4       -4      -4      -4
+#> 303      2     0.0       -4       -4     47        0       24      -4      -4
+#> 304      2     1.0       -4       -4     29       -4       -4      -4      -4
+#> 305      2     3.0       30       -4     28        0       24      -4      -4
+#> 306      2     0.0       -4       -4     32       -4       24      -4      -4
+#> 307      2     2.0       -4       -4     27        0       96      -4      -4
+#> 308      2     0.5       -4       -4     29        0       24      -4      -4
+#> 309      2     2.0       -4       -4     33        0       24      -4      -4
+#> 310      2     0.5       -4       -4     45       -4       24      -4      -4
+#> 311      2     1.0       -4       -4     77       -4       97      -4      -4
+#> 312      2     0.0       -4       -4     19        1       24      -4      -4
+#> 313      2     0.0       -4       -4     43        0       24      -4      -4
+#> 314      2     1.0       -4       -4     40       -4       -4      -4      -4
+#> 315      2     1.0       -4       -4     75        0       24      -4      -4
+#> 316      2     0.5       -4       -4     -4       -4       -4      -4      -4
+#> 317      2     1.0       -4       -4     19       -4       -4      -4      -4
+#> 318      2     0.0       -4       -4     24       -4       -4      -4      -4
+#> 319      2     0.5       -4       -4     30        0       24      -4      -4
+#> 320      2     2.0       -4       -4     25       -4       -4      -4      -4
+#> 321      2     0.0       -4       -4     24       -4       -4      -4      -4
+#> 322      2     0.0       -4       -4     21        0       24      -4      -4
+#> 323      2     2.0       -4       -4     66        0       24      -4      -4
+#> 324      2     0.0       -4       -4     29        0       24      -4      -4
+#> 325      2     1.0       -4       -4     18        0       24      -4      -4
+#> 326      2     0.0       -4       -4     25        2       24      -4      -4
+#> 327      2     0.5       -4       -4    996        0       24      -4      -4
+#> 328      2     0.5       -4       -4     22        0       24      -4      -4
+#> 329      2     1.0       25       -4     68        0       24      -4      -4
+#> 330      2     0.0       29       -4     78        0       24      -4      -4
+#> 331      2     0.0       -4       -4     32        0       24      -4      -4
+#> 332      2     0.5       -4       -4     41        0       24      -4      -4
+#> 333      2     0.5       -4       -4     44       -4       -4      -4      -4
+#> 334      2     0.5       -4       -4    997       -4       -4      -4      -4
+#> 335      2     0.0       -4       -4     43        0       24      -4      -4
+#> 336      2     1.0       -4       -4     41        0       24      -4      -4
+#> 337      2     3.0       -4       -4     28        0       24      -4      -4
+#> 338      2     0.0       -4       -4     49        0       24      -4      -4
+#> 339      2     0.0       -4       -4     23        0       24      -4      -4
+#> 340      2     2.0       -4       -4     73        0       24      -4      -4
+#> 341      2     0.5       -4       -4    997        0       24      -4      -4
+#> 342      2     0.0       -4       -4     73        0       96      -4      -4
+#> 343      2     0.0       -4       -4     40        0       24      -4      -4
+#> 344      2     0.0       -4       -4     23        0       24      -4      -4
+#>     DIGFORCT DIGFORSL DIGBACCT DIGBACLS WAIS MINTTOTS ANIMALS VEG UDSVERTN
+#> 1         -4       -4       -4       -4    0       -4      26   3       -4
+#> 2         -4       -4       -4       -4   49       -4      27  18       -4
+#> 3         -4       -4       -4       -4   43       -4      23  21       -4
+#> 4         -4       -4       -4       -4   51       -4      12  11       -4
+#> 5         -4       -4       -4       -4   43       -4      22  17       -4
+#> 6         -4       -4       -4       -4   38       -4      18   6       -4
+#> 7         -4       -4       -4       -4   17       -4      22  97       -4
+#> 8         -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 9         -4       -4       -4       -4   32       -4       8  16       -4
+#> 10        -4       -4       -4       -4   30       -4      14  10       -4
+#> 11        97        7        8        6   -4       29      25  10       24
+#> 12        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 13        -4       -4       -4       -4   29       -4      22   7       -4
+#> 14        -4       -4       -4       -4   38       -4      26  14       -4
+#> 15        -4       -4       -4       -4   27       -4      25  18       -4
+#> 16        -4       -4       -4       -4    0       -4      16  15       -4
+#> 17         9        5       97        5   -4       31      97  97       36
+#> 18         5        7        7       96   -4       26      12   7       28
+#> 19        -4       -4       -4       -4   33       -4      10  96       -4
+#> 20        -4       -4       -4       -4   32       -4      19   7       -4
+#> 21        -4       -4       -4       -4    0       -4      98  18       -4
+#> 22        14        9        9        5   -4       28      15  95       17
+#> 23        11        7        5        6   -4       20       8   8       35
+#> 24        -4       -4       -4       -4   35       -4      19   3       -4
+#> 25        -4       -4       -4       -4   63       -4      11   7       -4
+#> 26        -4       -4       -4       -4   59       -4      11   9       -4
+#> 27        -4       -4       -4       -4   38       -4      13  22       -4
+#> 28        -4       -4       -4       -4   52       -4      29   4       -4
+#> 29        -4       -4       -4       -4   24       -4      96  10       -4
+#> 30        -4       -4       -4       -4   56       -4      15  18       -4
+#> 31        -4       -4       -4       -4   50       -4      14   6       -4
+#> 32        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 33        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 34        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 35         8        3        4        5   -4       31       5  18       28
+#> 36         9        6        5        3   -4       24       8  14       22
+#> 37        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 38         4        7        9        6   -4       31      27  11       30
+#> 39        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 40        -4       -4       -4       -4   41       -4      17   9       -4
+#> 41        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 42        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 43        -4       -4       -4       -4   47       -4      96  13       -4
+#> 44        -4       -4       -4       -4   38       -4      20   9       -4
+#> 45        -4       -4       -4       -4   72       -4      11   8       -4
+#> 46         9        5       12        3   -4       24      12  22       40
+#> 47        97        9        6        5   -4       97      12  10       29
+#> 48        -4       -4       -4       -4   51       -4      15  14       -4
+#> 49         5        5        8        5   -4       30      20   6       35
+#> 50        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 51        -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 52        -4       -4       -4       -4   43       -4      19   9       -4
+#> 53        -4       -4       -4       -4   -4       -4      15   9       29
+#> 54         6        7        4        7   -4       28      15   8       34
+#> 55        -4       -4       -4       -4   24       -4      16  21       -4
+#> 56        -4       -4       -4       -4   65       -4      25  17       -4
+#> 57        -4       -4       -4       -4   59       -4      20  11       -4
+#> 58        -4       -4       -4       -4   59       -4      17  16       -4
+#> 59        -4       -4       -4       -4   22       -4      21   5       -4
+#> 60        -4       -4       -4       -4   31       -4      16  13       -4
+#> 61        -4       -4       -4       -4   21       -4      10  14       -4
+#> 62        -4       -4       -4       -4   40       -4      16  13       -4
+#> 63        -4       -4       -4       -4   42       -4       4  96       -4
+#> 64        -4       -4       -4       -4   12       -4      12  96       -4
+#> 65        -4       -4       -4       -4   44       -4      24  10       -4
+#> 66        -4       -4       -4       -4   42       -4      15   9       -4
+#> 67        -4       -4       -4       -4   33       -4      15  12       -4
+#> 68        -4       -4       -4       -4   98       -4      28  12       -4
+#> 69        -4       -4       -4       -4   41       -4       5  11       -4
+#> 70        10        6        9        7   -4       96       3   2       36
+#> 71         6        6       10        4   -4       30      24   9       33
+#> 72        -4       -4       -4       -4   30       -4      12  14       -4
+#> 73        -4       -4       -4       -4   43       -4      13  13       -4
+#> 74        -4       -4       -4       -4   41       -4      13  13       -4
+#> 75        -4       -4       -4       -4   30       -4       0   8       -4
+#> 76        -4       -4       -4       -4   23       -4      96  14       -4
+#> 77        -4       -4       -4       -4   28       -4      25  14       -4
+#> 78         4        7        9        5   -4       29      12  14       29
+#> 79         8        6        2        5   -4       30      16  96       30
+#> 80         8        5        6        3   -4       31      18  19       28
+#> 81         4        6       10        3   -4       98      15   2       17
+#> 82        -4       -4       -4       -4   32       -4      12  10       -4
+#> 83        -4       -4       -4       -4   21       -4      13   6       -4
+#> 84        -4       -4       -4       -4   44       -4      23  15       -4
+#> 85        -4       -4       -4       -4   37       -4      14   9       -4
+#> 86        -4       -4       -4       -4   96       -4      11  16       -4
+#> 87        -4       -4       -4       -4    9       -4      15  19       -4
+#> 88        -4       -4       -4       -4    6       -4      14  15       -4
+#> 89        -4       -4       -4       -4   96       -4       4  97       -4
+#> 90        -4       -4       -4       -4   53       -4      17  96       -4
+#> 91        -4       -4       -4       -4   58       -4      16  10       -4
+#> 92         8        6        6        5   -4       30      19   9       28
+#> 93         8        7        0       97   -4       31      23  10       27
+#> 94        10        8        8        8   -4       31      96  12       19
+#> 95         7        7        6        3   -4       28      19   0       32
+#> 96         6        8        3        6   -4       28      22  15       16
+#> 97        -4       -4       -4       -4   49       -4      97  26       -4
+#> 98        -4       -4       -4       -4    9       -4      18   5       -4
+#> 99        -4       -4       -4       -4   12       -4      29  17       -4
+#> 100       -4       -4       -4       -4   24       -4      22  18       -4
+#> 101       -4       -4       -4       -4   37       -4      26  11       -4
+#> 102       -4       -4       -4       -4   65       -4      18  15       -4
+#> 103       10        7        8        6   -4       31      18  17       17
+#> 104       97        7        9        4   -4       27      23  13       97
+#> 105       -4       -4       -4       -4   96       -4       6  10       -4
+#> 106       -4       -4       -4       -4   34       -4      13  97       -4
+#> 107       -4       -4       -4       -4   97       -4      10  10       -4
+#> 108       -4       -4       -4       -4   25       -4      23  14       -4
+#> 109       -4       -4       -4       -4   45       -4      17   7       -4
+#> 110       -4       -4       -4       -4   96       -4       9  12       -4
+#> 111       -4       -4       -4       -4   40       -4      97   4       -4
+#> 112       -4       -4       -4       -4   96       -4      97  14       -4
+#> 113        8        6        2        5   -4       30      10   7       29
+#> 114        4        7        3        7   -4       28      28   4       18
+#> 115       97        3        9        5   -4       96      24   8       29
+#> 116       -4       -4       -4       -4   41       -4      97  17       -4
+#> 117       -4       -4       -4       -4   60       -4       8  16       -4
+#> 118       14        8        6        6   -4       26      22  14       32
+#> 119        8        6        5        5   -4       29      22  12        0
+#> 120       11        9        6        6   -4       24      32  18       25
+#> 121        5        5        7        6   -4       31      12  14       29
+#> 122        8        7        6        4   -4       -4      30   8       18
+#> 123        6        5        4        7   -4       32      25   6       24
+#> 124        9        7        6        4   -4       31      13  95       18
+#> 125        7        8       13        6   -4       30      14   6       42
+#> 126        9        7        5       97   -4       25      10  17       20
+#> 127       11        3        5        3   -4       32      17   9       40
+#> 128       -4       -4       -4       -4   20       -4      17  96       -4
+#> 129       -4       -4       -4       -4   63       -4      18  12       -4
+#> 130       -4       -4       -4       -4   97       -4      12  15       -4
+#> 131       -4       -4       -4       -4   52       -4      21  96       -4
+#> 132        5        6        4       97   -4       25      13   8       31
+#> 133        6        7       96        4   -4       31      22  15       15
+#> 134       13        9        7        5   -4       30      11  20        9
+#> 135       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 136        8        5        4        3   -4       96       9   3       10
+#> 137        9        5        8        4   -4       30      11   2       11
+#> 138        7        8        9        0   -4       24      24   8       35
+#> 139       -4       -4       -4       -4   40       -4      23   9       -4
+#> 140       -4       -4       -4       -4   30       -4      11   0       -4
+#> 141       -4       -4       -4       -4   -4       -4       4   5       30
+#> 142       96        7        4        4   -4       26      15  19       20
+#> 143        6        8        8        6   -4       32       8  11       44
+#> 144        5        7        4        3   -4       29      22  11        4
+#> 145        7        7        8        6   -4       22      96  22       25
+#> 146        6        8        8        7   -4       -4      15  97       27
+#> 147        8        7        9        5   -4       32      18  13       40
+#> 148        8        9        9        8   -4       32      13   8       44
+#> 149        7        6        8        5   -4       32       4  12       16
+#> 150       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 151       11        8        4        5   -4       -4      17   9       41
+#> 152        6        3        7        6   -4       13      20  15       96
+#> 153       -4       -4       -4       -4   89       -4      20  18       -4
+#> 154       -4       -4       -4       -4   62       -4      14   0       -4
+#> 155       -4       -4       -4       -4   47       -4       3   4       -4
+#> 156       -4       -4       -4       -4   97       -4      25  15       -4
+#> 157       -4       -4       -4       -4   16       -4      20  17       -4
+#> 158       -4       -4       -4       -4   39       -4      11  18       -4
+#> 159       -4       -4       -4       -4    7       -4      96  19       -4
+#> 160       -4       -4       -4       -4   64       -4      29  10       -4
+#> 161       -4       -4       -4       -4   38       -4      20   7       -4
+#> 162       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 163       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 164       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 165       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 166       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 167       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 168       -4       -4       -4       -4   32       -4      37   4       -4
+#> 169       -4       -4       -4       -4   70       -4      20  17       -4
+#> 170       -4       -4       -4       -4   58       -4      17  18       -4
+#> 171       -4       -4       -4       -4   75       -4      22  12       -4
+#> 172        9        4        2        4   -4       24       6  30       33
+#> 173       10        9        2        4   -4       29      12  14        0
+#> 174       10        5       11        7   -4       32      23   7        9
+#> 175       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 176       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 177       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 178        7        8        6        6   -4       32      96  18       32
+#> 179       -4       -4       -4       -4   42       -4      13  96       -4
+#> 180       -4       -4       -4       -4   97       -4      27  17       -4
+#> 181       -4       -4       -4       -4   39       -4       7   8       -4
+#> 182       -4       -4       -4       -4   22       -4      18  19       -4
+#> 183       -4       -4       -4       -4   28       -4       9   8       -4
+#> 184       -4       -4       -4       -4   56       -4      23  12       -4
+#> 185       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 186        3        6        8        4   -4        5       4  96       26
+#> 187       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 188       -4       -4       -4       -4   59       -4      19  96       -4
+#> 189       -4       -4       -4       -4   96       -4      30  10       -4
+#> 190       -4       -4       -4       -4   47       -4      18   6       -4
+#> 191       -4       -4       -4       -4   38       -4      14  17       -4
+#> 192       -4       -4       -4       -4   96       -4      12   6       -4
+#> 193       -4       -4       -4       -4   46       -4      14  13       -4
+#> 194       -4       -4       -4       -4   96       -4       8  28       -4
+#> 195       -4       -4       -4       -4   55       -4      18  16       -4
+#> 196       -4       -4       -4       -4   56       -4      20  97       -4
+#> 197       -4       -4       -4       -4   43       -4      24   9       -4
+#> 198       -4       -4       -4       -4   95       -4      12  14       -4
+#> 199        6       96        8        5   -4       31      28  16       38
+#> 200       -4       -4       -4       -4   35       -4      15  25       -4
+#> 201       -4       -4       -4       -4   26       -4       4   0       -4
+#> 202       -4       -4       -4       -4    0       -4      11  97       -4
+#> 203       -4       -4       -4       -4   96       -4      13   9       -4
+#> 204        8        6        2        8   -4       28      18  15       36
+#> 205        8        7        6        5   -4       32      26  97       25
+#> 206       10        5        8        4   -4       31      13  96       21
+#> 207        5        6        6        6   -4       18      15   8       37
+#> 208       11        7        7       97   -4       -4      15  15       32
+#> 209        8        8        2        5   -4       -4      24   3       97
+#> 210        8        7       12        6   -4       29      17   9       28
+#> 211       -4       -4       -4       -4   68       -4      17  15       -4
+#> 212       -4       -4       -4       -4   70       -4       6   8       -4
+#> 213       -4       -4       -4       -4   42       -4      26  16       -4
+#> 214       -4       -4       -4       -4   36       -4       9  17       -4
+#> 215       -4       -4       -4       -4   38       -4       7   0       -4
+#> 216       -4       -4       -4       -4   57       -4      21  97       -4
+#> 217        7        7        7        4   -4       98      23  12       25
+#> 218        8        6        6        3   -4       97      20  13       26
+#> 219        4        9       97       96   -4       31       7   5       19
+#> 220        5        8        5        4   -4       32      96  15       10
+#> 221        6        7        5        5   -4       32       6  13       26
+#> 222        7        7        9        5   -4       30      26   9       28
+#> 223        5        5        5        8   -4       97      13  16       17
+#> 224        7        4       96       97   -4       -4      16   8       12
+#> 225        6        8        4        5   -4       31       5   4       35
+#> 226       -4       -4       -4       -4    3       -4      13  15       -4
+#> 227        3        6        4        4   -4       31      12   0       30
+#> 228       -4       -4       -4       -4   53       -4      26  97       -4
+#> 229       -4       -4       -4       -4   31       -4      21  26       -4
+#> 230       -4       -4       -4       -4   14       -4      17   0       -4
+#> 231       -4       -4       -4       -4    2       -4      19  17       -4
+#> 232       -4       -4       -4       -4   97       -4      14  13       -4
+#> 233       -4       -4       -4       -4   32       -4      11  11       -4
+#> 234       -4       -4       -4       -4   -4       -4       6  96        9
+#> 235        7        6        5        4   -4       28       5  11       29
+#> 236       10        5        8        4   -4       32      22  10       18
+#> 237       96        8        2        4   -4       30      18  10       34
+#> 238        9        9        4        5   -4       30      15   9       34
+#> 239        5       97        9        0   -4       32       7   2       32
+#> 240        9        9        8        4   -4       27      22  10       27
+#> 241       12        8        7        6   -4       31       9  12        9
+#> 242        8       97        8        5   -4       31      14  10       24
+#> 243       -4       -4       -4       -4   30       -4      22  96       -4
+#> 244       -4       -4       -4       -4   53       -4       2  18       -4
+#> 245       10        7        7        5   -4       30      17  10       35
+#> 246       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 247       98        7        7        5   -4       30      14  13       39
+#> 248       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 249       -4       -4       -4       -4   32       -4      12   8       -4
+#> 250       -4       -4       -4       -4   49       -4       7  14       -4
+#> 251       -4       -4       -4       -4   20       -4      18  13       -4
+#> 252       -4       -4       -4       -4   47       -4      17   9       -4
+#> 253       -4       -4       -4       -4   51       -4      26  15       -4
+#> 254       -4       -4       -4       -4   49       -4      17  13       -4
+#> 255       -4       -4       -4       -4   35       -4       4  21       -4
+#> 256       -4       -4       -4       -4   49       -4      18  96       -4
+#> 257        6        7        9        4   -4       97      31   3       26
+#> 258        6        6        7        4   -4       29      11   5       14
+#> 259        6        0        5        3   -4       31       7  17       29
+#> 260       -4       -4       -4       -4   54       -4      18  13       -4
+#> 261       -4       -4       -4       -4   58       -4      16   9       -4
+#> 262       -4       -4       -4       -4   54       -4      11  11       -4
+#> 263       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 264       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 265       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 266       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 267        6        5        8        5   -4       27      97  20       16
+#> 268       10        8        6        5   -4       -4      24  14       33
+#> 269       11        9       96        5   -4       97      16  22       35
+#> 270       -4       -4       -4       -4   59       -4      17  19       -4
+#> 271       -4       -4       -4       -4   24       -4      24  17       -4
+#> 272        9        4        7        4   -4       21      31  15       29
+#> 273       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 274       97        8        6        5   -4       32      18   9       21
+#> 275       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 276       14        3        4        4   -4       24      95  15       39
+#> 277       -4       -4       -4       -4   18       -4      24  12       -4
+#> 278       -4       -4       -4       -4   96       -4      18  14       -4
+#> 279       -4       -4       -4       -4   39       -4      16   8       -4
+#> 280       -4       -4       -4       -4   41       -4      20  12       -4
+#> 281       -4       -4       -4       -4    4       -4      15  13       -4
+#> 282       -4       -4       -4       -4   37       -4      28  11       -4
+#> 283       -4       -4       -4       -4   95       -4      12  18       -4
+#> 284       -4       -4       -4       -4   22       -4      20  14       -4
+#> 285       -4       -4       -4       -4   52       -4      15   3       -4
+#> 286       -4       -4       -4       -4   -4       -4       4   0       17
+#> 287       -4       -4       -4       -4   -4       -4      23  12       13
+#> 288        8        6        6        5   -4       18      12  10       25
+#> 289        8        9        9        6   -4       32      17  12       26
+#> 290        5        9        8       97   -4       32      23  16       26
+#> 291        7       96       12        5   -4       -4       4  16       18
+#> 292        9       97        4        5   -4       -4      18  12       30
+#> 293       11        6        5        5   -4       18      14  11       22
+#> 294       -4       -4       -4       -4   38       -4      24  15       -4
+#> 295       -4       -4       -4       -4   95       -4       8  97       -4
+#> 296       -4       -4       -4       -4   28       -4      14   8       -4
+#> 297        5        8        8        6   -4       29      15  12       34
+#> 298       97        6        8        5   -4       32      24  10       31
+#> 299        5        4        3        7   -4       32      24  12       42
+#> 300       11        8        6        6   -4       28      17  18       23
+#> 301       -4       -4       -4       -4   62       -4      11  22       -4
+#> 302       -4       -4       -4       -4   58       -4      14  14       -4
+#> 303       -4       -4       -4       -4   58       -4       0  17       -4
+#> 304       -4       -4       -4       -4   96       -4      27  11       -4
+#> 305        8        5        2        2   -4       31      96  16       24
+#> 306       -4       -4       -4       -4   15       -4      10  16       -4
+#> 307       -4       -4       -4       -4   29       -4       5  10       -4
+#> 308       -4       -4       -4       -4   95       -4      23  15       -4
+#> 309       -4       -4       -4       -4   67       -4       9  22       -4
+#> 310       -4       -4       -4       -4   22       -4      98  11       -4
+#> 311       -4       -4       -4       -4   40       -4      24  18       -4
+#> 312       -4       -4       -4       -4   34       -4      19   7       -4
+#> 313       -4       -4       -4       -4   57       -4      21  15       -4
+#> 314       -4       -4       -4       -4   64       -4      26   5       -4
+#> 315       -4       -4       -4       -4   39       -4      30   7       -4
+#> 316       -4       -4       -4       -4   -4       -4      -4  -4       -4
+#> 317       -4       -4       -4       -4   35       -4      20  14       -4
+#> 318       -4       -4       -4       -4   46       -4      16   5       -4
+#> 319       -4       -4       -4       -4   97       -4      17  20       -4
+#> 320       -4       -4       -4       -4   18       -4      19  10       -4
+#> 321       -4       -4       -4       -4    0       -4      30  10       -4
+#> 322       -4       -4       -4       -4   42       -4      12  13       -4
+#> 323       -4       -4       -4       -4   96       -4      22   9       -4
+#> 324       -4       -4       -4       -4   97       -4      17  21       -4
+#> 325       -4       -4       -4       -4   46       -4      28  10       -4
+#> 326       -4       -4       -4       -4   56       -4       6   6       -4
+#> 327       -4       -4       -4       -4   31       -4      13  16       -4
+#> 328       -4       -4       -4       -4   72       -4      18  97       -4
+#> 329       10        7        8        6   -4       31      20  13       25
+#> 330       97        7        4        5   -4       32      21  20       40
+#> 331       -4       -4       -4       -4   46       -4      97  17       -4
+#> 332       -4       -4       -4       -4    6       -4      13   3       -4
+#> 333       -4       -4       -4       -4   58       -4       9  10       -4
+#> 334       -4       -4       -4       -4   97       -4      96  16       -4
+#> 335       -4       -4       -4       -4   35       -4      11   9       -4
+#> 336       -4       -4       -4       -4   41       -4      28  11       -4
+#> 337       -4       -4       -4       -4   54       -4      19  15       -4
+#> 338       -4       -4       -4       -4   60       -4      19  18       -4
+#> 339       -4       -4       -4       -4   10       -4      16  16       -4
+#> 340       -4       -4       -4       -4   59       -4      15   6       -4
+#> 341       -4       -4       -4       -4   59       -4      22  12       -4
+#> 342       -4       -4       -4       -4   -4       -4      19   5       31
+#> 343       -4       -4       -4       -4   -4       -4      31   6       15
+#> 344       -4       -4       -4       -4   -4       -4      18  15       16
+#>     UDSVERFC UDSVERLC UDSBENTC UDSBENTD CRAFTVRS CRAFTURS CRAFTDVR CRAFTDRE
+#> 1         -4       -4       -4       -4       -4       -4       -4       -4
+#> 2         -4       -4       -4       -4       -4       -4       -4       -4
+#> 3         -4       -4       -4       -4       -4       -4       -4       -4
+#> 4         -4       -4       -4       -4       -4       -4       -4       -4
+#> 5         -4       -4       -4       -4       -4       -4       -4       -4
+#> 6         -4       -4       -4       -4       -4       -4       -4       -4
+#> 7         -4       -4       -4       -4       -4       -4       -4       -4
+#> 8         -4       -4       -4       -4       -4       -4       -4       -4
+#> 9         -4       -4       -4       -4       -4       -4       -4       -4
+#> 10        -4       -4       -4       -4       -4       -4       -4       -4
+#> 11        96        8       14       11       20        6       21       11
+#> 12        -4       -4       -4       -4       -4       -4       -4       -4
+#> 13        -4       -4       -4       -4       -4       -4       -4       -4
+#> 14        -4       -4       -4       -4       -4       -4       -4       -4
+#> 15        -4       -4       -4       -4       -4       -4       -4       -4
+#> 16        -4       -4       -4       -4       -4       -4       -4       -4
+#> 17        24        7       17        2       97       97       18        5
+#> 18        14       23       16       12       32        8       24       96
+#> 19        -4       -4       -4       -4       -4       -4       -4       -4
+#> 20        -4       -4       -4       -4       -4       -4       -4       -4
+#> 21        -4       -4       -4       -4       -4       -4       -4       -4
+#> 22        20       17       17        8       27       18       10       12
+#> 23        97       97       12       13       27       21        0       96
+#> 24        -4       -4       -4       -4       -4       -4       -4       -4
+#> 25        -4       -4       -4       -4       -4       -4       -4       -4
+#> 26        -4       -4       -4       -4       -4       -4       -4       -4
+#> 27        -4       -4       -4       -4       -4       -4       -4       -4
+#> 28        -4       -4       -4       -4       -4       -4       -4       -4
+#> 29        -4       -4       -4       -4       -4       -4       -4       -4
+#> 30        -4       -4       -4       -4       -4       -4       -4       -4
+#> 31        -4       -4       -4       -4       -4       -4       -4       -4
+#> 32        -4       -4       -4       -4       -4       -4       -4       -4
+#> 33        -4       -4       -4       -4       -4       -4       -4       -4
+#> 34        -4       -4       -4       -4       -4       -4       -4       -4
+#> 35        98        8       97        7       97       19        7       13
+#> 36         1       22       15       10       30       97       26        3
+#> 37        -4       -4       -4       -4       -4       -4       -4       -4
+#> 38         8       13       16        3       21        9       26        5
+#> 39        -4       -4       -4       -4       -4       -4       -4       -4
+#> 40        -4       -4       -4       -4       -4       -4       -4       -4
+#> 41        -4       -4       -4       -4       -4       -4       -4       -4
+#> 42        -4       -4       -4       -4       -4       -4       -4       -4
+#> 43        -4       -4       -4       -4       -4       -4       -4       -4
+#> 44        -4       -4       -4       -4       -4       -4       -4       -4
+#> 45        -4       -4       -4       -4       -4       -4       -4       -4
+#> 46        13       24       16       12       22       17        0       97
+#> 47        23       18       17        9       19       15       20       11
+#> 48        -4       -4       -4       -4       -4       -4       -4       -4
+#> 49         9        6       17       13       21       18       20       16
+#> 50        -4       -4       -4       -4       -4       -4       -4       -4
+#> 51        -4       -4       -4       -4       -4       -4       -4       -4
+#> 52        -4       -4       -4       -4       -4       -4       -4       -4
+#> 53        18        6       14       16       -4       -4       -4       -4
+#> 54         8       14       17       10        5       23        5        6
+#> 55        -4       -4       -4       -4       -4       -4       -4       -4
+#> 56        -4       -4       -4       -4       -4       -4       -4       -4
+#> 57        -4       -4       -4       -4       -4       -4       -4       -4
+#> 58        -4       -4       -4       -4       -4       -4       -4       -4
+#> 59        -4       -4       -4       -4       -4       -4       -4       -4
+#> 60        -4       -4       -4       -4       -4       -4       -4       -4
+#> 61        -4       -4       -4       -4       -4       -4       -4       -4
+#> 62        -4       -4       -4       -4       -4       -4       -4       -4
+#> 63        -4       -4       -4       -4       -4       -4       -4       -4
+#> 64        -4       -4       -4       -4       -4       -4       -4       -4
+#> 65        -4       -4       -4       -4       -4       -4       -4       -4
+#> 66        -4       -4       -4       -4       -4       -4       -4       -4
+#> 67        -4       -4       -4       -4       -4       -4       -4       -4
+#> 68        -4       -4       -4       -4       -4       -4       -4       -4
+#> 69        -4       -4       -4       -4       -4       -4       -4       -4
+#> 70        11       15       13       96       13       96       24        9
+#> 71        14       11       11       10       97       97       14        0
+#> 72        -4       -4       -4       -4       -4       -4       -4       -4
+#> 73        -4       -4       -4       -4       -4       -4       -4       -4
+#> 74        -4       -4       -4       -4       -4       -4       -4       -4
+#> 75        -4       -4       -4       -4       -4       -4       -4       -4
+#> 76        -4       -4       -4       -4       -4       -4       -4       -4
+#> 77        -4       -4       -4       -4       -4       -4       -4       -4
+#> 78        15        9       13        0       28       13       27       18
+#> 79         9       14       14        9       28       19       12       17
+#> 80         8       16       16       15       97       19        3       14
+#> 81        10       18        3        4       19       19       97       13
+#> 82        -4       -4       -4       -4       -4       -4       -4       -4
+#> 83        -4       -4       -4       -4       -4       -4       -4       -4
+#> 84        -4       -4       -4       -4       -4       -4       -4       -4
+#> 85        -4       -4       -4       -4       -4       -4       -4       -4
+#> 86        -4       -4       -4       -4       -4       -4       -4       -4
+#> 87        -4       -4       -4       -4       -4       -4       -4       -4
+#> 88        -4       -4       -4       -4       -4       -4       -4       -4
+#> 89        -4       -4       -4       -4       -4       -4       -4       -4
+#> 90        -4       -4       -4       -4       -4       -4       -4       -4
+#> 91        -4       -4       -4       -4       -4       -4       -4       -4
+#> 92        12       21       15        4       21       15       25        2
+#> 93        16        9       17       13       10       13       24       12
+#> 94        15       11       11       10       13       20       96       13
+#> 95        10        8       15       13       24        9       31        0
+#> 96        18       11       13       14       12       19       97       13
+#> 97        -4       -4       -4       -4       -4       -4       -4       -4
+#> 98        -4       -4       -4       -4       -4       -4       -4       -4
+#> 99        -4       -4       -4       -4       -4       -4       -4       -4
+#> 100       -4       -4       -4       -4       -4       -4       -4       -4
+#> 101       -4       -4       -4       -4       -4       -4       -4       -4
+#> 102       -4       -4       -4       -4       -4       -4       -4       -4
+#> 103        6        9       13       11       24       97        1       11
+#> 104       96       18       17       96       27       16       24       15
+#> 105       -4       -4       -4       -4       -4       -4       -4       -4
+#> 106       -4       -4       -4       -4       -4       -4       -4       -4
+#> 107       -4       -4       -4       -4       -4       -4       -4       -4
+#> 108       -4       -4       -4       -4       -4       -4       -4       -4
+#> 109       -4       -4       -4       -4       -4       -4       -4       -4
+#> 110       -4       -4       -4       -4       -4       -4       -4       -4
+#> 111       -4       -4       -4       -4       -4       -4       -4       -4
+#> 112       -4       -4       -4       -4       -4       -4       -4       -4
+#> 113       16       97       17       14       28       10       15       22
+#> 114       12       10       17        4       14        5       17       22
+#> 115       12        7       16        5       23       15       24       14
+#> 116       -4       -4       -4       -4       -4       -4       -4       -4
+#> 117       -4       -4       -4       -4       -4       -4       -4       -4
+#> 118        3       15       12       97       17       15        8       15
+#> 119       12       97       13       17       25       14       21        6
+#> 120       13       20       16       12       27       97       20        0
+#> 121       11       10       96        0       16       15       34        0
+#> 122       16       97       -4       -4       13       12        9       21
+#> 123       11       12       13        8       28       18       23       97
+#> 124       14        7       16        8        5       14       10        9
+#> 125       10       15       15       11       15       13        6       11
+#> 126       18       12       12       14        5       21        6       14
+#> 127       17       12        7        6       24       17       16       19
+#> 128       -4       -4       -4       -4       -4       -4       -4       -4
+#> 129       -4       -4       -4       -4       -4       -4       -4       -4
+#> 130       -4       -4       -4       -4       -4       -4       -4       -4
+#> 131       -4       -4       -4       -4       -4       -4       -4       -4
+#> 132       13       15       95       95       11       17       14       17
+#> 133       18       12       17        6       21       15        8        5
+#> 134        8       97       14        0        9        4       97       10
+#> 135       -4       -4       -4       -4       -4       -4       -4       -4
+#> 136       15        8       15       12        0        5        0        7
+#> 137       17        8       16        9       24       11       23        1
+#> 138       15        9       17        9       28       10       14       14
+#> 139       -4       -4       -4       -4       -4       -4       -4       -4
+#> 140       -4       -4       -4       -4       -4       -4       -4       -4
+#> 141       11       10       15       14       -4       -4       -4       -4
+#> 142        7       18       17        2        0       19       20       11
+#> 143       15       10       16       12       18        6       21       13
+#> 144       17       96       15        5       12       15        1        8
+#> 145       22       97       16       15       22       13       11       97
+#> 146       26       13       -4       -4       21       15        4       18
+#> 147       20       18       17       11       28       20       21       12
+#> 148       16       15       17       13       10       13       97       18
+#> 149       12        2       15       12       29       14       27       18
+#> 150       -4       -4       -4       -4       -4       -4       -4       -4
+#> 151        6       11       -4       -4       25       15       13       15
+#> 152       17        6       17        9        4       97       17        7
+#> 153       -4       -4       -4       -4       -4       -4       -4       -4
+#> 154       -4       -4       -4       -4       -4       -4       -4       -4
+#> 155       -4       -4       -4       -4       -4       -4       -4       -4
+#> 156       -4       -4       -4       -4       -4       -4       -4       -4
+#> 157       -4       -4       -4       -4       -4       -4       -4       -4
+#> 158       -4       -4       -4       -4       -4       -4       -4       -4
+#> 159       -4       -4       -4       -4       -4       -4       -4       -4
+#> 160       -4       -4       -4       -4       -4       -4       -4       -4
+#> 161       -4       -4       -4       -4       -4       -4       -4       -4
+#> 162       -4       -4       -4       -4       -4       -4       -4       -4
+#> 163       -4       -4       -4       -4       -4       -4       -4       -4
+#> 164       -4       -4       -4       -4       -4       -4       -4       -4
+#> 165       -4       -4       -4       -4       -4       -4       -4       -4
+#> 166       -4       -4       -4       -4       -4       -4       -4       -4
+#> 167       -4       -4       -4       -4       -4       -4       -4       -4
+#> 168       -4       -4       -4       -4       -4       -4       -4       -4
+#> 169       -4       -4       -4       -4       -4       -4       -4       -4
+#> 170       -4       -4       -4       -4       -4       -4       -4       -4
+#> 171       -4       -4       -4       -4       -4       -4       -4       -4
+#> 172       11       13       15        8        6       16       24       16
+#> 173        9        3       14       12       34       17        1       96
+#> 174       14        5       16       15        8       21       15        2
+#> 175       -4       -4       -4       -4       -4       -4       -4       -4
+#> 176       -4       -4       -4       -4       -4       -4       -4       -4
+#> 177       -4       -4       -4       -4       -4       -4       -4       -4
+#> 178       13       19       12        0        5        6       18       12
+#> 179       -4       -4       -4       -4       -4       -4       -4       -4
+#> 180       -4       -4       -4       -4       -4       -4       -4       -4
+#> 181       -4       -4       -4       -4       -4       -4       -4       -4
+#> 182       -4       -4       -4       -4       -4       -4       -4       -4
+#> 183       -4       -4       -4       -4       -4       -4       -4       -4
+#> 184       -4       -4       -4       -4       -4       -4       -4       -4
+#> 185       -4       -4       -4       -4       -4       -4       -4       -4
+#> 186        9       15       15        0       26       11       97       16
+#> 187       -4       -4       -4       -4       -4       -4       -4       -4
+#> 188       -4       -4       -4       -4       -4       -4       -4       -4
+#> 189       -4       -4       -4       -4       -4       -4       -4       -4
+#> 190       -4       -4       -4       -4       -4       -4       -4       -4
+#> 191       -4       -4       -4       -4       -4       -4       -4       -4
+#> 192       -4       -4       -4       -4       -4       -4       -4       -4
+#> 193       -4       -4       -4       -4       -4       -4       -4       -4
+#> 194       -4       -4       -4       -4       -4       -4       -4       -4
+#> 195       -4       -4       -4       -4       -4       -4       -4       -4
+#> 196       -4       -4       -4       -4       -4       -4       -4       -4
+#> 197       -4       -4       -4       -4       -4       -4       -4       -4
+#> 198       -4       -4       -4       -4       -4       -4       -4       -4
+#> 199       10       14       14       16       21       18       17       19
+#> 200       -4       -4       -4       -4       -4       -4       -4       -4
+#> 201       -4       -4       -4       -4       -4       -4       -4       -4
+#> 202       -4       -4       -4       -4       -4       -4       -4       -4
+#> 203       -4       -4       -4       -4       -4       -4       -4       -4
+#> 204       18        5       97        8        5       96       22       12
+#> 205       97        6       15        3        8       16       15       97
+#> 206       16       17        9       15       34        5       26        0
+#> 207        8       17       16       12       35        0       30       15
+#> 208        6       21       -4       -4       29       97        0       97
+#> 209       14       13       -4       -4       27       16       97       17
+#> 210        7       12       17        7        2       19        8       17
+#> 211       -4       -4       -4       -4       -4       -4       -4       -4
+#> 212       -4       -4       -4       -4       -4       -4       -4       -4
+#> 213       -4       -4       -4       -4       -4       -4       -4       -4
+#> 214       -4       -4       -4       -4       -4       -4       -4       -4
+#> 215       -4       -4       -4       -4       -4       -4       -4       -4
+#> 216       -4       -4       -4       -4       -4       -4       -4       -4
+#> 217       16       14       17        7       25       21        4       14
+#> 218        7       18       17       13       96       16       20       11
+#> 219        6       12       16        5       18       13        0       25
+#> 220       33       16       15        9       17       19       26        6
+#> 221       14       13       16        2       19       17        9       12
+#> 222        9       11       13       12       11       96       21        8
+#> 223       97       15       15       10       96        0        0       15
+#> 224       17       13       -4       -4       14       17        0        0
+#> 225       12        5       14       11       31       21        0        8
+#> 226       -4       -4       -4       -4       -4       -4       -4       -4
+#> 227       10       13       16       96       20       18       12       14
+#> 228       -4       -4       -4       -4       -4       -4       -4       -4
+#> 229       -4       -4       -4       -4       -4       -4       -4       -4
+#> 230       -4       -4       -4       -4       -4       -4       -4       -4
+#> 231       -4       -4       -4       -4       -4       -4       -4       -4
+#> 232       -4       -4       -4       -4       -4       -4       -4       -4
+#> 233       -4       -4       -4       -4       -4       -4       -4       -4
+#> 234       22        7       17       14       -4       -4       -4       -4
+#> 235       17       18       16        0       13       20       17        3
+#> 236       12       10       16       12       19       10       11       19
+#> 237       17       14       15       13       23       22       17        5
+#> 238       10       12       15       16        8       21       21        7
+#> 239        9       17       14       13       14       15       13        1
+#> 240        9       17       16       12       15       14       97       96
+#> 241       23       15       13       14       97       16       26       12
+#> 242       97       12       16        6       24       18       14       24
+#> 243       -4       -4       -4       -4       -4       -4       -4       -4
+#> 244       -4       -4       -4       -4       -4       -4       -4       -4
+#> 245        9        6       16       13       12       17       30       17
+#> 246       -4       -4       -4       -4       -4       -4       -4       -4
+#> 247        9       12       14       12       33       17        0       21
+#> 248       -4       -4       -4       -4       -4       -4       -4       -4
+#> 249       -4       -4       -4       -4       -4       -4       -4       -4
+#> 250       -4       -4       -4       -4       -4       -4       -4       -4
+#> 251       -4       -4       -4       -4       -4       -4       -4       -4
+#> 252       -4       -4       -4       -4       -4       -4       -4       -4
+#> 253       -4       -4       -4       -4       -4       -4       -4       -4
+#> 254       -4       -4       -4       -4       -4       -4       -4       -4
+#> 255       -4       -4       -4       -4       -4       -4       -4       -4
+#> 256       -4       -4       -4       -4       -4       -4       -4       -4
+#> 257       15       18       14       12       31       97       12       10
+#> 258        4       17       97       13       27       17       22       16
+#> 259       16        7       15        0       18       21       13       17
+#> 260       -4       -4       -4       -4       -4       -4       -4       -4
+#> 261       -4       -4       -4       -4       -4       -4       -4       -4
+#> 262       -4       -4       -4       -4       -4       -4       -4       -4
+#> 263       -4       -4       -4       -4       -4       -4       -4       -4
+#> 264       -4       -4       -4       -4       -4       -4       -4       -4
+#> 265       -4       -4       -4       -4       -4       -4       -4       -4
+#> 266       -4       -4       -4       -4       -4       -4       -4       -4
+#> 267        9       12       16       12       22       10        0       96
+#> 268        6       96       -4       -4       23       12       12       16
+#> 269       19       14       17       98       98       16       12       96
+#> 270       -4       -4       -4       -4       -4       -4       -4       -4
+#> 271       -4       -4       -4       -4       -4       -4       -4       -4
+#> 272       12        9       16        7       21       10       29       18
+#> 273       -4       -4       -4       -4       -4       -4       -4       -4
+#> 274        9        1       16       10       14       21        0       19
+#> 275       -4       -4       -4       -4       -4       -4       -4       -4
+#> 276        7        9       16        0       24       12       26       14
+#> 277       -4       -4       -4       -4       -4       -4       -4       -4
+#> 278       -4       -4       -4       -4       -4       -4       -4       -4
+#> 279       -4       -4       -4       -4       -4       -4       -4       -4
+#> 280       -4       -4       -4       -4       -4       -4       -4       -4
+#> 281       -4       -4       -4       -4       -4       -4       -4       -4
+#> 282       -4       -4       -4       -4       -4       -4       -4       -4
+#> 283       -4       -4       -4       -4       -4       -4       -4       -4
+#> 284       -4       -4       -4       -4       -4       -4       -4       -4
+#> 285       -4       -4       -4       -4       -4       -4       -4       -4
+#> 286       20       16       16       96       -4       -4       -4       -4
+#> 287       16       18       15       10       -4       -4       -4       -4
+#> 288       12       13       16       10       96       15       20        0
+#> 289        8       10       15        7       28        6       22       19
+#> 290       15       11       15        9       11       12       25        1
+#> 291       12       11       -4       -4        9        3        5        8
+#> 292       19       15       -4       -4       19       16       26       11
+#> 293       18       23       15       10       23        8       17       14
+#> 294       -4       -4       -4       -4       -4       -4       -4       -4
+#> 295       -4       -4       -4       -4       -4       -4       -4       -4
+#> 296       -4       -4       -4       -4       -4       -4       -4       -4
+#> 297       16       15       13        3       25        4       24        9
+#> 298        8       97        5       10       21       20       20       97
+#> 299        8        8       14       97       14       13       19       16
+#> 300       21       97       15        9       11       16       19       98
+#> 301       -4       -4       -4       -4       -4       -4       -4       -4
+#> 302       -4       -4       -4       -4       -4       -4       -4       -4
+#> 303       -4       -4       -4       -4       -4       -4       -4       -4
+#> 304       -4       -4       -4       -4       -4       -4       -4       -4
+#> 305       12       10       15       96       14       97        1       20
+#> 306       -4       -4       -4       -4       -4       -4       -4       -4
+#> 307       -4       -4       -4       -4       -4       -4       -4       -4
+#> 308       -4       -4       -4       -4       -4       -4       -4       -4
+#> 309       -4       -4       -4       -4       -4       -4       -4       -4
+#> 310       -4       -4       -4       -4       -4       -4       -4       -4
+#> 311       -4       -4       -4       -4       -4       -4       -4       -4
+#> 312       -4       -4       -4       -4       -4       -4       -4       -4
+#> 313       -4       -4       -4       -4       -4       -4       -4       -4
+#> 314       -4       -4       -4       -4       -4       -4       -4       -4
+#> 315       -4       -4       -4       -4       -4       -4       -4       -4
+#> 316       -4       -4       -4       -4       -4       -4       -4       -4
+#> 317       -4       -4       -4       -4       -4       -4       -4       -4
+#> 318       -4       -4       -4       -4       -4       -4       -4       -4
+#> 319       -4       -4       -4       -4       -4       -4       -4       -4
+#> 320       -4       -4       -4       -4       -4       -4       -4       -4
+#> 321       -4       -4       -4       -4       -4       -4       -4       -4
+#> 322       -4       -4       -4       -4       -4       -4       -4       -4
+#> 323       -4       -4       -4       -4       -4       -4       -4       -4
+#> 324       -4       -4       -4       -4       -4       -4       -4       -4
+#> 325       -4       -4       -4       -4       -4       -4       -4       -4
+#> 326       -4       -4       -4       -4       -4       -4       -4       -4
+#> 327       -4       -4       -4       -4       -4       -4       -4       -4
+#> 328       -4       -4       -4       -4       -4       -4       -4       -4
+#> 329       15       14       15        4       23        8       16       16
+#> 330        8       17       15       15       26       13        0       16
+#> 331       -4       -4       -4       -4       -4       -4       -4       -4
+#> 332       -4       -4       -4       -4       -4       -4       -4       -4
+#> 333       -4       -4       -4       -4       -4       -4       -4       -4
+#> 334       -4       -4       -4       -4       -4       -4       -4       -4
+#> 335       -4       -4       -4       -4       -4       -4       -4       -4
+#> 336       -4       -4       -4       -4       -4       -4       -4       -4
+#> 337       -4       -4       -4       -4       -4       -4       -4       -4
+#> 338       -4       -4       -4       -4       -4       -4       -4       -4
+#> 339       -4       -4       -4       -4       -4       -4       -4       -4
+#> 340       -4       -4       -4       -4       -4       -4       -4       -4
+#> 341       -4       -4       -4       -4       -4       -4       -4       -4
+#> 342       22       18       13        9       -4       -4       -4       -4
+#> 343       23       22       14       13       -4       -4       -4       -4
+#> 344       16        7       17        7       -4       -4       -4       -4
+#>     REY1REC REY2REC REY3REC REY4REC REY5REC REY6REC REYDREC REYTCOR TRAILB
+#> 1        -4      -4      -4      -4      -4      -4      -4      -4    150
+#> 2        -4      -4      -4      -4      -4      -4      -4      -4     98
+#> 3        -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 4        -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 5        -4      -4      -4      -4      -4      -4      -4      -4     39
+#> 6        -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 7        -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 8        -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 9        -4      -4      -4      -4      -4      -4      -4      -4    212
+#> 10       -4      -4      -4      -4      -4      -4      -4      -4     38
+#> 11       -4      -4      -4      -4      -4      -4      -4      -4    114
+#> 12       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 13       -4      -4      -4      -4      -4      -4      -4      -4    998
+#> 14       -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 15       -4      -4      -4      -4      -4      -4      -4      -4    155
+#> 16       -4      -4      -4      -4      -4      -4      -4      -4     36
+#> 17       -4      -4      -4      -4      -4      -4      -4      -4     38
+#> 18       -4      -4      -4      -4      -4      -4      -4      -4    146
+#> 19       -4      -4      -4      -4      -4      -4      -4      -4     73
+#> 20       -4      -4      -4      -4      -4      -4      -4      -4    183
+#> 21       -4      -4      -4      -4      -4      -4      -4      -4     39
+#> 22       -4      -4      -4      -4      -4      -4      -4      -4     84
+#> 23       -4      -4      -4      -4      -4      -4      -4      -4     70
+#> 24       -4      -4      -4      -4      -4      -4      -4      -4     46
+#> 25       -4      -4      -4      -4      -4      -4      -4      -4     53
+#> 26       -4      -4      -4      -4      -4      -4      -4      -4    138
+#> 27       -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 28       -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 29       -4      -4      -4      -4      -4      -4      -4      -4     38
+#> 30       -4      -4      -4      -4      -4      -4      -4      -4     46
+#> 31       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 32       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 33       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 34       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 35       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 36       -4      -4      -4      -4      -4      -4      -4      -4    136
+#> 37       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 38       -4      -4      -4      -4      -4      -4      -4      -4     97
+#> 39       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 40       -4      -4      -4      -4      -4      -4      -4      -4    106
+#> 41       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 42       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 43       -4      -4      -4      -4      -4      -4      -4      -4    137
+#> 44       -4      -4      -4      -4      -4      -4      -4      -4    125
+#> 45       -4      -4      -4      -4      -4      -4      -4      -4    187
+#> 46       -4      -4      -4      -4      -4      -4      -4      -4    123
+#> 47       -4      -4      -4      -4      -4      -4      -4      -4    998
+#> 48       -4      -4      -4      -4      -4      -4      -4      -4     51
+#> 49       -4      -4      -4      -4      -4      -4      -4      -4    166
+#> 50       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 51       -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 52       -4      -4      -4      -4      -4      -4      -4      -4    112
+#> 53       -4      -4      -4      -4      -4      -4      -4      -4     34
+#> 54       -4      -4      -4      -4      -4      -4      -4      -4    998
+#> 55       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 56       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 57       -4      -4      -4      -4      -4      -4      -4      -4    102
+#> 58       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 59       -4      -4      -4      -4      -4      -4      -4      -4    216
+#> 60       -4      -4      -4      -4      -4      -4      -4      -4     44
+#> 61       -4      -4      -4      -4      -4      -4      -4      -4     69
+#> 62       -4      -4      -4      -4      -4      -4      -4      -4     37
+#> 63       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 64       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 65       -4      -4      -4      -4      -4      -4      -4      -4     95
+#> 66       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 67       -4      -4      -4      -4      -4      -4      -4      -4     84
+#> 68       -4      -4      -4      -4      -4      -4      -4      -4     76
+#> 69       -4      -4      -4      -4      -4      -4      -4      -4     81
+#> 70       -4      -4      -4      -4      -4      -4      -4      -4     89
+#> 71       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 72       -4      -4      -4      -4      -4      -4      -4      -4     62
+#> 73       -4      -4      -4      -4      -4      -4      -4      -4     66
+#> 74       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 75       -4      -4      -4      -4      -4      -4      -4      -4     70
+#> 76       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 77       -4      -4      -4      -4      -4      -4      -4      -4     89
+#> 78       -4      -4      -4      -4      -4      -4      -4      -4     87
+#> 79       -4      -4      -4      -4      -4      -4      -4      -4     84
+#> 80       -4      -4      -4      -4      -4      -4      -4      -4     67
+#> 81       -4      -4      -4      -4      -4      -4      -4      -4    122
+#> 82       -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 83       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 84       -4      -4      -4      -4      -4      -4      -4      -4     84
+#> 85       -4      -4      -4      -4      -4      -4      -4      -4     71
+#> 86       -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 87       -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 88       -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 89       -4      -4      -4      -4      -4      -4      -4      -4     47
+#> 90       -4      -4      -4      -4      -4      -4      -4      -4    102
+#> 91       -4      -4      -4      -4      -4      -4      -4      -4    266
+#> 92       -4      -4      -4      -4      -4      -4      -4      -4     71
+#> 93       -4      -4      -4      -4      -4      -4      -4      -4    104
+#> 94       -4      -4      -4      -4      -4      -4      -4      -4    170
+#> 95       -4      -4      -4      -4      -4      -4      -4      -4     60
+#> 96       -4      -4      -4      -4      -4      -4      -4      -4     79
+#> 97       -4      -4      -4      -4      -4      -4      -4      -4    109
+#> 98       -4      -4      -4      -4      -4      -4      -4      -4     55
+#> 99       -4      -4      -4      -4      -4      -4      -4      -4     80
+#> 100      -4      -4      -4      -4      -4      -4      -4      -4     90
+#> 101      -4      -4      -4      -4      -4      -4      -4      -4    106
+#> 102      -4      -4      -4      -4      -4      -4      -4      -4     59
+#> 103      -4      -4      -4      -4      -4      -4      -4      -4     85
+#> 104      -4      -4      -4      -4      -4      -4      -4      -4    106
+#> 105      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 106      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 107      -4      -4      -4      -4      -4      -4      -4      -4    114
+#> 108      -4      -4      -4      -4      -4      -4      -4      -4     67
+#> 109      -4      -4      -4      -4      -4      -4      -4      -4     66
+#> 110      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 111      -4      -4      -4      -4      -4      -4      -4      -4     25
+#> 112      -4      -4      -4      -4      -4      -4      -4      -4     92
+#> 113      -4      -4      -4      -4      -4      -4      -4      -4     58
+#> 114      -4      -4      -4      -4      -4      -4      -4      -4    164
+#> 115      -4      -4      -4      -4      -4      -4      -4      -4     47
+#> 116      -4      -4      -4      -4      -4      -4      -4      -4    117
+#> 117      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 118      -4      -4      -4      -4      -4      -4      -4      -4    998
+#> 119      -4      -4      -4      -4      -4      -4      -4      -4    154
+#> 120      -4      -4      -4      -4      -4      -4      -4      -4     56
+#> 121      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 122      88      88      88      88      88      88      97      88     -4
+#> 123      -4      -4      -4      -4      -4      -4      -4      -4     90
+#> 124      -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 125      -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 126      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 127      -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 128      -4      -4      -4      -4      -4      -4      -4      -4     52
+#> 129      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 130      -4      -4      -4      -4      -4      -4      -4      -4     96
+#> 131      -4      -4      -4      -4      -4      -4      -4      -4    104
+#> 132      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 133      -4      -4      -4      -4      -4      -4      -4      -4    134
+#> 134      -4      -4      -4      -4      -4      -4      -4      -4     84
+#> 135      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 136      -4      -4      -4      -4      -4      -4      -4      -4    222
+#> 137      -4      -4      -4      -4      -4      -4      -4      -4     80
+#> 138      -4      -4      -4      -4      -4      -4      -4      -4    273
+#> 139      -4      -4      -4      -4      -4      -4      -4      -4    126
+#> 140      -4      -4      -4      -4      -4      -4      -4      -4     46
+#> 141      -4      -4      -4      -4      -4      -4      -4      -4     39
+#> 142      -4      -4      -4      -4      -4      -4      -4      -4     82
+#> 143      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 144      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 145      -4      -4      -4      -4      -4      -4      -4      -4    298
+#> 146      88      88      15      10      88       6      88      88     -4
+#> 147      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 148      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 149      -4      -4      -4      -4      -4      -4      -4      -4     25
+#> 150      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 151      88      88      88      88      15       9      88      88     -4
+#> 152      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 153      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 154      -4      -4      -4      -4      -4      -4      -4      -4     41
+#> 155      -4      -4      -4      -4      -4      -4      -4      -4     45
+#> 156      -4      -4      -4      -4      -4      -4      -4      -4     90
+#> 157      -4      -4      -4      -4      -4      -4      -4      -4     78
+#> 158      -4      -4      -4      -4      -4      -4      -4      -4    145
+#> 159      -4      -4      -4      -4      -4      -4      -4      -4     39
+#> 160      -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 161      -4      -4      -4      -4      -4      -4      -4      -4    201
+#> 162      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 163      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 164      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 165      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 166      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 167      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 168      -4      -4      -4      -4      -4      -4      -4      -4     73
+#> 169      -4      -4      -4      -4      -4      -4      -4      -4     63
+#> 170      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 171      -4      -4      -4      -4      -4      -4      -4      -4     50
+#> 172      -4      -4      -4      -4      -4      -4      -4      -4     81
+#> 173      -4      -4      -4      -4      -4      -4      -4      -4    102
+#> 174      -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 175      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 176      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 177      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 178      -4      -4      -4      -4      -4      -4      -4      -4     33
+#> 179      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 180      -4      -4      -4      -4      -4      -4      -4      -4     74
+#> 181      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 182      -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 183      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 184      -4      -4      -4      -4      -4      -4      -4      -4    115
+#> 185      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 186      -4      -4      -4      -4      -4      -4      -4      -4     42
+#> 187      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 188      -4      -4      -4      -4      -4      -4      -4      -4    111
+#> 189      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 190      -4      -4      -4      -4      -4      -4      -4      -4     62
+#> 191      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 192      -4      -4      -4      -4      -4      -4      -4      -4     67
+#> 193      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 194      -4      -4      -4      -4      -4      -4      -4      -4    178
+#> 195      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 196      -4      -4      -4      -4      -4      -4      -4      -4    135
+#> 197      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 198      -4      -4      -4      -4      -4      -4      -4      -4     93
+#> 199      -4      -4      -4      -4      -4      -4      -4      -4     74
+#> 200      -4      -4      -4      -4      -4      -4      -4      -4    106
+#> 201      -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 202      -4      -4      -4      -4      -4      -4      -4      -4    193
+#> 203      -4      -4      -4      -4      -4      -4      -4      -4    161
+#> 204      -4      -4      -4      -4      -4      -4      -4      -4     34
+#> 205      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 206      -4      -4      -4      -4      -4      -4      -4      -4     51
+#> 207      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 208      88      12      88       6      88      88      88      15     -4
+#> 209      88      95      88      88      88      88      88      88     -4
+#> 210      -4      -4      -4      -4      -4      -4      -4      -4     72
+#> 211      -4      -4      -4      -4      -4      -4      -4      -4     79
+#> 212      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 213      -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 214      -4      -4      -4      -4      -4      -4      -4      -4     61
+#> 215      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 216      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 217      -4      -4      -4      -4      -4      -4      -4      -4    120
+#> 218      -4      -4      -4      -4      -4      -4      -4      -4    126
+#> 219      -4      -4      -4      -4      -4      -4      -4      -4     63
+#> 220      -4      -4      -4      -4      -4      -4      -4      -4     68
+#> 221      -4      -4      -4      -4      -4      -4      -4      -4     33
+#> 222      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 223      -4      -4      -4      -4      -4      -4      -4      -4     47
+#> 224      88       7      88      88      88       7      88      14     -4
+#> 225      -4      -4      -4      -4      -4      -4      -4      -4    134
+#> 226      -4      -4      -4      -4      -4      -4      -4      -4    169
+#> 227      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 228      -4      -4      -4      -4      -4      -4      -4      -4     86
+#> 229      -4      -4      -4      -4      -4      -4      -4      -4     50
+#> 230      -4      -4      -4      -4      -4      -4      -4      -4     96
+#> 231      -4      -4      -4      -4      -4      -4      -4      -4     69
+#> 232      -4      -4      -4      -4      -4      -4      -4      -4    205
+#> 233      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 234      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 235      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 236      -4      -4      -4      -4      -4      -4      -4      -4    100
+#> 237      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 238      -4      -4      -4      -4      -4      -4      -4      -4    115
+#> 239      -4      -4      -4      -4      -4      -4      -4      -4     68
+#> 240      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 241      -4      -4      -4      -4      -4      -4      -4      -4     49
+#> 242      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 243      -4      -4      -4      -4      -4      -4      -4      -4     85
+#> 244      -4      -4      -4      -4      -4      -4      -4      -4    101
+#> 245      -4      -4      -4      -4      -4      -4      -4      -4     60
+#> 246      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 247      -4      -4      -4      -4      -4      -4      -4      -4     85
+#> 248      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 249      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 250      -4      -4      -4      -4      -4      -4      -4      -4    103
+#> 251      -4      -4      -4      -4      -4      -4      -4      -4    998
+#> 252      -4      -4      -4      -4      -4      -4      -4      -4    119
+#> 253      -4      -4      -4      -4      -4      -4      -4      -4     62
+#> 254      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 255      -4      -4      -4      -4      -4      -4      -4      -4     62
+#> 256      -4      -4      -4      -4      -4      -4      -4      -4    120
+#> 257      -4      -4      -4      -4      -4      -4      -4      -4    995
+#> 258      -4      -4      -4      -4      -4      -4      -4      -4     63
+#> 259      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 260      -4      -4      -4      -4      -4      -4      -4      -4     78
+#> 261      -4      -4      -4      -4      -4      -4      -4      -4     50
+#> 262      -4      -4      -4      -4      -4      -4      -4      -4    288
+#> 263      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 264      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 265      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 266      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 267      -4      -4      -4      -4      -4      -4      -4      -4     61
+#> 268      88      88      88      88       9      88      88      88     -4
+#> 269      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 270      -4      -4      -4      -4      -4      -4      -4      -4    107
+#> 271      -4      -4      -4      -4      -4      -4      -4      -4     63
+#> 272      -4      -4      -4      -4      -4      -4      -4      -4     63
+#> 273      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 274      -4      -4      -4      -4      -4      -4      -4      -4     95
+#> 275      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 276      -4      -4      -4      -4      -4      -4      -4      -4    233
+#> 277      -4      -4      -4      -4      -4      -4      -4      -4     57
+#> 278      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 279      -4      -4      -4      -4      -4      -4      -4      -4    214
+#> 280      -4      -4      -4      -4      -4      -4      -4      -4    221
+#> 281      -4      -4      -4      -4      -4      -4      -4      -4    214
+#> 282      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 283      -4      -4      -4      -4      -4      -4      -4      -4     53
+#> 284      -4      -4      -4      -4      -4      -4      -4      -4    263
+#> 285      -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 286      -4      -4      -4      -4      -4      -4      -4      -4    119
+#> 287      -4      -4      -4      -4      -4      -4      -4      -4     93
+#> 288      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 289      -4      -4      -4      -4      -4      -4      -4      -4     85
+#> 290      -4      -4      -4      -4      -4      -4      -4      -4     64
+#> 291      88      88      88      88      88      88      88      88     -4
+#> 292      88      88      88      88      13      88      88      88     -4
+#> 293      -4      -4      -4      -4      -4      -4      -4      -4     60
+#> 294      -4      -4      -4      -4      -4      -4      -4      -4    117
+#> 295      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 296      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 297      -4      -4      -4      -4      -4      -4      -4      -4     74
+#> 298      -4      -4      -4      -4      -4      -4      -4      -4    262
+#> 299      -4      -4      -4      -4      -4      -4      -4      -4    154
+#> 300      -4      -4      -4      -4      -4      -4      -4      -4     75
+#> 301      -4      -4      -4      -4      -4      -4      -4      -4    272
+#> 302      -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 303      -4      -4      -4      -4      -4      -4      -4      -4     89
+#> 304      -4      -4      -4      -4      -4      -4      -4      -4     70
+#> 305      -4      -4      -4      -4      -4      -4      -4      -4    207
+#> 306      -4      -4      -4      -4      -4      -4      -4      -4     70
+#> 307      -4      -4      -4      -4      -4      -4      -4      -4    220
+#> 308      -4      -4      -4      -4      -4      -4      -4      -4    122
+#> 309      -4      -4      -4      -4      -4      -4      -4      -4     46
+#> 310      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 311      -4      -4      -4      -4      -4      -4      -4      -4     87
+#> 312      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 313      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 314      -4      -4      -4      -4      -4      -4      -4      -4     96
+#> 315      -4      -4      -4      -4      -4      -4      -4      -4    115
+#> 316      -4      -4      -4      -4      -4      -4      -4      -4     -4
+#> 317      -4      -4      -4      -4      -4      -4      -4      -4     95
+#> 318      -4      -4      -4      -4      -4      -4      -4      -4    137
+#> 319      -4      -4      -4      -4      -4      -4      -4      -4    144
+#> 320      -4      -4      -4      -4      -4      -4      -4      -4     43
+#> 321      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 322      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 323      -4      -4      -4      -4      -4      -4      -4      -4    300
+#> 324      -4      -4      -4      -4      -4      -4      -4      -4     86
+#> 325      -4      -4      -4      -4      -4      -4      -4      -4     60
+#> 326      -4      -4      -4      -4      -4      -4      -4      -4    997
+#> 327      -4      -4      -4      -4      -4      -4      -4      -4    266
+#> 328      -4      -4      -4      -4      -4      -4      -4      -4     92
+#> 329      -4      -4      -4      -4      -4      -4      -4      -4    291
+#> 330      -4      -4      -4      -4      -4      -4      -4      -4     96
+#> 331      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 332      -4      -4      -4      -4      -4      -4      -4      -4     88
+#> 333      -4      -4      -4      -4      -4      -4      -4      -4     42
+#> 334      -4      -4      -4      -4      -4      -4      -4      -4     43
+#> 335      -4      -4      -4      -4      -4      -4      -4      -4    996
+#> 336      -4      -4      -4      -4      -4      -4      -4      -4     59
+#> 337      -4      -4      -4      -4      -4      -4      -4      -4     38
+#> 338      -4      -4      -4      -4      -4      -4      -4      -4    148
+#> 339      -4      -4      -4      -4      -4      -4      -4      -4     94
+#> 340      -4      -4      -4      -4      -4      -4      -4      -4     97
+#> 341      -4      -4      -4      -4      -4      -4      -4      -4     77
+#> 342      -4      -4      -4      -4      -4      -4      -4      -4     50
+#> 343      -4      -4      -4      -4      -4      -4      -4      -4     51
+#> 344      -4      -4      -4      -4      -4      -4      -4      -4    300
+#>     TRAILBLI TRAILBRR MOCACLOC MOCACLOH MOCACLON OTRAILB OTRLBRR OTRLBLI
+#> 1         -4       -4       -4       -4       -4      -4      -4      -4
+#> 2         96        0       -4       -4       -4      -4      -4      -4
+#> 3          6        1       -4       -4       -4      -4      -4      -4
+#> 4         24        0       -4       -4       -4      -4      -4      -4
+#> 5         24        0       -4       -4       -4      -4      -4      -4
+#> 6         24        3       -4       -4       -4      -4      -4      -4
+#> 7         24        1       -4       -4       -4      -4      -4      -4
+#> 8         -4       -4       -4       -4       -4      -4      -4      -4
+#> 9         24        0       -4       -4       -4      -4      -4      -4
+#> 10        21        0       -4       -4       -4      -4      -4      -4
+#> 11        18       95        1        1        1      -4      -4      -4
+#> 12        -4       -4       -4       -4       -4      -4      -4      -4
+#> 13        24        1       -4       -4       -4      -4      -4      -4
+#> 14        24        2       -4       -4       -4      -4      -4      -4
+#> 15        24        2       -4       -4       -4      -4      -4      -4
+#> 16        24       97       -4       -4       -4      -4      -4      -4
+#> 17        24        0        1        1        1      -4      -4      -4
+#> 18        24        1        1        0        1      -4      -4      -4
+#> 19        24        1       -4       -4       -4      -4      -4      -4
+#> 20        97        0       -4       -4       -4      -4      -4      -4
+#> 21        24       96       -4       -4       -4      -4      -4      -4
+#> 22        24        1        1        1        1      -4      -4      -4
+#> 23        95        1        1        1        1      -4      -4      -4
+#> 24        24        1       -4       -4       -4      -4      -4      -4
+#> 25        -4       -4       -4       -4       -4      -4      -4      -4
+#> 26        24        5       -4       -4       -4      -4      -4      -4
+#> 27        -4        1       -4       -4       -4      -4      -4      -4
+#> 28        24        0       -4       -4       -4      -4      -4      -4
+#> 29        24        0       -4       -4       -4      -4      -4      -4
+#> 30        24        5       -4       -4       -4      -4      -4      -4
+#> 31        96        7       -4       -4       -4      -4      -4      -4
+#> 32        -4       -4       -4       -4       -4      -4      -4      -4
+#> 33        -4       -4       -4       -4       -4      -4      -4      -4
+#> 34        -4       -4       -4       -4       -4      -4      -4      -4
+#> 35        24        2        1        1        1      -4      -4      -4
+#> 36        24        1        1        1        0      -4      -4      -4
+#> 37        -4       -4       -4       -4       -4      -4      -4      -4
+#> 38        24        9        1        0        1      -4      -4      -4
+#> 39        -4       -4       -4       -4       -4      -4      -4      -4
+#> 40        -4       -4       -4       -4       -4      -4      -4      -4
+#> 41        -4       -4       -4       -4       -4      -4      -4      -4
+#> 42        -4       -4       -4       -4       -4      -4      -4      -4
+#> 43        24       97       -4       -4       -4      -4      -4      -4
+#> 44        24        0       -4       -4       -4      -4      -4      -4
+#> 45        24       95       -4       -4       -4      -4      -4      -4
+#> 46        96        0        1        0        0      -4      -4      -4
+#> 47        24        0        1        1        1      -4      -4      -4
+#> 48        -4       -4       -4       -4       -4      -4      -4      -4
+#> 49        98        0        1        1       96      -4      -4      -4
+#> 50        -4       -4       -4       -4       -4      -4      -4      -4
+#> 51        -4       -4       -4       -4       -4      -4      -4      -4
+#> 52        97        9       -4       -4       -4      -4      -4      -4
+#> 53        24        0       -4       -4       -4      -4      -4      -4
+#> 54        24        1        1        1        1      -4      -4      -4
+#> 55        -4       -4       -4       -4       -4      -4      -4      -4
+#> 56        -4       -4       -4       -4       -4      -4      -4      -4
+#> 57        24       97       -4       -4       -4      -4      -4      -4
+#> 58        -4       -4       -4       -4       -4      -4      -4      -4
+#> 59        -4       -4       -4       -4       -4      -4      -4      -4
+#> 60        -4       -4       -4       -4       -4      -4      -4      -4
+#> 61        -4       -4       -4       -4       -4      -4      -4      -4
+#> 62        24       96       -4       -4       -4      -4      -4      -4
+#> 63        97        0       -4       -4       -4      -4      -4      -4
+#> 64        24        0       -4       -4       -4      -4      -4      -4
+#> 65        -4       -4       -4       -4       -4      -4      -4      -4
+#> 66        24        0       -4       -4       -4      -4      -4      -4
+#> 67        96       95       -4       -4       -4      -4      -4      -4
+#> 68        24        0       -4       -4       -4      -4      -4      -4
+#> 69        24        0       -4       -4       -4      -4      -4      -4
+#> 70        24        0        1        1        1      -4      -4      -4
+#> 71        96        1        1        1       97      -4      -4      -4
+#> 72        24        0       -4       -4       -4      -4      -4      -4
+#> 73        24        0       -4       -4       -4      -4      -4      -4
+#> 74        24        1       -4       -4       -4      -4      -4      -4
+#> 75        -4       -4       -4       -4       -4      -4      -4      -4
+#> 76        24       96       -4       -4       -4      -4      -4      -4
+#> 77        96        0       -4       -4       -4      -4      -4      -4
+#> 78        96        1        1        1        1      -4      -4      -4
+#> 79        24        9        1        1        0      -4      -4      -4
+#> 80        96        2        1        0        1      -4      -4      -4
+#> 81        24        0        1        1        1      -4      -4      -4
+#> 82        95        1       -4       -4       -4      -4      -4      -4
+#> 83        -4       -4       -4       -4       -4      -4      -4      -4
+#> 84        -4       -4       -4       -4       -4      -4      -4      -4
+#> 85        24        0       -4       -4       -4      -4      -4      -4
+#> 86        96        2       -4       -4       -4      -4      -4      -4
+#> 87        24       97       -4       -4       -4      -4      -4      -4
+#> 88        24       96       -4       -4       -4      -4      -4      -4
+#> 89        24       96       -4       -4       -4      -4      -4      -4
+#> 90        24        1       -4       -4       -4      -4      -4      -4
+#> 91        24        0       -4       -4       -4      -4      -4      -4
+#> 92        96       96        1        1        0      -4      -4      -4
+#> 93        24        0        0        1        1      -4      -4      -4
+#> 94         0        3        1       96        1      -4      -4      -4
+#> 95        97        1        1        0        0      -4      -4      -4
+#> 96        24        2        1        1        1      -4      -4      -4
+#> 97        24        0       -4       -4       -4      -4      -4      -4
+#> 98        96        1       -4       -4       -4      -4      -4      -4
+#> 99        24        0       -4       -4       -4      -4      -4      -4
+#> 100       16        4       -4       -4       -4      -4      -4      -4
+#> 101       24       96       -4       -4       -4      -4      -4      -4
+#> 102       24        3       -4       -4       -4      -4      -4      -4
+#> 103       96       96        1        1        1      -4      -4      -4
+#> 104       97        1        1        0        1      -4      -4      -4
+#> 105       -4       -4       -4       -4       -4      -4      -4      -4
+#> 106       24        0       -4       -4       -4      -4      -4      -4
+#> 107       24       96       -4       -4       -4      -4      -4      -4
+#> 108       97        1       -4       -4       -4      -4      -4      -4
+#> 109       96        0       -4       -4       -4      -4      -4      -4
+#> 110       24        2       -4       -4       -4      -4      -4      -4
+#> 111       98        0       -4       -4       -4      -4      -4      -4
+#> 112       22        0       -4       -4       -4      -4      -4      -4
+#> 113       24        3        1        0        0      -4      -4      -4
+#> 114       96       96        0        0        1      -4      -4      -4
+#> 115       24        0        1        1        1      -4      -4      -4
+#> 116       24        0       -4       -4       -4      -4      -4      -4
+#> 117       24       96       -4       -4       -4      -4      -4      -4
+#> 118       24       96        1        0        1      -4      -4      -4
+#> 119       24        0        1        0        1      -4      -4      -4
+#> 120       24        3        1        1        1      -4      -4      -4
+#> 121       96        0        1        0        1      -4      -4      -4
+#> 122       -4       -4       -4       -4       -4     888      88      88
+#> 123       14       96        1        1        1      -4      -4      -4
+#> 124       24        1        1        1        0      -4      -4      -4
+#> 125       24       98        1        0        1      -4      -4      -4
+#> 126       24        3        1        0        1      -4      -4      -4
+#> 127       24        0        1        1        1      -4      -4      -4
+#> 128       24        2       -4       -4       -4      -4      -4      -4
+#> 129       24        0       -4       -4       -4      -4      -4      -4
+#> 130       17       96       -4       -4       -4      -4      -4      -4
+#> 131       96        0       -4       -4       -4      -4      -4      -4
+#> 132       24        0        1        1        1      -4      -4      -4
+#> 133       97        0        1        0        1      -4      -4      -4
+#> 134       24        2        1        0        0      -4      -4      -4
+#> 135       -4       -4       -4       -4       -4      -4      -4      -4
+#> 136       24        0        1        0       97      -4      -4      -4
+#> 137        9        0        1        1        1      -4      -4      -4
+#> 138       24        1        1        0        1      -4      -4      -4
+#> 139       24        1       -4       -4       -4      -4      -4      -4
+#> 140       96        0       -4       -4       -4      -4      -4      -4
+#> 141       24        0       -4       -4       -4      -4      -4      -4
+#> 142       24        2        1        0        1      -4      -4      -4
+#> 143       96        0        1        1        1      -4      -4      -4
+#> 144        8       96        1        1        1      -4      -4      -4
+#> 145       96       96        1        0        1      -4      -4      -4
+#> 146       -4       -4       -4       -4       -4      49       1      25
+#> 147       96        0       96        0        1      -4      -4      -4
+#> 148       24        1        1        0        1      -4      -4      -4
+#> 149       22        4        1        1        1      -4      -4      -4
+#> 150       -4       -4       -4       -4       -4      -4      -4      -4
+#> 151       -4       -4       -4       -4       -4     888       0      25
+#> 152       24        0        1        0        1      -4      -4      -4
+#> 153       -4       -4       -4       -4       -4      -4      -4      -4
+#> 154       -4       -4       -4       -4       -4      -4      -4      -4
+#> 155       -4       -4       -4       -4       -4      -4      -4      -4
+#> 156       24       96       -4       -4       -4      -4      -4      -4
+#> 157       24        2       -4       -4       -4      -4      -4      -4
+#> 158       96       96       -4       -4       -4      -4      -4      -4
+#> 159       96        3       -4       -4       -4      -4      -4      -4
+#> 160       24        0       -4       -4       -4      -4      -4      -4
+#> 161       24        1       -4       -4       -4      -4      -4      -4
+#> 162       -4       -4       -4       -4       -4      -4      -4      -4
+#> 163       -4       -4       -4       -4       -4      -4      -4      -4
+#> 164       -4       -4       -4       -4       -4      -4      -4      -4
+#> 165       -4       -4       -4       -4       -4      -4      -4      -4
+#> 166       -4       -4       -4       -4       -4      -4      -4      -4
+#> 167       -4       -4       -4       -4       -4      -4      -4      -4
+#> 168       24        0       -4       -4       -4      -4      -4      -4
+#> 169       24       96       -4       -4       -4      -4      -4      -4
+#> 170       -4       -4       -4       -4       -4      -4      -4      -4
+#> 171       -4       -4       -4       -4       -4      -4      -4      -4
+#> 172        7        1        1        0        1      -4      -4      -4
+#> 173       24        1        1        1       98      -4      -4      -4
+#> 174       24       96        1        0        0      -4      -4      -4
+#> 175       -4       -4       -4       -4       -4      -4      -4      -4
+#> 176       -4       -4       -4       -4       -4      -4      -4      -4
+#> 177       -4       -4       -4       -4       -4      -4      -4      -4
+#> 178       24       96       95        1        1      -4      -4      -4
+#> 179       97        2       -4       -4       -4      -4      -4      -4
+#> 180       -4       -4       -4       -4       -4      -4      -4      -4
+#> 181       24        0       -4       -4       -4      -4      -4      -4
+#> 182       -4       -4       -4       -4       -4      -4      -4      -4
+#> 183       24        3       -4       -4       -4      -4      -4      -4
+#> 184       14        1       -4       -4       -4      -4      -4      -4
+#> 185       -4       -4       -4       -4       -4      -4      -4      -4
+#> 186       24        0        1        0       98      -4      -4      -4
+#> 187       -4       -4       -4       -4       -4      -4      -4      -4
+#> 188       24        0       -4       -4       -4      -4      -4      -4
+#> 189       -4       -4       -4       -4       -4      -4      -4      -4
+#> 190       24        1       -4       -4       -4      -4      -4      -4
+#> 191       24       96       -4       -4       -4      -4      -4      -4
+#> 192       24        3       -4       -4       -4      -4      -4      -4
+#> 193       24        0       -4       -4       -4      -4      -4      -4
+#> 194       -4       -4       -4       -4       -4      -4      -4      -4
+#> 195       24        2       -4       -4       -4      -4      -4      -4
+#> 196       24        1       -4       -4       -4      -4      -4      -4
+#> 197       24        1       -4       -4       -4      -4      -4      -4
+#> 198       24        3       -4       -4       -4      -4      -4      -4
+#> 199       24        0        1        0        1      -4      -4      -4
+#> 200       96        0       -4       -4       -4      -4      -4      -4
+#> 201       24        0       -4       -4       -4      -4      -4      -4
+#> 202       24        1       -4       -4       -4      -4      -4      -4
+#> 203       98        0       -4       -4       -4      -4      -4      -4
+#> 204       24        0        1        0        1      -4      -4      -4
+#> 205       96        1        1        1        1      -4      -4      -4
+#> 206       24        0        1        1        1      -4      -4      -4
+#> 207       24        0        1        1        1      -4      -4      -4
+#> 208       -4       -4       -4       -4       -4      17       0      25
+#> 209       -4       -4       -4       -4       -4     996       0      25
+#> 210       24        3        1       97        1      -4      -4      -4
+#> 211       -4       -4       -4       -4       -4      -4      -4      -4
+#> 212       24        0       -4       -4       -4      -4      -4      -4
+#> 213       -4       -4       -4       -4       -4      -4      -4      -4
+#> 214       24        0       -4       -4       -4      -4      -4      -4
+#> 215       24        0       -4       -4       -4      -4      -4      -4
+#> 216       24        0       -4       -4       -4      -4      -4      -4
+#> 217       24        0        1        1        1      -4      -4      -4
+#> 218       24        0        1        1        1      -4      -4      -4
+#> 219       24        0        1        1        1      -4      -4      -4
+#> 220       24       96        1        1        1      -4      -4      -4
+#> 221       24        0        1        0        0      -4      -4      -4
+#> 222       24        0        1        1        1      -4      -4      -4
+#> 223       24       97        1        0        1      -4      -4      -4
+#> 224       -4       -4       -4       -4       -4      55       3      25
+#> 225       95        1        1        0        0      -4      -4      -4
+#> 226       24        1       -4       -4       -4      -4      -4      -4
+#> 227       24        1        1        1        1      -4      -4      -4
+#> 228       24        0       -4       -4       -4      -4      -4      -4
+#> 229       24        0       -4       -4       -4      -4      -4      -4
+#> 230        4        0       -4       -4       -4      -4      -4      -4
+#> 231       24       97       -4       -4       -4      -4      -4      -4
+#> 232       97        3       -4       -4       -4      -4      -4      -4
+#> 233       24        0       -4       -4       -4      -4      -4      -4
+#> 234       24        0       -4       -4       -4      -4      -4      -4
+#> 235       97        1        1        0        1      -4      -4      -4
+#> 236       24        0        1        1        1      -4      -4      -4
+#> 237       24        0        1        1        1      -4      -4      -4
+#> 238       24        0        1        1        1      -4      -4      -4
+#> 239       97        0        1        1        1      -4      -4      -4
+#> 240       24        0        1        0        1      -4      -4      -4
+#> 241       96        0        1        0        1      -4      -4      -4
+#> 242       24        1        1        0        1      -4      -4      -4
+#> 243       96        1       -4       -4       -4      -4      -4      -4
+#> 244       -4       -4       -4       -4       -4      -4      -4      -4
+#> 245       24        0        1        0        1      -4      -4      -4
+#> 246       -4       -4       -4       -4       -4      -4      -4      -4
+#> 247       16        0        1        0        1      -4      -4      -4
+#> 248       -4       -4       -4       -4       -4      -4      -4      -4
+#> 249       -4       -4       -4       -4       -4      -4      -4      -4
+#> 250       96        0       -4       -4       -4      -4      -4      -4
+#> 251       24       95       -4       -4       -4      -4      -4      -4
+#> 252       96        0       -4       -4       -4      -4      -4      -4
+#> 253       24        0       -4       -4       -4      -4      -4      -4
+#> 254       24        0       -4       -4       -4      -4      -4      -4
+#> 255       96        2       -4       -4       -4      -4      -4      -4
+#> 256       24        0       -4       -4       -4      -4      -4      -4
+#> 257       13        2        1        1        1      -4      -4      -4
+#> 258       24        0        1        1        1      -4      -4      -4
+#> 259       24        0        1        1        1      -4      -4      -4
+#> 260       96        0       -4       -4       -4      -4      -4      -4
+#> 261       24        0       -4       -4       -4      -4      -4      -4
+#> 262       24        1       -4       -4       -4      -4      -4      -4
+#> 263       -4       -4       -4       -4       -4      -4      -4      -4
+#> 264       -4       -4       -4       -4       -4      -4      -4      -4
+#> 265       -4       -4       -4       -4       -4      -4      -4      -4
+#> 266       -4       -4       -4       -4       -4      -4      -4      -4
+#> 267       96        2        1        1        1      -4      -4      -4
+#> 268       -4       -4       -4       -4       -4     888      88      25
+#> 269       97        0        1        0        1      -4      -4      -4
+#> 270       20        2       -4       -4       -4      -4      -4      -4
+#> 271       96        0       -4       -4       -4      -4      -4      -4
+#> 272       24        1        1        1        1      -4      -4      -4
+#> 273       -4       -4       -4       -4       -4      -4      -4      -4
+#> 274       97        3        1        0        0      -4      -4      -4
+#> 275       -4       -4       -4       -4       -4      -4      -4      -4
+#> 276       24        0        1        1        1      -4      -4      -4
+#> 277       -4       -4       -4       -4       -4      -4      -4      -4
+#> 278       -4       -4       -4       -4       -4      -4      -4      -4
+#> 279       -4       -4       -4       -4       -4      -4      -4      -4
+#> 280       24        2       -4       -4       -4      -4      -4      -4
+#> 281       24        1       -4       -4       -4      -4      -4      -4
+#> 282       24        1       -4       -4       -4      -4      -4      -4
+#> 283        2        0       -4       -4       -4      -4      -4      -4
+#> 284       24        0       -4       -4       -4      -4      -4      -4
+#> 285       23       96       -4       -4       -4      -4      -4      -4
+#> 286       24        2       -4       -4       -4      -4      -4      -4
+#> 287       18        1       -4       -4       -4      -4      -4      -4
+#> 288       24        2        1        0        1      -4      -4      -4
+#> 289       24        0        1        1        1      -4      -4      -4
+#> 290       96        4        1        1        0      -4      -4      -4
+#> 291       -4       -4       -4       -4       -4      49       0      25
+#> 292       -4       -4       -4       -4       -4      16       4      88
+#> 293       96        3        1        1        0      -4      -4      -4
+#> 294       24        3       -4       -4       -4      -4      -4      -4
+#> 295       24        2       -4       -4       -4      -4      -4      -4
+#> 296       24       97       -4       -4       -4      -4      -4      -4
+#> 297       24        0        1        1        1      -4      -4      -4
+#> 298       96        0        1        1        1      -4      -4      -4
+#> 299       24       96        1        0        1      -4      -4      -4
+#> 300       24        0        1        1        1      -4      -4      -4
+#> 301       -4       -4       -4       -4       -4      -4      -4      -4
+#> 302       24        1       -4       -4       -4      -4      -4      -4
+#> 303       96        0       -4       -4       -4      -4      -4      -4
+#> 304       -4       -4       -4       -4       -4      -4      -4      -4
+#> 305       24       98        1       97        1      -4      -4      -4
+#> 306       95        2       -4       -4       -4      -4      -4      -4
+#> 307       96        0       -4       -4       -4      -4      -4      -4
+#> 308       24        1       -4       -4       -4      -4      -4      -4
+#> 309       97        0       -4       -4       -4      -4      -4      -4
+#> 310       24        1       -4       -4       -4      -4      -4      -4
+#> 311       24        0       -4       -4       -4      -4      -4      -4
+#> 312       18        0       -4       -4       -4      -4      -4      -4
+#> 313       24        0       -4       -4       -4      -4      -4      -4
+#> 314       -4       -4       -4       -4       -4      -4      -4      -4
+#> 315       97        1       -4       -4       -4      -4      -4      -4
+#> 316       -4       -4       -4       -4       -4      -4      -4      -4
+#> 317       -4       -4       -4       -4       -4      -4      -4      -4
+#> 318       -4       -4       -4       -4       -4      -4      -4      -4
+#> 319       24        3       -4       -4       -4      -4      -4      -4
+#> 320       -4       -4       -4       -4       -4      -4      -4      -4
+#> 321       -4       -4       -4       -4       -4      -4      -4      -4
+#> 322       24        0       -4       -4       -4      -4      -4      -4
+#> 323       24        1       -4       -4       -4      -4      -4      -4
+#> 324       24        0       -4       -4       -4      -4      -4      -4
+#> 325       97        1       -4       -4       -4      -4      -4      -4
+#> 326       24        0       -4       -4       -4      -4      -4      -4
+#> 327       24        1       -4       -4       -4      -4      -4      -4
+#> 328       95        5       -4       -4       -4      -4      -4      -4
+#> 329       24        0        1        1        1      -4      -4      -4
+#> 330       24        0        1        1       97      -4      -4      -4
+#> 331       24       96       -4       -4       -4      -4      -4      -4
+#> 332       24       96       -4       -4       -4      -4      -4      -4
+#> 333       -4       -4       -4       -4       -4      -4      -4      -4
+#> 334       -4       -4       -4       -4       -4      -4      -4      -4
+#> 335       24        0       -4       -4       -4      -4      -4      -4
+#> 336       24        5       -4       -4       -4      -4      -4      -4
+#> 337       95        0       -4       -4       -4      -4      -4      -4
+#> 338       24        0       -4       -4       -4      -4      -4      -4
+#> 339       98        1       -4       -4       -4      -4      -4      -4
+#> 340       24        1       -4       -4       -4      -4      -4      -4
+#> 341       24        6       -4       -4       -4      -4      -4      -4
+#> 342       24        0       -4       -4       -4      -4      -4      -4
+#> 343       24        1       -4       -4       -4      -4      -4      -4
+#> 344       24        5       -4       -4       -4      -4      -4      -4
+#>     NACCGDS CDRSUM UDSBENRS BILLS TAXES SHOPPING GAMES STOVE MEALPREP EVENTS
+#> 1         1    2.0       -4     0     0        0     0     0        0      0
+#> 2         0    8.0       -4     0     0        0     0     0        1      0
+#> 3         1   13.0       -4     0     0        0     0     0        8      0
+#> 4        88    2.5       -4     0     0        0     0     0        0      2
+#> 5         5    0.0       -4     0     0        0     0     0        8      3
+#> 6         7    0.0       -4     0     3        0     0     0        1      0
+#> 7         0    0.5       -4     0     0        3     3     0        0      0
+#> 8        -4    0.5       -4     0     0        3     0     0        8      3
+#> 9         0    0.5       -4     3     2        3     1     3        0      1
+#> 10        0    2.0       -4     0     0        0     0     0        3      0
+#> 11        6    0.0        1     0     0        0     0     0        2      0
+#> 12       -4    1.0       -4     0     0        0     3     0        8      0
+#> 13        1    0.0       -4     0     0        2     0     3        8      0
+#> 14       88   14.0       -4    -4    -4       -4    -4    -4       -4     -4
+#> 15        4    5.0       -4     0     0        0     8     0        0      1
+#> 16        1    0.5       -4     3     2        2     2     0        0      0
+#> 17        0    0.5        1     0     3        0     2     0        0      0
+#> 18        2    0.0        1     0     0        0     0     0        3      1
+#> 19        1    3.0       -4     3     0        0     0     0        3      0
+#> 20        4    0.0       -4     0     0        1     0     3        0      0
+#> 21        0    0.0       -4     0     0        0     0     0        0      0
+#> 22        2    0.5        1     0     1        0     2     0        0      2
+#> 23        7    0.0        1     0     1        2     1     0        0      0
+#> 24        1    2.0       -4     0     0        0     1     0        0      2
+#> 25        0   14.0       -4     3     8        0     8     0        0      0
+#> 26        1   17.0       -4     3     0        8     0     0        0      3
+#> 27        2    3.0       -4     0     0        0     0     0        0      2
+#> 28        1    0.0       -4     0     0        3     0     2        0      0
+#> 29        0    6.0       -4     2     0        0     0     0        1      1
+#> 30        3    0.0       -4     8     8        0     2     0        0      3
+#> 31        2    3.0       -4     0     0        0     0     0        0      0
+#> 32       -4    0.0       -4     1     0        0     0     0        0      1
+#> 33       -4    0.0       -4     3     8        0     0     0        0      3
+#> 34       -4    0.0       -4     0     8        2     3     0        1      0
+#> 35        1    0.0        1     3     0        1     0     0        8      0
+#> 36        0    0.5        1     0     2        0     0     1        0      1
+#> 37       -4    0.0       -4     0     0        0     0     0        0      0
+#> 38       88    0.0        0     3     0        0     0     0        0      2
+#> 39       -4    0.0       -4     8     3        0     0     0        8      2
+#> 40       88    0.0       -4     0     3        3     1     0        0      0
+#> 41       -4    0.0       -4     0     3        2     0     0        0      3
+#> 42       -4   12.0       -4     0     3        0     0     0        0      2
+#> 43        0    0.0       -4     3     0        0     0     0        0      0
+#> 44        0    0.0       -4     0     0        3     0     0        0      0
+#> 45       -4    0.0       -4     1     0        0     0     0        3      3
+#> 46        6   11.0        1     1     0        0     0     0        8      0
+#> 47        0    0.5        0     0     1        1     0     0        3      0
+#> 48       88    4.5       -4     0     8        8     3     0        3      0
+#> 49        0    0.0       -4     3     0        2     0     1        0      0
+#> 50       -4   15.0       -4     0     0        0     1     0        0      0
+#> 51       -4   14.0       -4     2     0        0     0     0        0      0
+#> 52        1    0.5       -4     3     3        0     0     0        0      0
+#> 53        1   16.0        1     0     3        8     0     0        0      2
+#> 54        1    0.0        1     3     0        1     0     0        8      1
+#> 55        1    0.5       -4     0     0        0     0     0        0      0
+#> 56        5    3.5       -4     8     0        0     0     0        3      2
+#> 57        1    0.0       -4     0     0        0     2     0        3      0
+#> 58        0   11.0       -4     0     0        0     0     0        0      0
+#> 59        6    0.0       -4     2     0        3     1     0        3      0
+#> 60        4   17.0       -4     3     0        0     3     0        8      1
+#> 61        2    3.5       -4     3     3        2     8     2        0      0
+#> 62        2    1.5       -4     3     0        0     0     0        0      0
+#> 63        0    0.0       -4     0     0        2     0     1        3      0
+#> 64        2    0.5       -4     0     1        0     2     0        0      0
+#> 65        0   11.0       -4     0     3        0     8     0        0      0
+#> 66        3    0.0       -4     0     0        2     0     0        0      0
+#> 67        2    0.0       -4     3     9        3     0     0        0      0
+#> 68        1    0.0       -4     3     0        0     1     0        0      0
+#> 69        1    4.5       -4     0     3        1     0     0        8      0
+#> 70        1    0.0        1     0     3        0     0     0        0      0
+#> 71        4    9.0        1     8     1        2     0     0        3      0
+#> 72        0   12.0       -4     0     3        3     2     0        0      0
+#> 73        0    0.5       -4     0     0        0     0     0        0      0
+#> 74        1    0.5       -4     0     3        0     0     0        0      0
+#> 75        4    0.5       -4     0     8        2     2     0        3      0
+#> 76        1    9.0       -4     0     0        8     0     0        0      0
+#> 77        0    0.0       -4     0     0        0     0     2        0      2
+#> 78        3   14.0        1     0     3        0     0     0        0      0
+#> 79        8    0.5        1     0     0        0     1     0        2      0
+#> 80        0    5.0        0     2     0        3     1     0        0      0
+#> 81        0    0.0        1     2     0        0     0     0        0      2
+#> 82        0    5.0       -4     8     0        0     0     3        3      1
+#> 83        1    0.5       -4     0     0        0     2     0        0      2
+#> 84        3    4.5       -4     0     0        1     0     0        0      2
+#> 85        0    2.5       -4     0     0        0     0     0        0      0
+#> 86        0    0.0       -4     0     8        0     0     0        0      0
+#> 87        3    1.5       -4     0     0        3     3     0        2      0
+#> 88        9    0.0       -4     0     0        0     2     0        8      0
+#> 89        5    5.5       -4     0     8        3     0     3        3      0
+#> 90        5    0.5       -4     0     0        0     1     0        0      2
+#> 91        9    0.5       -4     3     8        1     1     0        0      0
+#> 92        2    0.0        1     0     8        0     3     3        0      0
+#> 93        0    0.0        1     3     3        2     3     0        8      0
+#> 94        0   17.0        1     0     8        0     0     0        0      0
+#> 95        0    1.0        1     0     3        0     0     0        0      2
+#> 96       -4    2.5        1     2     2        0     0     0        0      1
+#> 97        1    0.5       -4     0     3        0     0     0        0      0
+#> 98        2   18.0       -4     2     0        0     8     0        3      0
+#> 99        0    3.5       -4     3     0        0     3     0        0      0
+#> 100       0    2.0       -4     0     0        0     0     0        0      0
+#> 101       0    0.0       -4     3     8        2     3     0        0      0
+#> 102       1    0.0       -4     3     0        1     3     0        0      0
+#> 103      88    0.0        1     0     0        0     0     3        0      0
+#> 104       0    0.0        1     3     0        0     2     0        0      0
+#> 105       0    0.0       -4     0     0        3     0     3        0      0
+#> 106       6    5.0       -4     0     1        0     0     0        1      0
+#> 107       0    0.5       -4     0     3        0     3     0        0      0
+#> 108       0    0.0       -4     0     8        0     0     3        0      0
+#> 109       1    5.0       -4     0     0        0     0     0        0      3
+#> 110       0   10.0       -4     0     3        0     0     0        0      2
+#> 111      12    6.0       -4     0     1        3     8     0        1      0
+#> 112       5    0.5       -4     0     0        0     0     0        2      0
+#> 113       1    2.0       -4     0     0        0     1     0        0      0
+#> 114       0    3.5       -4     3     0        0     0     0        0      3
+#> 115       3    0.0       -4     3     0        0     3     0        8      1
+#> 116       0   16.0       -4     0     3        0     0     0        0      0
+#> 117       1    0.0       -4     3     3        0     0     0        0      0
+#> 118       0    3.0        1     0     0        0     0     0        3      2
+#> 119       0    0.5        0     0     3        0     0     2        0      0
+#> 120       0    0.0        0     8     2        0     0     0        0      1
+#> 121       2    5.0        1     0     0        0     8     2        8      0
+#> 122       0    0.0       -4     0     8        0     0     0        3      3
+#> 123       0    0.0        1     0     3        2     0     0        2      1
+#> 124       1    2.5        1     2     8        2     8     0        0      0
+#> 125       8    5.0        1     0     1        3     0     0        0      1
+#> 126       7    0.0        1     3     3        0     1     0        1      0
+#> 127       2    0.0        1     0     0        3     0     0        3      0
+#> 128       2    0.0       -4     0     0        0     1     3        0      0
+#> 129       0    2.0       -4     3     1        1     0     0        0      0
+#> 130       4    0.0       -4     0     8        0     0     1        0      0
+#> 131       2    0.0       -4     0     0        0     1     0        0      0
+#> 132       1    0.0        1     2     1        0     0     0        0      0
+#> 133       6    1.5        1     3     0        0     0     0        0      3
+#> 134       3    0.5        1     0     3        0     0     0        3      2
+#> 135      -4    0.0       -4     3     0        3     1     0        0      0
+#> 136       4    3.0        1     3     8        0     3     1        0      0
+#> 137       0    1.0        1     3     0        0     0     1        0      0
+#> 138       0    1.0        1     0     0        0     0     3        0      0
+#> 139       3    3.5       -4     0     0        0     0     0        0      8
+#> 140       3    0.0       -4     9     0        0     1     0        0      2
+#> 141       2    5.0       -4     3     0        1     0     2        0      1
+#> 142       2    0.0        0     2     3        0     0     0        0      2
+#> 143       0    0.0        1     8     0        0     0     2        0      0
+#> 144       1    0.0        0     0     0        0     0     0        0      0
+#> 145       0    0.0        1     0     0        0     3     0        2      0
+#> 146       2    0.0       -4     0     2        0     0     0        0      0
+#> 147       1    0.0       -4     1     0        1     0     0        0      0
+#> 148       0    0.5        1     0     1        0     0     0        0      0
+#> 149       2    0.0        1     3     0        8     0     3        0      0
+#> 150      -4    3.5       -4     0     0        3     0     0        0      1
+#> 151       0   10.0       -4     0     0        2     0     0        0      0
+#> 152       0    0.0        0     8     0        1     0     0        0      0
+#> 153       3    0.0       -4     0     1        3     0     1        2      0
+#> 154       0    0.0       -4     8     0        2     0     0        0      0
+#> 155       1    0.0       -4     1     0        2     0     3        0      0
+#> 156       8    0.0       -4     3     3        3     0     0        0      0
+#> 157       3    0.5       -4     0     1        0     1     0        0      2
+#> 158       0    0.0       -4     0     0        0     3     0        3      0
+#> 159       1    0.0       -4     0     3        0     3     0        2      0
+#> 160       3   12.0       -4     3     0        0     0     0        0      1
+#> 161       0    0.0       -4     3     3        3     3     0        0      0
+#> 162       2    0.0       -4     0     0        0     1     0        0      3
+#> 163       2    0.0       -4     0     0        0     0     0        1      0
+#> 164       2    8.0       -4     3     0        0     0     0        3      0
+#> 165       0   18.0       -4     3     2        3     0     0        2      0
+#> 166       0    5.0       -4     0     3        3     0     0        0      0
+#> 167       0    0.0       -4     0     3        0     0     0        0      0
+#> 168       2    1.5       -4     0     3        0     0     0        0      0
+#> 169       9    8.0       -4     2     3        1     0     3        3      0
+#> 170       1    0.5       -4     0     2        0     0     0        3      0
+#> 171       0    5.0       -4     3     0        3     0     0        1      9
+#> 172       1    0.0        1     1     8        2     0     0        0      3
+#> 173       2    0.0        1     3     8        0     0     0        0      3
+#> 174      88    1.0        1     8     0        0     2     2        0      0
+#> 175      -4   10.0       -4     0     0        0     3     0        1      2
+#> 176      -4    0.5       -4     0     0        0     8     0        1      0
+#> 177       1    4.0       -4     0     0        2     1     0        0      0
+#> 178       1    0.0        1     0     0        0     0     0        0      0
+#> 179      -4    0.0       -4     0     3        3     1     0        1      0
+#> 180       2   12.0       -4     0     0        0     1     0        0      1
+#> 181       4    0.0       -4     0     0        3     8     0        3      0
+#> 182       4    0.0       -4     0     0        1     0     0        0      1
+#> 183       5    0.0       -4     0     0        0     0     0        0      0
+#> 184       0    7.0       -4     0     0        3     3     0        0      2
+#> 185      -4   12.0       -4     0     1        3     3     0        2      0
+#> 186       2    1.5        1     2     3        3     0     3        3      0
+#> 187      -4    1.0       -4     3     3        0     0     0        3      0
+#> 188       0    3.0       -4     3     2        0     0     3        0      0
+#> 189       0    1.0       -4     3     3        1     3     0        0      3
+#> 190       1    4.5       -4     1     1        3     0     0        8      0
+#> 191       3    0.5       -4     0     0        2     0     0        0      0
+#> 192       0    1.5       -4     0     0        0     3     3        3      2
+#> 193       0    0.0       -4     0     0        0     0     0        0      0
+#> 194       2    5.0       -4     0     0        3     0     0        3      0
+#> 195       0    0.0       -4     0     0        0     0     0        0      3
+#> 196       2    0.0       -4     0     0        0     0     0        0      2
+#> 197       1    0.5       -4    -4    -4       -4    -4    -4       -4     -4
+#> 198      -4   11.0       -4     0     2        0     0     0        0      0
+#> 199       0    0.0        0     0     3        0     8     0        0      3
+#> 200       2   18.0       -4     0     0        2     0     0        0      0
+#> 201       1    0.0       -4     0     3        0     0     0        3      0
+#> 202      88    0.0       -4     0     0        3     0     1        0      0
+#> 203       0    1.5       -4     2     8        1     0     0        0      0
+#> 204       1    0.0        1     0     0        0     0     0        0      0
+#> 205       2   18.0        1     0     0        0     1     1        0      0
+#> 206       1    0.5        1     0     0        0     3     0        2      0
+#> 207       1    1.5        1     0     0        2     0     0        3      0
+#> 208       1    0.0       -4     0     3        0     0     3        0      3
+#> 209       1    0.0       -4     0     0        0     0     3        0      0
+#> 210       6    0.5        0     3     0        0     0     0        3      1
+#> 211       0    0.0       -4     0     0        0     0     1        0      0
+#> 212      88    0.0       -4     0     0        0     0     0        8      0
+#> 213       0    0.0       -4     0     0        0     0     0        3      0
+#> 214       3   10.0       -4     3     0        3     0     1        0      0
+#> 215       0    0.0       -4     0     0        0     0     0        0      0
+#> 216       1   10.0       -4     0     3        0     1     0        0      0
+#> 217       0    0.0        1     8     0        3     0     0        0      1
+#> 218       0    7.0        1     0     3        0     3     0        8      0
+#> 219       0    0.5        1     3     0        8     1     0        0      0
+#> 220       0   17.0        1     0     3        0     0     0        3      2
+#> 221      88    9.0        1     3     8        2     0     0        0      3
+#> 222       4    0.0        0     0     0        0     0     0        0      1
+#> 223       0    0.0        1     0     0        0     2     0        0      0
+#> 224       2    9.0       -4     0     1        1     0     0        0      0
+#> 225       1   12.0        1     0     3        0     0     0        0      0
+#> 226       1    0.5       -4     0     8        0     0     0        0      0
+#> 227       0    0.0        1     0     0        2     0     0        3      2
+#> 228       1    0.0       -4     0     0        0     0     3        1      0
+#> 229       0    9.0       -4     2     3        0     0     0        0      0
+#> 230       3   18.0       -4     0     8        0     2     3        2      3
+#> 231       1    1.0       -4     0     0        0     3     0        0      0
+#> 232       0    0.5       -4     0     0        0     0     0        0      0
+#> 233      88    0.0       -4     3     0        0     0     0        1      0
+#> 234       3   10.0       -4     0     8        3     0     0        0      0
+#> 235       1    6.0        1     8     0        1     0     0        0      0
+#> 236       1    4.5        1     2     0        0     0     0        1      0
+#> 237      13    0.0        1     0     0        0     0     1        3      0
+#> 238       5    5.5        0     0     3        3     0     0        3      2
+#> 239       2    0.0        1     3     0        0     0     0        0      0
+#> 240       5    0.5        1     3     1        0     0     3        0      0
+#> 241       1    0.0        1     0     0        2     0     0        3      3
+#> 242       1    0.0        0     0     0        0     0     0        3      0
+#> 243       0    4.5       -4     0     0        0     0     0        0      2
+#> 244       7    0.5       -4     3     0        0     1     2        0      0
+#> 245       0    0.5        1     0     0        3     3     0        0      0
+#> 246      -4    6.0       -4     3     8        1     0     0        0      0
+#> 247       3    2.5        1     3     1        0     0     0        0      0
+#> 248      -4   12.0       -4     0     0        8     0     0        3      0
+#> 249       1    0.5       -4     0     1        0     2     0        8      0
+#> 250       2    3.5       -4     0     3        0     0     2        0      2
+#> 251       0    0.0       -4     0     3        0     3     0        0      0
+#> 252       3    0.0       -4     2     8        0     0     0        0      0
+#> 253       0    9.0       -4     3     8        1     0     1        0      0
+#> 254       1    0.0       -4     0     3        3     0     0        0      0
+#> 255       0    0.0       -4     3     0        0     3     2        0      0
+#> 256       1    0.0       -4     3     0        0     0     0        0      0
+#> 257       1   10.0        0     3     0        0     0     1        0      2
+#> 258       0    1.5        1     8     0        0     0     0        8      3
+#> 259       2    0.0        1     0     2        2     0     0        8      2
+#> 260       5    0.0       -4     8     0        0     0     1        0      0
+#> 261      88    1.0       -4     0     0        0     0     0        0      0
+#> 262       0    5.5       -4     0     0        8     0     3        0      0
+#> 263      -4    1.5       -4     2     0        0     0     0        0      0
+#> 264      -4    5.0       -4     3     3        3     0     0        0      3
+#> 265      -4    2.0       -4     8     3        0     0     0        0      3
+#> 266      -4    4.5       -4     3     0        0     0     0        2      0
+#> 267       0    0.5        1     0     0        0     0     0        0      0
+#> 268      88    0.0       -4     0     2        2     0     0        0      1
+#> 269       0    7.0        0     3     0        0     0     0        0      3
+#> 270       2    0.0       -4     3     0        3     0     0        0      0
+#> 271      88   17.0       -4     0     0        3     0     0        0      0
+#> 272       1    0.0        1     0     3        0     0     0        8      3
+#> 273      -4    0.0       -4     0     8        0     3     0        8      3
+#> 274       6    0.0        0     8     0        0     0     0        0      0
+#> 275       0    0.0       -4     3     0        0     0     0        0      0
+#> 276       4    1.5        0     0     8        2     0     0        0      0
+#> 277       0    4.5       -4     0     0        0     0     0        0      3
+#> 278       8    5.0       -4     3     8        1     0     0        0      0
+#> 279       4    0.0       -4     0     0        8     3     0        0      0
+#> 280       0    0.0       -4     0     8        3     3     0        0      0
+#> 281      88    0.0       -4     0     0        0     1     1        8      0
+#> 282       3    0.0       -4     3     0        0     0     3        0      0
+#> 283       0    0.0       -4     0     0        0     0     2        0      0
+#> 284       0    7.0       -4     0     8        0     0     3        2      2
+#> 285       3    0.5       -4     0     3        0     0     3        0      2
+#> 286       0    0.5        1     3     2        0     0     0        0      0
+#> 287       3    0.0       -4     2     0        0     0     0        0      0
+#> 288       4    0.0        1     3     8        0     0     0        8      1
+#> 289       2   10.0        1     3     3        0     0     0        0      0
+#> 290       3   15.0        1     3     0        1     3     3        0      0
+#> 291       0    0.0       -4     3     3        3     0     1        3      0
+#> 292       0    5.0       -4     0     0        0     0     0        0      0
+#> 293       0    0.0        1     0     0        0     2     0        0      0
+#> 294       1    1.5       -4     3     2        3     2     0        0      1
+#> 295       2    2.5       -4     0     0        0     0     3        1      0
+#> 296       1    0.0       -4     0     8        0     8     0        0      0
+#> 297       0   12.0        0     0     2        0     0     0        0      2
+#> 298       0    0.0        1     0     0        3     0     0        3      0
+#> 299       0    0.0       -4     0     3        0     0     8        3      3
+#> 300       2    0.0        1     0     0        3     0     3        3      0
+#> 301       1    0.0       -4     0     0        0     0     2        0      2
+#> 302       1    4.0       -4     0     0        3     3     0        0      3
+#> 303       0    0.0       -4     0     0        0     0     0        3      0
+#> 304       0    4.0       -4     1     3        3     3     0        0      0
+#> 305       1    6.0        1     3     0        0     0     0        0      3
+#> 306       0    3.5       -4     0     8        0     0     1        1      0
+#> 307       9   18.0       -4     0     3        3     8     3        0      0
+#> 308      88    2.5       -4     2     8        0     8     0        3      0
+#> 309       0    0.0       -4     3     0        3     0     1        0      1
+#> 310       1    6.0       -4     3     8        0     3     2        3      2
+#> 311       1    0.0       -4     0     0        0     8     0        1      1
+#> 312       0    0.0       -4     0     8        0     3     0        0      3
+#> 313       3    0.0       -4     8     0        0     0     0        0      0
+#> 314       0    2.0       -4     3     3        2     3     0        0      3
+#> 315       4    1.0       -4     0     2        3     0     0        1      0
+#> 316      -4    0.0       -4     0     3        0     0     2        8      2
+#> 317      14    5.0       -4     3     0        2     0     3        0      0
+#> 318       0    0.0       -4     0     0        3     3     3        0      2
+#> 319       5    0.0       -4     0     1        0     8     0        8      0
+#> 320       3    0.0       -4     3     8        8     1     0        9      0
+#> 321       0    0.5       -4     0     0        3     0     3        0      0
+#> 322       4    1.5       -4     3     0        0     8     3        0      0
+#> 323       0   11.0       -4     0     0        3     8     0        0      0
+#> 324       5    9.0       -4     3     3        0     0     3        0      0
+#> 325       2    0.0       -4     3     0        0     1     3        0      3
+#> 326       2    0.0       -4     0     0        2     0     2        3      0
+#> 327       0    0.0       -4     3     0        0     8     2        0      0
+#> 328       7    0.0       -4     0     2        3     0     0        0      1
+#> 329       1   17.0        1     0     0        0     3     1        0      0
+#> 330       1    5.0        1     3     0        0     0     8        0      2
+#> 331       0    0.0       -4     1     3        0     0     0        8      0
+#> 332       5    0.5       -4     0     0        0     3     0        0      0
+#> 333       0    0.0       -4     0     0        0     3     0        2      0
+#> 334       7    0.0       -4     3     0        0     0     0        0      0
+#> 335       4    2.0       -4     0     3        0     0     0        0      3
+#> 336       4    0.0       -4     0     0        0     0     3        0      0
+#> 337       2    0.0       -4     3     0        0     8     0        0      0
+#> 338       2    0.0       -4     0     3        0     0     0        0      0
+#> 339       9    0.0       -4     0     0        0     0     0        0      1
+#> 340       1    0.0       -4     1     0        0     0     0        0      0
+#> 341      10    0.0       -4     8     8        0     8     0        0      0
+#> 342       5    6.0        1     0     3        0     0     1        0      0
+#> 343       0    3.5        1     1     0        0     0     0        1      0
+#> 344       3    0.0        1     0     0        0     3     0        3      0
+#>     PAYATTN REMDATES TRAVEL REYFPOS NACCUDSD NACCMMSE BOSTON LOGIMEM MEMUNITS
+#> 1         0        2      0      -4        1       30     29      17        3
+#> 2         0        0      0      -4        1       30     26      17        2
+#> 3         0        0      0      -4        1       30     24      16       13
+#> 4         0        3      0      -4        4       29      3      17        5
+#> 5         2        0      0      -4        4       28     27       3        0
+#> 6         0        3      2      -4        1       20     28       9        0
+#> 7         0        0      0      -4        4       17     28       9       13
+#> 8         0        0      0      -4        4       -4     -4      -4       -4
+#> 9         3        0      8      -4        4       27     27      17       10
+#> 10        0        3      1      -4        4       29     25       8       21
+#> 11        1        0      0      -4        3       -4     -4      -4       -4
+#> 12        0        0      1      -4        4       -4     -4      -4       -4
+#> 13        0        0      3      -4        3       30     29      16       19
+#> 14       -4       -4     -4      -4        4       30     29       7       13
+#> 15        0        0      1      -4        3       20     29       9        8
+#> 16        0        0      0      -4        1       19     27      14        7
+#> 17        0        1      3      -4        1       -4     -4      -4       -4
+#> 18        1        3      0      -4        4       -4     -4      -4       -4
+#> 19        0        2      0      -4        4        2     30       1       11
+#> 20        1        0      0      -4        4       28     30       5       12
+#> 21        1        3      0      -4        1       27     29      15        6
+#> 22        1        0      0      -4        1       -4     -4      -4       -4
+#> 23        2        0      0      -4        4       -4     -4      -4       -4
+#> 24        0        0      0      -4        4       26     29      16        6
+#> 25        0        1      3      -4        4       27     18      16       15
+#> 26        0        3      3      -4        1       21     11       0       20
+#> 27        1        3      0      -4        1       30     30       0       17
+#> 28        0        1      3      -4        1       27     25       5       12
+#> 29        0        1      0      -4        1       29     26      19       18
+#> 30        0        0      0      -4        3       30     97      96        2
+#> 31        2        0      3      -4        4       30     97       2       19
+#> 32        0        0      1      -4        4       -4     -4      -4       -4
+#> 33        0        0      0      -4        1       -4     -4      -4       -4
+#> 34        0        3      2      -4        1       -4     -4      -4       -4
+#> 35        0        1      0      -4        3       -4     -4      -4       -4
+#> 36        0        1      1      -4        3       -4     -4      -4       -4
+#> 37        3        0      0      -4        4       -4     -4      -4       -4
+#> 38        0        0      3      -4        4       -4     -4      -4       -4
+#> 39        0        0      0      -4        3       -4     -4      -4       -4
+#> 40        0        0      3      -4        1       30     28      11       10
+#> 41        0        0      8      -4        3       -4     -4      -4       -4
+#> 42        1        3      3      -4        3       -4     -4      -4       -4
+#> 43        2        3      3      -4        3       29      7      17       11
+#> 44        0        0      0      -4        1       30     29      13       12
+#> 45        0        0      3      -4        4       30     26      96        0
+#> 46        0        0      0      -4        1       -4     -4      -4       -4
+#> 47        0        0      1      -4        3       -4     -4      -4       -4
+#> 48        0        0      2      -4        3       14     19      14       15
+#> 49        1        0      0      -4        2       -4     -4      -4       -4
+#> 50        0        0      0      -4        4       -4     -4      -4       -4
+#> 51        0        1      0      -4        3       -4     -4      -4       -4
+#> 52        0        0      0      -4        1       30     14      18        2
+#> 53        0        0      3      -4        2       30      9       4       11
+#> 54        2        0      0      -4        1       -4     -4      -4       -4
+#> 55        0        1      0      -4        1       97     17      14        8
+#> 56        0        0      0      -4        1       24     30      20        0
+#> 57        1        1      3      -4        1       11     29      14       15
+#> 58        0        0      1      -4        4       27     22       8       15
+#> 59        0        0      0      -4        2       20     96       5        8
+#> 60        9        0      2      -4        1       16     96      13       19
+#> 61        0        0      0      -4        1       13     28      12       13
+#> 62        0        2      3      -4        1       30     27      96        9
+#> 63        0        0      0      -4        1       30     27      12        9
+#> 64        0        0      0      -4        4       28     21      18        1
+#> 65        0        0      0      -4        4       21     26      10        4
+#> 66        0        1      0      -4        1       97     29      12       11
+#> 67        0        0      8      -4        1       30     28      15       19
+#> 68        0        1      0      -4        1       30     27       2        5
+#> 69        0        0      0      -4        1       28     27      17        0
+#> 70        0        2      0      -4        4       -4     -4      -4       -4
+#> 71        1        0      0      -4        3       -4     -4      -4       -4
+#> 72        0        3      0      -4        3       30     26      22        8
+#> 73        0        0      1      -4        3       30      9       8       10
+#> 74        0        0      0      -4        1       29     30       4        5
+#> 75        0        0      2      -4        1       29     15      11       13
+#> 76        3        0      0      -4        1       28     25      96       20
+#> 77        3        0      0      -4        1       30     29      15        0
+#> 78        0        2      0      -4        1       -4     -4      -4       -4
+#> 79        0        0      3      -4        1       -4     -4      -4       -4
+#> 80        0        0      3      -4        3       -4     -4      -4       -4
+#> 81        0        2      2      -4        2       -4     -4      -4       -4
+#> 82        3        3      0      -4        4       23     29      97       13
+#> 83        0        1      0      -4        4       30     29       7       97
+#> 84        1        0      3      -4        3       26     30      24        0
+#> 85        1        0      3      -4        4       16     25      14        2
+#> 86        0        0      0      -4        4       28     29       5        8
+#> 87        0        0      0      -4        1       28     27      16        7
+#> 88        0        3      0      -4        4       29     96       0        7
+#> 89        0        2      0      -4        4       28     27      96       14
+#> 90        3        3      0      -4        4       27     29       7       14
+#> 91        0        0      0      -4        3       23     21      16        1
+#> 92        0        1      0      -4        4       -4     -4      -4       -4
+#> 93        2        0      0      -4        3       -4     -4      -4       -4
+#> 94        0        2      3      -4        1       -4     -4      -4       -4
+#> 95        0        0      0      -4        3       -4     -4      -4       -4
+#> 96        0        3      8      -4        2       -4     -4      -4       -4
+#> 97        0        0      0      -4        4       24     29       6        1
+#> 98        0        0      2      -4        4       26     27       0       18
+#> 99        0        0      0      -4        2       27     27       8        0
+#> 100       0        0      0      -4        1       29     29      18       18
+#> 101       2        0      3      -4        3       30     29      13        0
+#> 102       0        0      0      -4        1       29     26      17       15
+#> 103       0        3      1      -4        3       -4     -4      -4       -4
+#> 104       0        3      0      -4        1       -4     -4      -4       -4
+#> 105       3        0      0      -4        4       17     27      15       97
+#> 106       0        2      0      -4        3       28     96      20        2
+#> 107       0        0      0      -4        3       29     30      11        0
+#> 108       2        3      3      -4        1        5     15      10        0
+#> 109       0        2      1      -4        1       30     26      10       96
+#> 110       0        1      0      -4        4       23     23      97       97
+#> 111       0        2      0      -4        4       24     25      97       10
+#> 112       0        0      3      -4        1       28     29       9       96
+#> 113       0        2      0      -4        1       -4     -4      -4       -4
+#> 114       0        0      0      -4        4       -4     -4      -4       -4
+#> 115       0        2      3      -4        3       -4     -4      -4       -4
+#> 116       0        0      0      -4        1       29     95      15        0
+#> 117       0        0      3      -4        1       10     30      20       16
+#> 118       1        0      0      -4        1       -4     -4      -4       -4
+#> 119       1        0      0      -4        1       -4     -4      -4       -4
+#> 120       0        0      1      -4        4       -4     -4      -4       -4
+#> 121       0        0      0      -4        1       -4     -4      -4       -4
+#> 122       0        0      3       3        1       -4     -4      -4       -4
+#> 123       0        3      3      -4        1       -4     -4      -4       -4
+#> 124       3        0      0      -4        4       -4     -4      -4       -4
+#> 125       0        0      0      -4        1       -4     -4      -4       -4
+#> 126       0        3      0      -4        1       -4     -4      -4       -4
+#> 127       2        1      0      -4        3       -4     -4      -4       -4
+#> 128       0        0      0      -4        3       30     28      14       12
+#> 129       1        2      0      -4        4       29     25       3        7
+#> 130       2        0      0      -4        1       29     27      12       21
+#> 131       0        0      3      -4        4       30     16       5       17
+#> 132       0        1      2      -4        4       -4     -4      -4       -4
+#> 133       2        0      3      -4        1       -4     -4      -4       -4
+#> 134       0        0      0      -4        4       -4     -4      -4       -4
+#> 135       0        0      3      -4        1       -4     -4      -4       -4
+#> 136       0        0      0      -4        4       -4     -4      -4       -4
+#> 137       0        0      1      -4        4       -4     -4      -4       -4
+#> 138       3        0      0      -4        1       -4     -4      -4       -4
+#> 139       1        0      3      -4        1       18     30       9       12
+#> 140       0        0      0      -4        1       20     25      15       10
+#> 141       0        3      0      -4        4       97     28       8       13
+#> 142       0        0      1      -4        1       -4     -4      -4       -4
+#> 143       0        0      3      -4        1       -4     -4      -4       -4
+#> 144       1        2      0      -4        4       -4     -4      -4       -4
+#> 145       0        0      0      -4        1       -4     -4      -4       -4
+#> 146       0        0      1      88        4       -4     -4      -4       -4
+#> 147       1        0      0      -4        1       -4     -4      -4       -4
+#> 148       2        9      0      -4        3       -4     -4      -4       -4
+#> 149       0        0      0      -4        3       -4     -4      -4       -4
+#> 150       1        2      0      -4        4       -4     -4      -4       -4
+#> 151       0        0      2      88        1       -4     -4      -4       -4
+#> 152       0        3      0      -4        1       -4     -4      -4       -4
+#> 153       2        0      1      -4        3       25     30      17       18
+#> 154       3        0      0      -4        1       27     28      12       10
+#> 155       0        2      1      -4        1       29      5      97        1
+#> 156       1        1      0      -4        1       29     29       1       15
+#> 157       0        0      0      -4        1       13     19       8       18
+#> 158       0        3      2      -4        1       29     25       4       16
+#> 159       0        3      0      -4        4       29     30      10        2
+#> 160       0        0      3      -4        3       26     30      10       16
+#> 161       1        0      0      -4        1       30      0       5        0
+#> 162       0        1      1      -4        1       -4     -4      -4       -4
+#> 163       0        0      0      -4        3       -4     -4      -4       -4
+#> 164       1        0      0      -4        1       -4     -4      -4       -4
+#> 165       1        0      3      -4        1       -4     -4      -4       -4
+#> 166       2        0      0      -4        1       -4     -4      -4       -4
+#> 167       0        0      8      -4        1       -4     -4      -4       -4
+#> 168       8        3      0      -4        1       29     28       8       17
+#> 169       0        0      0      -4        1       26     28      14       15
+#> 170       0        0      0      -4        1       30     30       0       13
+#> 171       2        0      8      -4        1       26     24      18       11
+#> 172       0        3      0      -4        1       -4     -4      -4       -4
+#> 173       0        0      0      -4        1       -4     -4      -4       -4
+#> 174       1        1      0      -4        3       -4     -4      -4       -4
+#> 175       0        2      0      -4        1       -4     -4      -4       -4
+#> 176       1        0      0      -4        4       -4     -4      -4       -4
+#> 177       0        0      0      -4        4       -4     -4      -4       -4
+#> 178       3        0      3      -4        3       -4     -4      -4       -4
+#> 179       2        0      0      -4        1       22     20       1       96
+#> 180       0        0      0      -4        4       28     21       6        0
+#> 181       0        2      0      -4        4       23     27       1       15
+#> 182       0        0      3      -4        4       28     28       6       10
+#> 183       0        3      0      -4        2       30     97       8        7
+#> 184       0        0      0      -4        4       30     29      18        0
+#> 185       3        0      0      -4        1       -4     -4      -4       -4
+#> 186       1        0      1      -4        4       -4     -4      -4       -4
+#> 187       1        0      3      -4        3       -4     -4      -4       -4
+#> 188       3        1      0      -4        1       29      6      10       11
+#> 189       3        0      2      -4        3       12     28      17       96
+#> 190       0        0      1      -4        1       27     30      10       21
+#> 191       0        0      0      -4        3       28     29      15       18
+#> 192       0        0      2      -4        1       15     30      13        0
+#> 193       0        0      0      -4        4       30     15      16       12
+#> 194       0        2      0      -4        1       25      5       7       97
+#> 195       0        0      0      -4        3        5     18      12       15
+#> 196       0        0      0      -4        1       28     22       8       15
+#> 197      -4       -4     -4      -4        4       23     26       4        8
+#> 198       0        0      0      -4        1       30     96      11        0
+#> 199       0        2      3      -4        4       -4     -4      -4       -4
+#> 200       1        0      0      -4        1       30     26      18        7
+#> 201       2        0      0      -4        1       26     19      96        9
+#> 202       3        0      3      -4        4       29     22      11       18
+#> 203       2        3      0      -4        4       30     28      11        9
+#> 204       0        0      0      -4        1       -4     -4      -4       -4
+#> 205       0        0      0      -4        3       -4     -4      -4       -4
+#> 206       2        3      0      -4        1       -4     -4      -4       -4
+#> 207       0        0      3      -4        1       -4     -4      -4       -4
+#> 208       0        1      3      88        1       -4     -4      -4       -4
+#> 209       2        0      0      88        3       -4     -4      -4       -4
+#> 210       0        0      0      -4        1       -4     -4      -4       -4
+#> 211       0        2      3      -4        1       29     18      11       18
+#> 212       0        0      0      -4        3        2     30      10       13
+#> 213       0        0      0      -4        3       30     29       5       15
+#> 214       3        1      3      -4        1       30     27      13       10
+#> 215       1        2      3      -4        4       29     97      15        4
+#> 216       0        0      0      -4        1       96     11      16        8
+#> 217       0        0      0      -4        1       -4     -4      -4       -4
+#> 218       0        0      0      -4        1       -4     -4      -4       -4
+#> 219       1        3      0      -4        1       -4     -4      -4       -4
+#> 220       0        0      2      -4        1       -4     -4      -4       -4
+#> 221       0        2      1      -4        1       -4     -4      -4       -4
+#> 222       0        2      0      -4        1       -4     -4      -4       -4
+#> 223       0        0      3      -4        4       -4     -4      -4       -4
+#> 224       2        0      0      88        1       -4     -4      -4       -4
+#> 225       3        0      3      -4        3       -4     -4      -4       -4
+#> 226       1        3      0      -4        4       28      9       6        0
+#> 227       1        0      0      -4        3       -4     -4      -4       -4
+#> 228       0        3      1      -4        3       29     26      11        0
+#> 229       0        0      0      -4        1       16     96       1       14
+#> 230       0        0      3      -4        4       25     23      17        0
+#> 231       1        0      0      -4        4       22     28      11       14
+#> 232       0        0      3      -4        2       30     24       9        0
+#> 233       3        0      0      -4        3       29     25      15        8
+#> 234       0        0      1      -4        1       28     27      19        8
+#> 235       0        0      1      -4        1       -4     -4      -4       -4
+#> 236       0        0      3      -4        1       -4     -4      -4       -4
+#> 237       1        0      0      -4        1       -4     -4      -4       -4
+#> 238       0        1      0      -4        1       -4     -4      -4       -4
+#> 239       3        3      0      -4        3       -4     -4      -4       -4
+#> 240       2        0      0      -4        1       -4     -4      -4       -4
+#> 241       0        0      0      -4        3       -4     -4      -4       -4
+#> 242       0        0      0      -4        1       -4     -4      -4       -4
+#> 243       3        2      3      -4        3       18     21       0        1
+#> 244       0        3      3      -4        3        7     30      22       17
+#> 245       0        3      3      -4        3       -4     -4      -4       -4
+#> 246       1        3      0      -4        4       -4     -4      -4       -4
+#> 247       3        0      0      -4        1       -4     -4      -4       -4
+#> 248       0        0      0      -4        3       -4     -4      -4       -4
+#> 249       1        3      0      -4        1        3     15      11        1
+#> 250       1        0      0      -4        4       30     28      12       10
+#> 251       2        0      0      -4        1       28     22      10        9
+#> 252       0        3      0      -4        4        9     12       0        0
+#> 253       0        0      0      -4        1       29     20      19       14
+#> 254       0        1      0      -4        4       30     25      21       15
+#> 255       3        8      2      -4        1       29     26      14       10
+#> 256       1        1      3      -4        3       30     27       6        0
+#> 257       0        0      0      -4        1       -4     -4      -4       -4
+#> 258       3        1      2      -4        3       -4     -4      -4       -4
+#> 259       0        0      0      -4        3       -4     -4      -4       -4
+#> 260       0        0      3      -4        1       30     21       7        2
+#> 261       1        2      3      -4        4       29     97       6       10
+#> 262       0        1      0      -4        4       28     29      97        7
+#> 263       0        1      3      -4        3       -4     -4      -4       -4
+#> 264       1        0      2      -4        1       -4     -4      -4       -4
+#> 265       0        0      1      -4        1       -4     -4      -4       -4
+#> 266       0        0      0      -4        2       -4     -4      -4       -4
+#> 267       0        3      3      -4        1       -4     -4      -4       -4
+#> 268       0        1      3      88        4       -4     -4      -4       -4
+#> 269       0        0      0      -4        3       -4     -4      -4       -4
+#> 270       2        0      3      -4        2       27     26      21       25
+#> 271       0        0      0      -4        4       29     30       8        2
+#> 272       0        0      2      -4        4       -4     -4      -4       -4
+#> 273       0        0      0      -4        2       -4     -4      -4       -4
+#> 274       1        1      0      -4        1       -4     -4      -4       -4
+#> 275       3        0      0      -4        1       -4     -4      -4       -4
+#> 276       2        2      9      -4        1       -4     -4      -4       -4
+#> 277       0        0      3      -4        4       27     30      97        8
+#> 278       0        0      0      -4        1       29     96      11       13
+#> 279       3        0      0      -4        4       25     97       1        0
+#> 280       0        0      0      -4        1       29      9      17       15
+#> 281       0        0      0      -4        4       13     27      96       97
+#> 282       0        0      2      -4        1       28     27       0       16
+#> 283       0        1      3      -4        4       22     15      10        6
+#> 284       8        0      3      -4        4       23     24       4        0
+#> 285       0        2      0      -4        3       30     28      14        0
+#> 286       0        1      2      -4        1       30     29       9       16
+#> 287       2        0      0      -4        1       23     29       9       19
+#> 288       2        3      0      -4        1       -4     -4      -4       -4
+#> 289       0        3      0      -4        1       -4     -4      -4       -4
+#> 290       1        3      0      -4        3       -4     -4      -4       -4
+#> 291       0        3      0       0        1       -4     -4      -4       -4
+#> 292       1        1      0      88        1       -4     -4      -4       -4
+#> 293       0        0      3      -4        3       -4     -4      -4       -4
+#> 294       0        0      3      -4        1       30     24       8        0
+#> 295       3        0      3      -4        1       30     28       6       98
+#> 296       0        0      3      -4        1       30     30      15        7
+#> 297       0        0      3      -4        3       -4     -4      -4       -4
+#> 298       2        0      0      -4        4       -4     -4      -4       -4
+#> 299       0        0      0      -4        4       -4     -4      -4       -4
+#> 300       0        2      0      -4        1       -4     -4      -4       -4
+#> 301       0        0      3      -4        1       23     27      14       18
+#> 302       2        0      0      -4        1       23     19      18       16
+#> 303       1        0      0      -4        3       28     30      11       11
+#> 304       0        0      0      -4        1        9     30      97       19
+#> 305       0        0      0      -4        4       -4     -4      -4       -4
+#> 306       3        0      1      -4        4       26     29      97        8
+#> 307       0        3      0      -4        3       30     30       9        0
+#> 308       0        0      0      -4        3       25     30      14       12
+#> 309       0        0      3      -4        3       21     17      14       17
+#> 310       1        0      1      -4        1       29     97       0       96
+#> 311       1        1      0      -4        1       26     96       3       10
+#> 312       3        0      2      -4        1       97     30       3        0
+#> 313       2        1      3      -4        3       27     27      96       96
+#> 314       0        3      0      -4        3       17     30      18       19
+#> 315       3        0      0      -4        3        0     30       9       96
+#> 316       0        3      0      -4        4       -4     -4      -4       -4
+#> 317       0        1      0      -4        4       30     23      12       10
+#> 318       0        3      0      -4        2       24     21       9       18
+#> 319       0        0      0      -4        4       16     96       4       17
+#> 320       0        0      0      -4        1       24      7       5        3
+#> 321       0        0      1      -4        4       20     20      14       15
+#> 322       0        0      0      -4        1       27     30       8       20
+#> 323       1        1      0      -4        4       26     29      20        8
+#> 324       0        0      0      -4        1       23     15      96       12
+#> 325       0        1      0      -4        1       27     25      11        0
+#> 326       0        0      0      -4        4       30     25      14       13
+#> 327       3        0      0      -4        3       30      5      97        4
+#> 328       0        0      3      -4        1       26      8      17       96
+#> 329       0        0      1      -4        1       -4     -4      -4       -4
+#> 330       0        3      3      -4        1       -4     -4      -4       -4
+#> 331       2        1      1      -4        4       12     30      19       15
+#> 332       0        0      0      -4        4       29     15      10       16
+#> 333       0        0      1      -4        2       29     22      14       21
+#> 334       0        3      0      -4        1       14     26       6       10
+#> 335       3        3      0      -4        4       30     29       3       98
+#> 336       2        0      0      -4        4       19     30       8       16
+#> 337       0        3      3      -4        4       26     28       7       11
+#> 338       1        1      1      -4        4       29     27       5       10
+#> 339       0        0      3      -4        1       29     22       9        6
+#> 340       0        0      3      -4        1       29     95      15       12
+#> 341       0        2      3      -4        4       30     29       6       15
+#> 342       0        0      3      -4        1       30     14      13        0
+#> 343       0        0      3      -4        4       25     30       6       12
+#> 344       0        0      2      -4        3       28      8      15       16
+#>     MEMTIME DIGIF DIGIFLEN DIGIB DIGIBLEN OTHCOG
+#> 1        35     8        3     3        5     -4
+#> 2        -4    97        6     8        4     -4
+#> 3        18     6        5     8        4     -4
+#> 4         8    10        6     4        7     -4
+#> 5        10    10       96     3        5     -4
+#> 6        21    11        4     6        6     -4
+#> 7        13     3        7    97       96     -4
+#> 8        -4    -4       -4    -4       -4      0
+#> 9        19     9        8     5        3     -4
+#> 10       17     9        7     4       96     -4
+#> 11       -4    -4       -4    -4       -4      0
+#> 12       -4    -4       -4    -4       -4      0
+#> 13       20     7        5     4        6     -4
+#> 14       20     7        0     6        5     -4
+#> 15       20     6        8     6        3     -4
+#> 16       30     6        6     8        3     -4
+#> 17       -4    -4       -4    -4       -4      0
+#> 18       -4    -4       -4    -4       -4      0
+#> 19       17     8        8    97        6     -4
+#> 20       20     8       95     0        5     -4
+#> 21       28     4        5     7        5     -4
+#> 22       -4    -4       -4    -4       -4      0
+#> 23       -4    -4       -4    -4       -4      0
+#> 24       -4    10        7     8        4     -4
+#> 25       30     8        6     7        4     -4
+#> 26       16     6        7     6        4     -4
+#> 27       20     7       96     3        4     -4
+#> 28       15     9        6     5        6     -4
+#> 29       15    10        8     5        4     -4
+#> 30       20     6       96    11        3     -4
+#> 31       30     7        7     9        0     -4
+#> 32       -4    -4       -4    -4       -4      0
+#> 33       -4    -4       -4    -4       -4      0
+#> 34       -4    -4       -4    -4       -4      0
+#> 35       -4    -4       -4    -4       -4      0
+#> 36       -4    -4       -4    -4       -4      0
+#> 37       -4    -4       -4    -4       -4      0
+#> 38       -4    -4       -4    -4       -4      0
+#> 39       -4    -4       -4    -4       -4      0
+#> 40       99     7        5     7        4     -4
+#> 41       -4    -4       -4    -4       -4     -4
+#> 42       -4    -4       -4    -4       -4     -4
+#> 43       17    11        5     6       98     -4
+#> 44       -4     4        6     5        0     -4
+#> 45       -4     8        8     5        5     -4
+#> 46       -4    -4       -4    -4       -4      0
+#> 47       -4    -4       -4    -4       -4      0
+#> 48       25    10        6     5        5     -4
+#> 49       -4    -4       -4    -4       -4      0
+#> 50       -4    -4       -4    -4       -4      0
+#> 51       -4    -4       -4    -4       -4      0
+#> 52       16    12        7    98        5     -4
+#> 53       16     8        5     3        4      0
+#> 54       -4    -4       -4    -4       -4      0
+#> 55       17     7        6    96        5     -4
+#> 56       15    12        5     4        7     -4
+#> 57       25     4        6     7       96     -4
+#> 58       26     6        5     4        5     -4
+#> 59       20     6        5     8        7     -4
+#> 60       13     7        5     6        4     -4
+#> 61       27    96        7     4        3     -4
+#> 62       21     5        6     5        6     -4
+#> 63       15    97        5    96       98     -4
+#> 64       20     8        8     4        7     -4
+#> 65       19     9        5    10        4     -4
+#> 66       30     5        7     6        7     -4
+#> 67       18     2        5     5        6     -4
+#> 68       19     9        6     5        3     -4
+#> 69       16     9        6     6        4     -4
+#> 70       -4    -4       -4    -4       -4      0
+#> 71       -4    -4       -4    -4       -4      0
+#> 72       22     8        6     4        5     -4
+#> 73       30    11        6     4        3     -4
+#> 74       -4     7        6    11        5     -4
+#> 75       18     9        7     4        5     -4
+#> 76       20     2        7     6        3     -4
+#> 77       16     9       96     4        3     -4
+#> 78       -4    -4       -4    -4       -4      0
+#> 79       -4    -4       -4    -4       -4      0
+#> 80       -4    -4       -4    -4       -4      0
+#> 81       -4    -4       -4    -4       -4      0
+#> 82       17     8        8     8        5     -4
+#> 83       27    10        6    97        3     -4
+#> 84       19    96        6     7        5     -4
+#> 85       15     8        7    10        4     -4
+#> 86       15     9        5     5        4     -4
+#> 87       18     8        6     7        3     -4
+#> 88       33    11        7     4        2     -4
+#> 89       20     9        5     3        4     -4
+#> 90       15    10        5     7        2     -4
+#> 91       13     8        7     5        7     -4
+#> 92       -4    -4       -4    -4       -4      0
+#> 93       -4    -4       -4    -4       -4      0
+#> 94       -4    -4       -4    -4       -4      0
+#> 95       -4    -4       -4    -4       -4      0
+#> 96       -4    -4       -4    -4       -4      0
+#> 97       20    11        7     3        3     -4
+#> 98       16     5        6     5        5     -4
+#> 99       15     8        6     3        3     -4
+#> 100      23     6        4     4        7     -4
+#> 101      18     8        8     3        5     -4
+#> 102      14     9        8     9        2     -4
+#> 103      -4    -4       -4    -4       -4      0
+#> 104      -4    -4       -4    -4       -4      0
+#> 105      10     8        7     0        4     -4
+#> 106      13    12        7     7       97     -4
+#> 107      20     9        6     9        4     -4
+#> 108      22    12        6    12        5     -4
+#> 109      22    96        3     3        4     -4
+#> 110      18    11        6     0        7     -4
+#> 111      17     9        7    96        4     -4
+#> 112      14     9        8     5       96     -4
+#> 113      -4    -4       -4    -4       -4      0
+#> 114      -4    -4       -4    -4       -4      0
+#> 115      -4    -4       -4    -4       -4      0
+#> 116      12     1        8     2       97     -4
+#> 117      -4    11        6     7        6     -4
+#> 118      -4    -4       -4    -4       -4      0
+#> 119      -4    -4       -4    -4       -4      0
+#> 120      -4    -4       -4    -4       -4      0
+#> 121      -4    -4       -4    -4       -4      0
+#> 122      -4    -4       -4    -4       -4      0
+#> 123      -4    -4       -4    -4       -4      0
+#> 124      -4    -4       -4    -4       -4      0
+#> 125      -4    -4       -4    -4       -4      0
+#> 126      -4    -4       -4    -4       -4      0
+#> 127      -4    -4       -4    -4       -4      0
+#> 128      11     8        6    10        2     -4
+#> 129      -4     8        7     7        3     -4
+#> 130      18     9        6     7        4     -4
+#> 131      20     8        5     7        4     -4
+#> 132      -4    -4       -4    -4       -4      0
+#> 133      -4    -4       -4    -4       -4      1
+#> 134      -4    -4       -4    -4       -4      0
+#> 135      -4    -4       -4    -4       -4      1
+#> 136      -4    -4       -4    -4       -4      0
+#> 137      -4    -4       -4    -4       -4      0
+#> 138      -4    -4       -4    -4       -4      0
+#> 139      -4    10        5     5        5     -4
+#> 140      -4     7        6     7        4     -4
+#> 141      -4     6        0     4        4      1
+#> 142      -4    -4       -4    -4       -4      0
+#> 143      -4    -4       -4    -4       -4      0
+#> 144      -4    -4       -4    -4       -4      0
+#> 145      -4    -4       -4    -4       -4      0
+#> 146      -4    -4       -4    -4       -4      0
+#> 147      -4    -4       -4    -4       -4      0
+#> 148      -4    -4       -4    -4       -4      0
+#> 149      -4    -4       -4    -4       -4      1
+#> 150      -4    -4       -4    -4       -4      0
+#> 151      -4    -4       -4    -4       -4      0
+#> 152      -4    -4       -4    -4       -4      0
+#> 153      15    10        7     6        3     -4
+#> 154      16     7        5     4        4     -4
+#> 155      24     5        4     7        5     -4
+#> 156      20    10        5    97        3     -4
+#> 157      20    10        6     4        4     -4
+#> 158      15     9        7     7       96     -4
+#> 159      18    11        7     6        3     -4
+#> 160      18    10        6     7        6     -4
+#> 161      99     9       97     7        6     -4
+#> 162      -4    -4       -4    -4       -4     -4
+#> 163      -4    -4       -4    -4       -4     -4
+#> 164      -4    -4       -4    -4       -4     -4
+#> 165      -4    -4       -4    -4       -4     -4
+#> 166      -4    -4       -4    -4       -4     -4
+#> 167      -4    -4       -4    -4       -4     -4
+#> 168      14     8        5     4        5     -4
+#> 169      18     7        4     8        5     -4
+#> 170      20    10        4    96        4     -4
+#> 171      11     5       96     2        5     -4
+#> 172      -4    -4       -4    -4       -4      0
+#> 173      -4    -4       -4    -4       -4      0
+#> 174      -4    -4       -4    -4       -4      0
+#> 175      -4    -4       -4    -4       -4      0
+#> 176      -4    -4       -4    -4       -4      0
+#> 177      -4    -4       -4    -4       -4      0
+#> 178      -4    -4       -4    -4       -4      0
+#> 179      20     7        8     5        5     -4
+#> 180      20    11        8    96        4     -4
+#> 181      -4     8        5     7        5     -4
+#> 182      15     6        8     4        4     -4
+#> 183      22     9        6     5        6     -4
+#> 184      13    10        6     5        5     -4
+#> 185      -4    -4       -4    -4       -4     -4
+#> 186      -4    -4       -4    -4       -4      0
+#> 187      -4    -4       -4    -4       -4      0
+#> 188      21    11       97     4       97     -4
+#> 189      30     6        6     4        5     -4
+#> 190      23     9        8    11        3     -4
+#> 191      17     8        6     5        4     -4
+#> 192      12    10        5     7        7     -4
+#> 193      20     6        7     5        6     -4
+#> 194      20     8        5     3        4     -4
+#> 195      16    12        4     9        5     -4
+#> 196      18     8        6     2        6     -4
+#> 197      20     4        6     8        5     -4
+#> 198      16     9        7     7        5     -4
+#> 199      -4    -4       -4    -4       -4      0
+#> 200      20     6        5     5        5     -4
+#> 201      20     7        5     6        4     -4
+#> 202      20     4       97     6        3     -4
+#> 203      15     8        7     5       96     -4
+#> 204      -4    -4       -4    -4       -4      0
+#> 205      -4    -4       -4    -4       -4      0
+#> 206      -4    -4       -4    -4       -4      0
+#> 207      -4    -4       -4    -4       -4      0
+#> 208      -4    -4       -4    -4       -4      0
+#> 209      -4    -4       -4    -4       -4      0
+#> 210      -4    -4       -4    -4       -4      0
+#> 211      15     9        6     7        3     -4
+#> 212      20     7        4     4        2     -4
+#> 213      20     8        6     6        4     -4
+#> 214      27     8        6     7        5     -4
+#> 215      15    11        7     9        7     -4
+#> 216      20     3        7     7        4     -4
+#> 217      -4    -4       -4    -4       -4      0
+#> 218      -4    -4       -4    -4       -4      0
+#> 219      -4    -4       -4    -4       -4      0
+#> 220      -4    -4       -4    -4       -4      0
+#> 221      -4    -4       -4    -4       -4      0
+#> 222      -4    -4       -4    -4       -4      0
+#> 223      -4    -4       -4    -4       -4      0
+#> 224      -4    -4       -4    -4       -4      0
+#> 225      -4    -4       -4    -4       -4      0
+#> 226      19     6       96     8        2     -4
+#> 227      -4    -4       -4    -4       -4      0
+#> 228      14     5        6     5        4     -4
+#> 229      24     4        6     8        4     -4
+#> 230      16     7        4     6        4     -4
+#> 231      25    11        5     7        6     -4
+#> 232      28     7        6     7        5     -4
+#> 233      31     9        7     6        7     -4
+#> 234      18     6        7     6        5      0
+#> 235      -4    -4       -4    -4       -4      0
+#> 236      -4    -4       -4    -4       -4      0
+#> 237      -4    -4       -4    -4       -4      0
+#> 238      -4    -4       -4    -4       -4      0
+#> 239      -4    -4       -4    -4       -4      0
+#> 240      -4    -4       -4    -4       -4      0
+#> 241      -4    -4       -4    -4       -4      0
+#> 242      -4    -4       -4    -4       -4      0
+#> 243      19     2        7     6        4     -4
+#> 244      30     8        8     6        5     -4
+#> 245      -4    -4       -4    -4       -4      0
+#> 246      -4    -4       -4    -4       -4      0
+#> 247      -4    -4       -4    -4       -4      0
+#> 248      -4    -4       -4    -4       -4      0
+#> 249      20     4        4     7        3     -4
+#> 250      20    11        6     9        2     -4
+#> 251      20     3        6     7        4     -4
+#> 252      16     9        7     8        3     -4
+#> 253      20    96        6     4        6     -4
+#> 254      14     8        7     7        3     -4
+#> 255      13     6        4     2        3     -4
+#> 256      15     5        7     8        5     -4
+#> 257      -4    -4       -4    -4       -4      0
+#> 258      -4    -4       -4    -4       -4      0
+#> 259      -4    -4       -4    -4       -4      0
+#> 260      -4     5        7     6        3     -4
+#> 261      -4     8        7     6        5     -4
+#> 262      -4     6        6     7        6     -4
+#> 263      -4    -4       -4    -4       -4     -4
+#> 264      -4    -4       -4    -4       -4     -4
+#> 265      -4    -4       -4    -4       -4     -4
+#> 266      -4    -4       -4    -4       -4     -4
+#> 267      -4    -4       -4    -4       -4      0
+#> 268      -4    -4       -4    -4       -4      0
+#> 269      -4    -4       -4    -4       -4      0
+#> 270      18    12        6     5        5     -4
+#> 271      20     6        5     4        5     -4
+#> 272      -4    -4       -4    -4       -4      0
+#> 273      -4    -4       -4    -4       -4      0
+#> 274      -4    -4       -4    -4       -4      0
+#> 275      -4    -4       -4    -4       -4      0
+#> 276      -4    -4       -4    -4       -4      0
+#> 277      18     9        5     5        6     -4
+#> 278      13     7        7     7        7     -4
+#> 279      23     6        8     6        3     -4
+#> 280      22    10        7     7        4     -4
+#> 281      23     7        7     5        6     -4
+#> 282      99    10        8     3        5     -4
+#> 283      -4     6        7    10        5     -4
+#> 284      20     7       97     4        3     -4
+#> 285      16     6        7     6        6     -4
+#> 286      20     5        5     7        3      1
+#> 287      -4     6        7     6        0      0
+#> 288      -4    -4       -4    -4       -4      0
+#> 289      -4    -4       -4    -4       -4      0
+#> 290      -4    -4       -4    -4       -4      0
+#> 291      -4    -4       -4    -4       -4      0
+#> 292      -4    -4       -4    -4       -4      0
+#> 293      -4    -4       -4    -4       -4      0
+#> 294      15     7        5     9        6     -4
+#> 295      35    11        8     5        5     -4
+#> 296      99    10        6     4        4     -4
+#> 297      -4    -4       -4    -4       -4      0
+#> 298      -4    -4       -4    -4       -4      0
+#> 299      -4    -4       -4    -4       -4      0
+#> 300      -4    -4       -4    -4       -4      0
+#> 301      15     5        6     6        4     -4
+#> 302      14    11        7     6        0     -4
+#> 303      21     7        7    10        5     -4
+#> 304      32     8        7    97        5     -4
+#> 305      -4    -4       -4    -4       -4      0
+#> 306      19     7       96     6        2     -4
+#> 307      20     8        7     8        4     -4
+#> 308      21     7        6     5        5     -4
+#> 309      17    96        6     6        4     -4
+#> 310      23     4        8     8        5     -4
+#> 311      15     8        5     7        2     -4
+#> 312      16     6        6     8        4     -4
+#> 313      17     9        6     6        6     -4
+#> 314      15     5        7     2        5     -4
+#> 315      15     9        7     6        4     -4
+#> 316      -4    -4       -4    -4       -4     -4
+#> 317      33     7        8     4        4     -4
+#> 318      25    10        7     2        4     -4
+#> 319      16    11        8    11        5     -4
+#> 320      18     6        4     6        3     -4
+#> 321      28     9        8    12        0     -4
+#> 322      20     9        6     7        4     -4
+#> 323      20     9        6     6        6     -4
+#> 324      15     8        5     0        5     -4
+#> 325      16     7        7     6        4     -4
+#> 326      27     2        8    96        5     -4
+#> 327      23     9        8     4        6     -4
+#> 328      17     6        6     9       97     -4
+#> 329      -4    -4       -4    -4       -4      0
+#> 330      -4    -4       -4    -4       -4      0
+#> 331      19    11        7     2        6     -4
+#> 332       3    11        6     2        5     -4
+#> 333      20     7        6    11        0     -4
+#> 334      13     6        6     5        5     -4
+#> 335      23     7        7    10        5     -4
+#> 336      20     6        6     8        4     -4
+#> 337      16     8        6     6        3     -4
+#> 338      21     8        5     6        3     -4
+#> 339      15    11        7     5        7     -4
+#> 340      21     8        8    96        3     -4
+#> 341      26     6        7     0        3     -4
+#> 342      30     7       97     6        5      0
+#> 343      15     7        6     7        6      0
+#> 344      18     7        6     6        5      0
+#>                                       OTHCOGX OTHPSY                  OTHPSYX
+#> 1                                                  0                         
+#> 2                                                  0                         
+#> 3                                                  0                         
+#> 4                                                  0                         
+#> 5                                                  1                 DYSTHMIA
+#> 6                                                  0                         
+#> 7                                                  0                         
+#> 8                                                  0                         
+#> 9                                                  0                         
+#> 10                                                 0                         
+#> 11                                                 0                         
+#> 12                                                 0                         
+#> 13                                                 0                         
+#> 14                                                 0                         
+#> 15                                                 0                         
+#> 16                                                 0                         
+#> 17                                                 0                         
+#> 18                                                 0                         
+#> 19                                                 0                         
+#> 20                                                 0                         
+#> 21                                                 0                         
+#> 22                                                 0                         
+#> 23                                                 0                         
+#> 24                                                 0                         
+#> 25                                                 0                         
+#> 26                                                 0                         
+#> 27                                                 0                         
+#> 28                                                 0                         
+#> 29                                                 1               Delusional
+#> 30                                                 0                         
+#> 31                                                 0                         
+#> 32                                                 0                         
+#> 33                                                 0                         
+#> 34                                                 0                         
+#> 35                                                 0                         
+#> 36                                                 0                         
+#> 37                                                 0                         
+#> 38                                                 0                         
+#> 39                                                 0                         
+#> 40                                                 0                         
+#> 41                                                 0                         
+#> 42                                                 0                         
+#> 43                                                 0                         
+#> 44                                                 0                         
+#> 45                                                 0                         
+#> 46                                                 0                         
+#> 47                                                 0                         
+#> 48                                                 0                         
+#> 49                                                 0                         
+#> 50                                                 0                         
+#> 51                                                 0                         
+#> 52                                                 0                         
+#> 53                                                 0                         
+#> 54                                                 0                         
+#> 55                                                 0                         
+#> 56                                                 0                         
+#> 57                                                 0                         
+#> 58                                                 0                         
+#> 59                                                 0                         
+#> 60                                                 0                         
+#> 61                                                 1 Personality disorder NOS
+#> 62                                                 0                         
+#> 63                                                 0                         
+#> 64                                                 0                         
+#> 65                                                 0                         
+#> 66                                                 0                         
+#> 67                                                 0                         
+#> 68                                                 0                         
+#> 69                                                 0                         
+#> 70                                                 0                         
+#> 71                                                 0                         
+#> 72                                                 0                         
+#> 73                                                 0                         
+#> 74                                                 0                         
+#> 75                                                 0                         
+#> 76                                                 0                         
+#> 77                                                 0                         
+#> 78                                                 0                         
+#> 79                                                 0                         
+#> 80                                                 0                         
+#> 81                                                 0                         
+#> 82                                                 0                         
+#> 83                                                 0                         
+#> 84                                                 0                         
+#> 85                                                 0                         
+#> 86                                                 0                         
+#> 87                                                 0                         
+#> 88                                                 0                         
+#> 89                                                 0                         
+#> 90                                                 0                         
+#> 91                                                 0                         
+#> 92                                                 0                         
+#> 93                                                 0                         
+#> 94                                                 0                         
+#> 95                                                 0                         
+#> 96                                                 0                         
+#> 97                                                 0                         
+#> 98                                                 0                         
+#> 99                                                 0                         
+#> 100                                                0                         
+#> 101                                                0                         
+#> 102                                                0                         
+#> 103                                                0                         
+#> 104                                                0                         
+#> 105                                                0                         
+#> 106                                                0                         
+#> 107                                                0                         
+#> 108                                                0                         
+#> 109                                                0                         
+#> 110                                                0                         
+#> 111                                                0                         
+#> 112                                                0                         
+#> 113                                                0                         
+#> 114                                                0                         
+#> 115                                                0                         
+#> 116                                                0                         
+#> 117                                                0                         
+#> 118                                                0                         
+#> 119                                                0                         
+#> 120                                                0                         
+#> 121                                                0                         
+#> 122                                                0                         
+#> 123                                                0                         
+#> 124                                                0                         
+#> 125                                                0                         
+#> 126                                                0                         
+#> 127                                                0                         
+#> 128                                                0                         
+#> 129                                                0                         
+#> 130                                                0                         
+#> 131                                                0                         
+#> 132                                                0                         
+#> 133     Neurodegenerative Disease (AD vs FTD)      0                         
+#> 134                                                0                         
+#> 135 microvascular disease 2007 MRI med-masted      0                         
+#> 136                                                0                         
+#> 137                                                0                         
+#> 138                                                0                         
+#> 139                                                0                         
+#> 140                                                0                         
+#> 141 resolved encephalitis of unknown etiology      0                         
+#> 142                                                0                         
+#> 143                                                0                         
+#> 144                                                0                         
+#> 145                                                0                         
+#> 146                                                0                         
+#> 147                                                0                         
+#> 148                                                0                         
+#> 149                               PPA ?TDP 43      0                         
+#> 150                                                0                         
+#> 151                                                0                         
+#> 152                                                0                         
+#> 153                                                0                         
+#> 154                                                0                         
+#> 155                                                0                         
+#> 156                                                0                         
+#> 157                                                0                         
+#> 158                                                0                         
+#> 159                                                0                         
+#> 160                                                0                         
+#> 161                                                0                         
+#> 162                                                0                         
+#> 163                                                0                         
+#> 164                                                0                         
+#> 165                                                0                         
+#> 166                                                0                         
+#> 167                                                0                         
+#> 168                                                0                         
+#> 169                                                0                         
+#> 170                                                0                         
+#> 171                                                0                         
+#> 172                                                0                         
+#> 173                                                0                         
+#> 174                                                0                         
+#> 175                                                0                         
+#> 176                                                0                         
+#> 177                                                0                         
+#> 178                                                0                         
+#> 179                                                0                         
+#> 180                                                0                         
+#> 181                                                0                         
+#> 182                                                0                         
+#> 183                                                0                         
+#> 184                                                0                         
+#> 185                                                0                         
+#> 186                                                0                         
+#> 187                                                0                         
+#> 188                                                0                         
+#> 189                                                0                         
+#> 190                                                0                         
+#> 191                                                0                         
+#> 192                                                0                         
+#> 193                                                0                         
+#> 194                                                0                         
+#> 195                                                0                         
+#> 196                                                0                         
+#> 197                                                0                         
+#> 198                                                0                         
+#> 199                                                0                         
+#> 200                                                0                         
+#> 201                                                0                         
+#> 202                                                0                         
+#> 203                                                0                         
+#> 204                                                0                         
+#> 205                                                0                         
+#> 206                                                0                         
+#> 207                                                0                         
+#> 208                                                0                         
+#> 209                                                0                         
+#> 210                                                0                         
+#> 211                                                0                         
+#> 212                                                0                         
+#> 213                                                0                         
+#> 214                                                0                         
+#> 215                                                0                         
+#> 216                                                0                         
+#> 217                                                0                         
+#> 218                                                0                         
+#> 219                                                0                         
+#> 220                                                0                         
+#> 221                                                0                         
+#> 222                                                0                         
+#> 223                                                0                         
+#> 224                                                0                         
+#> 225                                                0                         
+#> 226                                                0                         
+#> 227                                                0                         
+#> 228                                                0                         
+#> 229                                                0                         
+#> 230                                                0                         
+#> 231                                                0                         
+#> 232                                                0                         
+#> 233                                                0                         
+#> 234                                                0                         
+#> 235                                                0                         
+#> 236                                                0                         
+#> 237                                                0                         
+#> 238                                                0                         
+#> 239                                                0                         
+#> 240                                                0                         
+#> 241                                                0                         
+#> 242                                                0                         
+#> 243                                                0                         
+#> 244                                                0                         
+#> 245                                                0                         
+#> 246                                                0                         
+#> 247                                                0                         
+#> 248                                                0                         
+#> 249                                                0                         
+#> 250                                                0                         
+#> 251                                                0                         
+#> 252                                                0                         
+#> 253                                                0                         
+#> 254                                                0                         
+#> 255                                                0                         
+#> 256                                                0                         
+#> 257                                                0                         
+#> 258                                                0                         
+#> 259                                                0                         
+#> 260                                                0                         
+#> 261                                                0                         
+#> 262                                                0                         
+#> 263                                                0                         
+#> 264                                                0                         
+#> 265                                                0                         
+#> 266                                                0                         
+#> 267                                                0                         
+#> 268                                                0                         
+#> 269                                                0                         
+#> 270                                                0                         
+#> 271                                                0                         
+#> 272                                                0                         
+#> 273                                                0                         
+#> 274                                                0                         
+#> 275                                                0                         
+#> 276                                                0                         
+#> 277                                                0                         
+#> 278                                                0                         
+#> 279                                                0                         
+#> 280                                                0                         
+#> 281                                                0                         
+#> 282                                                0                         
+#> 283                                                0                         
+#> 284                                                0                         
+#> 285                                                0                         
+#> 286                             NOS/not other      0                         
+#> 287                                                0                         
+#> 288                                                0                         
+#> 289                                                0                         
+#> 290                                                0                         
+#> 291                                                0                         
+#> 292                                                0                         
+#> 293                                                0                         
+#> 294                                                0                         
+#> 295                                                0                         
+#> 296                                                0                         
+#> 297                                                0                         
+#> 298                                                0                         
+#> 299                                                0                         
+#> 300                                                0                         
+#> 301                                                0                         
+#> 302                                                0                         
+#> 303                                                0                         
+#> 304                                                0                         
+#> 305                                                0                         
+#> 306                                                0                         
+#> 307                                                0                         
+#> 308                                                0                         
+#> 309                                                0                         
+#> 310                                                0                         
+#> 311                                                0                         
+#> 312                                                0                         
+#> 313                                                0                         
+#> 314                                                0                         
+#> 315                                                0                         
+#> 316                                                0                         
+#> 317                                                0                         
+#> 318                                                0                         
+#> 319                                                0                         
+#> 320                                                0                         
+#> 321                                                0                         
+#> 322                                                0                         
+#> 323                                                0                         
+#> 324                                                0                         
+#> 325                                                0                         
+#> 326                                                0                         
+#> 327                                                0                         
+#> 328                                                0                         
+#> 329                                                0                         
+#> 330                                                0                         
+#> 331                                                0                         
+#> 332                                                0                         
+#> 333                                                0                         
+#> 334                                                0                         
+#> 335                                                0                         
+#> 336                                                0                         
+#> 337                                                0                         
+#> 338                                                0                         
+#> 339                                                0                         
+#> 340                                                0                         
+#> 341                                                0                         
+#> 342                                                0                         
+#> 343                                                0                         
+#> 344                                                0                         
+#>     COGOTH COGOTHIF                                                  COGOTHX
+#> 1        0        7                                                         
+#> 2        0        7                                                         
+#> 3        1        7                                                delusions
+#> 4        0        8                                                         
+#> 5        0        7                                                         
+#> 6        0        7                                                         
+#> 7        0        7                                                         
+#> 8        0        8                                                         
+#> 9        0        7                                                         
+#> 10       0        8                                                         
+#> 11       0        8                                                         
+#> 12       0        7                                                         
+#> 13       0        7                                                         
+#> 14       0        7                                                         
+#> 15       0        8                                                         
+#> 16       0        7                                                         
+#> 17       0        7                                                         
+#> 18       0        7                                                         
+#> 19       0        8                                                         
+#> 20       0        7                                                         
+#> 21       0        8                                                         
+#> 22       0        8                                                         
+#> 23       0        7                                                         
+#> 24       0        8                                                         
+#> 25       0        8                                                         
+#> 26       0        7                                                         
+#> 27       0        7                                                         
+#> 28       0        7                                                         
+#> 29       0        8                                                         
+#> 30       0        7                                                         
+#> 31       0        8                                                         
+#> 32       0        8                                                         
+#> 33       0        7                                                         
+#> 34       0        7                                                         
+#> 35       0        7                                                         
+#> 36       0        7                                                         
+#> 37       0        1                                                         
+#> 38       0        7                                                         
+#> 39       0        7                                                         
+#> 40       0        8                                                         
+#> 41       0        7                                                         
+#> 42       0        7                                                         
+#> 43       0        8                                                         
+#> 44       0        7                                                         
+#> 45       0        7                                                         
+#> 46       0        7                                                         
+#> 47       0        7                                                         
+#> 48       0        8                                                         
+#> 49       0        7                                                         
+#> 50       0        7                                                         
+#> 51       0        7                                                         
+#> 52       0        8                                                         
+#> 53       0        8                                                         
+#> 54       0        8                                                         
+#> 55       0        7                                                         
+#> 56       0        7                                                         
+#> 57       0        7                                                         
+#> 58       1        7                                       s/p fall, delirium
+#> 59       0        7                                                         
+#> 60       0        8                                                         
+#> 61       0        8                                                         
+#> 62       0        7                                                         
+#> 63       0        7                                                         
+#> 64       0        8                                                         
+#> 65       0        8                                                         
+#> 66       1        8                                       CEREBELLAR LACUNES
+#> 67       0        7                                                         
+#> 68       0        8                                                         
+#> 69       0        7                                                         
+#> 70       0        8                                                         
+#> 71       0        8                                                         
+#> 72       0        7                                                         
+#> 73       0        7                                                         
+#> 74       0        3                                                         
+#> 75       0        7                                                         
+#> 76       0        8                                                         
+#> 77       0        7                                                         
+#> 78       1        7                                             FIBROMYALGIA
+#> 79       0        7                                                         
+#> 80       1        8                    multi-factorial AD part late/vascular
+#> 81       0        7                                                         
+#> 82       0        8                                                         
+#> 83       0        8                                                         
+#> 84       0        8                                                         
+#> 85       0        8                                                         
+#> 86       0        7                                                         
+#> 87       0        8                                                         
+#> 88       0        8                                                         
+#> 89       0        7                                                         
+#> 90       0        8                                                         
+#> 91       0        8                                                         
+#> 92       0        1                                                         
+#> 93       0        7                                                         
+#> 94       0        3                                                         
+#> 95       0        7                                                         
+#> 96       0        7                                                         
+#> 97       0        7                                                         
+#> 98       0        8                                                         
+#> 99       0        7                                                         
+#> 100      0        7                                                         
+#> 101      0        7                                                         
+#> 102      0        7                                                         
+#> 103      0        8                                                         
+#> 104      0        7                                                         
+#> 105      0        7                                                         
+#> 106      0        3                                                         
+#> 107      0        7                                                         
+#> 108      0        8                                                         
+#> 109      0        7                                                         
+#> 110      0        8                                                         
+#> 111      0        8                                                         
+#> 112      0        7                                                         
+#> 113      0        7                                                         
+#> 114      0        7                                                         
+#> 115      0        7                                                         
+#> 116      0        7                                                         
+#> 117      0        7                                                         
+#> 118      0        7                                                         
+#> 119      0        7                                                         
+#> 120      0        8                                                         
+#> 121      0        8                                                         
+#> 122      0        7                                                         
+#> 123      1        8                                               POST POLIO
+#> 124      0        7                                                         
+#> 125      0        7                                                         
+#> 126      0        8                                                         
+#> 127      0        8                                                         
+#> 128      0        8                                                         
+#> 129      0        8                                                         
+#> 130      1        7                    Segmental Myoclonus + Familial Tremor
+#> 131      0        7                                                         
+#> 132      0        8                                                         
+#> 133      0        7                                                         
+#> 134      0        8                                                         
+#> 135      0        1                                                         
+#> 136      0        7                                                         
+#> 137      0        8                                                         
+#> 138      0        7                                                         
+#> 139      0        8                                                         
+#> 140      0        8                                                         
+#> 141      0        8                                                         
+#> 142      0        7                                                         
+#> 143      0        7                                                         
+#> 144      0        7                                                         
+#> 145      0        8                                                         
+#> 146      0        8                                                         
+#> 147      0        7                                                         
+#> 148      0        8                                                         
+#> 149      0        7                                                         
+#> 150      0        7                                                         
+#> 151      0        8                                                         
+#> 152      0        7                                                         
+#> 153      0        8                                                         
+#> 154      0        7                                                         
+#> 155      0        8                                                         
+#> 156      0        8                                                         
+#> 157      0        7                                                         
+#> 158      0        8                                                         
+#> 159      1        8 MCI with behavioral impairment and executive dysfunction
+#> 160      0        7                                                         
+#> 161      0        7                                                         
+#> 162      0        7                                                         
+#> 163      0        8                                                         
+#> 164      1        8                                                MYOCLONUS
+#> 165      0        8                                                         
+#> 166      0        8                                                         
+#> 167      0        7                                                         
+#> 168      0        8                                                         
+#> 169      0        7                                                         
+#> 170      0        8                                                         
+#> 171      0        7                                                         
+#> 172      0        7                                                         
+#> 173      0        7                                                         
+#> 174      0        8                                                         
+#> 175      0        8                                                         
+#> 176      0        7                                                         
+#> 177      0        7                                                         
+#> 178      1        7                                            Hx of one TIA
+#> 179      1        7                                          vascular on mri
+#> 180      0        8                                                         
+#> 181      0        7                                                         
+#> 182      0        7                                                         
+#> 183      0        8                                                         
+#> 184      0        7                                                         
+#> 185      0        7                                                         
+#> 186      0        7                                                         
+#> 187      0        8                                                         
+#> 188      0        8                                                         
+#> 189      0        8                                                         
+#> 190      0        8                                                         
+#> 191      0        7                                                         
+#> 192      0        8                                                         
+#> 193      0        7                                                         
+#> 194      0        8                                                         
+#> 195      0        8                                                         
+#> 196      0        8                                                         
+#> 197      0        7                                                         
+#> 198      0        8                                                         
+#> 199      0        7                                                         
+#> 200      0        7                                                         
+#> 201      0        8                                                         
+#> 202      0        8                                                         
+#> 203      0        7                                                         
+#> 204      0        8                                                         
+#> 205      0        7                                                         
+#> 206      0        8                                                         
+#> 207      0        1                                                         
+#> 208      0        7                                                         
+#> 209      0        8                                                         
+#> 210      0        7                                                         
+#> 211      0        8                                                         
+#> 212      0        7                                                         
+#> 213      1        7                                   Brain vascular disease
+#> 214      0        8                                                         
+#> 215      0        8                                                         
+#> 216      0        7                                                         
+#> 217      0        8                                                         
+#> 218      0        8                                                         
+#> 219      0        7                                                         
+#> 220      0        8                                                         
+#> 221      0        8                                                         
+#> 222      0        7                                                         
+#> 223      0        7                                                         
+#> 224      0        8                                                         
+#> 225      0        8                                                         
+#> 226      0        8                                                         
+#> 227      0        7                                                         
+#> 228      0        8                                                         
+#> 229      0        7                                                         
+#> 230      0        8                                                         
+#> 231      0        7                                                         
+#> 232      0        8                                                         
+#> 233      0        7                                                         
+#> 234      0        7                                                         
+#> 235      0        8                                                         
+#> 236      0        8                                                         
+#> 237      0        8                                                         
+#> 238      0        7                                                         
+#> 239      0        8                                                         
+#> 240      0        7                                                         
+#> 241      0        8                                                         
+#> 242      0        8                                                         
+#> 243      0        7                                                         
+#> 244      0        7                                                         
+#> 245      0        2                                                         
+#> 246      0        8                                                         
+#> 247      0        7                                                         
+#> 248      0        7                                                         
+#> 249      0        8                                                         
+#> 250      0        7                                                         
+#> 251      0        8                                                         
+#> 252      0        7                                                         
+#> 253      0        8                                                         
+#> 254      0        8                                                         
+#> 255      0        7                                                         
+#> 256      0        7                                                         
+#> 257      1        8                                                 SSEIZURE
+#> 258      0        8                                                         
+#> 259      0        8                                                         
+#> 260      0        8                                                         
+#> 261      0        7                                                         
+#> 262      0        8                                                         
+#> 263      0        7                                                         
+#> 264      0        7                                                         
+#> 265      0        7                                                         
+#> 266      0        8                                                         
+#> 267      0        7                                                         
+#> 268      0        7                                                         
+#> 269      0        8                                                         
+#> 270      0        2                                                         
+#> 271      0        7                                                         
+#> 272      0        8                                                         
+#> 273      0        7                                                         
+#> 274      0        8                                                         
+#> 275      0        7                                                         
+#> 276      0        7                                                         
+#> 277      0        7                                                         
+#> 278      1        8                             ETGH USC - QUESTION OF ABUSE
+#> 279      1        7                                         MENIERES DISEASE
+#> 280      0        7                                                         
+#> 281      0        8                                                         
+#> 282      0        7                                                         
+#> 283      0        8                                                         
+#> 284      0        7                                                         
+#> 285      0        8                                                         
+#> 286      0        7                                                         
+#> 287      0        7                                                         
+#> 288      0        7                                                         
+#> 289      0        8                                                         
+#> 290      0        8                                                         
+#> 291      1        8                                            BREAST CA TIA
+#> 292      0        7                                                         
+#> 293      0        2                                                         
+#> 294      0        7                                                         
+#> 295      0        8                                                         
+#> 296      0        8                                                         
+#> 297      0        8                                                         
+#> 298      0        7                                                         
+#> 299      0        8                                                         
+#> 300      0        8                                                         
+#> 301      0        8                                                         
+#> 302      1        8                              mixed AD+vascular+Lewy body
+#> 303      0        2                                                         
+#> 304      0        7                                                         
+#> 305      0        7                                                         
+#> 306      0        7                                                         
+#> 307      0        7                                                         
+#> 308      0        7                                                         
+#> 309      0        7                                                         
+#> 310      0        8                                                         
+#> 311      1        8                                        ANXIETY/AGITATION
+#> 312      0        8                                                         
+#> 313      1        7                                      treated sleep apnea
+#> 314      0        8                                                         
+#> 315      0        8                                                         
+#> 316      0        7                                                         
+#> 317      0        8                                                         
+#> 318      0        8                                                         
+#> 319      0        8                                                         
+#> 320      0        7                                                         
+#> 321      0        2                                                         
+#> 322      0        8                                                         
+#> 323      1        7                                     Insomnia/Sleep Apnea
+#> 324      0        7                                                         
+#> 325      0        8                                                         
+#> 326      0        7                                                         
+#> 327      0        8                                                         
+#> 328      0        7                                                         
+#> 329      0        2                                                         
+#> 330      0        7                                                         
+#> 331      0        8                                                         
+#> 332      0        8                                                         
+#> 333      0        7                                                         
+#> 334      0        7                                                         
+#> 335      0        3                                                         
+#> 336      0        7                                                         
+#> 337      0        8                                                         
+#> 338      0        8                                                         
+#> 339      0        1                                                         
+#> 340      0        8                                                         
+#> 341      1        8                                          B 12 Deficiency
+#> 342      0        8                                                         
+#> 343      0        7                                                         
+#> 344      0        7                                                         
+#>     COGOTH2 COGOTH2F     COGOTH2X COGOTH3 COGOTH3X ALCDEM ALCDEMIF ANXIET
+#> 1        -4        8                   -4               0        7     -4
+#> 2         0        8                    0               0        8     -4
+#> 3         0        8                    0               0        7     -4
+#> 4         0        8                    0               0        8     -4
+#> 5         0        7                    0               0        8     -4
+#> 6         0        8                    0               0        7     -4
+#> 7         0        7                    0               0        7     -4
+#> 8         0        7                    0               8        7      0
+#> 9         0        8                    0               0        7     -4
+#> 10        0        7                    0               0        8     -4
+#> 11        0        8                    0               0        7      0
+#> 12        0        7                    0               0        8      0
+#> 13        0        7                    0               0        8     -4
+#> 14        0        7                    0               8        7     -4
+#> 15        0        7                    0               0        7     -4
+#> 16        0        8                    0               0        7     -4
+#> 17        0        8                    0               0        7      0
+#> 18        0        7                    0               8        8      0
+#> 19        0        7                    0               0        8     -4
+#> 20        0        8                    0               0        8     -4
+#> 21        0        7                    0               0        7     -4
+#> 22        0        1                    0               8        7      0
+#> 23        0        7                    0               0        8      0
+#> 24        0        8                    0               0        7     -4
+#> 25       -4       -4                   -4               0        7     -4
+#> 26        0        8                    0               0        7     -4
+#> 27        0        8                    0               0        7     -4
+#> 28        0        7                    0               0        8     -4
+#> 29        0        8                    0               8        8     -4
+#> 30        0        7                    0               0        7     -4
+#> 31        0        7                    0               0        7     -4
+#> 32        0        8                    0               8        7      0
+#> 33        0        8                    0               0        8      1
+#> 34        0        7                    0               0        8      0
+#> 35        0        7                    0               0        7      0
+#> 36        0        8                    0               0        8      0
+#> 37        0        7                    0               0        7      0
+#> 38        0        7                    0               0        8      0
+#> 39        0        7                    0               0        8      0
+#> 40       -4       -4                   -4               0        7     -4
+#> 41        0        8                    0               8        7     -4
+#> 42        0        7                    0               0        7     -4
+#> 43        0        8                    0               8        8     -4
+#> 44       -4       -4                   -4               8        7     -4
+#> 45       -4       -4                   -4               0        8     -4
+#> 46        0        7                    0               0        7      0
+#> 47        0        8                    0               0        7      0
+#> 48       -4       -4                   -4               0        7     -4
+#> 49        0        8                    0               8        8      0
+#> 50        0        8                    0               0        7      0
+#> 51        0        7                    0               0        7      0
+#> 52        0        7                    0               0        7     -4
+#> 53        0        8                    0               0        7      0
+#> 54        0        7                    0               0        8      0
+#> 55       -4       -4                   -4               8        8     -4
+#> 56       -4       -4                   -4               0        7     -4
+#> 57        0        8                    0               0        7     -4
+#> 58       -4       -4                   -4               0        8     -4
+#> 59       -4       -4                   -4               8        7     -4
+#> 60       -4        7                   -4               0        8     -4
+#> 61       -4        8                   -4               8        7     -4
+#> 62        0        8                    0               8        7     -4
+#> 63        0        8                    0               8        7     -4
+#> 64        0        8                    0               0        7     -4
+#> 65       -4       -4                   -4               0        8     -4
+#> 66        0        8                    0               0        7     -4
+#> 67        0        8                    0               0        7     -4
+#> 68        0        7                    0               0        7     -4
+#> 69        0        8                    0               0        8     -4
+#> 70        0        7                    0               0        7      0
+#> 71        0        8                    0               0        8      0
+#> 72        0        8                    0               0        8     -4
+#> 73        0        7                    0               8        8     -4
+#> 74        0        8                    0               0        8     -4
+#> 75       -4       -4                   -4               0        8     -4
+#> 76        0        8                    0               0        8     -4
+#> 77        0        7                    0               0        7     -4
+#> 78        0        8                    0               0        8      0
+#> 79        0        8                    0               8        7      0
+#> 80        0        7                    0               0        7      0
+#> 81        0        7                    0               0        7      0
+#> 82       -4       -4                   -4               0        8     -4
+#> 83       -4       -4                   -4               8        8     -4
+#> 84       -4       -4                   -4               8        7     -4
+#> 85        0        7                    0               0        7     -4
+#> 86        0        7                    0               0        7     -4
+#> 87        0        8                    0               8        7     -4
+#> 88        0        8                    0               0        7     -4
+#> 89        0        8                    0               8        8     -4
+#> 90        0        8                    0               0        7     -4
+#> 91        0        7                    0               1        8     -4
+#> 92        0        7                    0               0        7      0
+#> 93        0        8                    0               0        7      0
+#> 94        0        7                    0               8        8      0
+#> 95        0        8                    0               0        8      0
+#> 96        0        8                    0               0        8      0
+#> 97        0        7                    0               0        8     -4
+#> 98        0        7                    0               8        7     -4
+#> 99        0        8                    0               0        7     -4
+#> 100       0        8                    0               0        8     -4
+#> 101       0        8                    0               0        8     -4
+#> 102       0        8                    0               0        7     -4
+#> 103       0        8                    0               0        8      0
+#> 104       0        7                    0               0        7      0
+#> 105      -4       -4                   -4               0        7     -4
+#> 106      -4       -4                   -4               0        7     -4
+#> 107       0        7                    0               0        7     -4
+#> 108       0        8                    0               8        7     -4
+#> 109       0        7                    0               0        7     -4
+#> 110       0        8                    0               0        7     -4
+#> 111       0        8                    0               0        7     -4
+#> 112       0        8                    0               0        8     -4
+#> 113       0        8                    0               0        8      0
+#> 114       0        8                    0               0        8      0
+#> 115       0        8                    0               0        7      1
+#> 116       0        7                    0               8        7     -4
+#> 117       0        8                    0               0        8     -4
+#> 118       0        8                    0               0        7      0
+#> 119       0        8                    0               0        7      0
+#> 120       0        7                    0               0        8      0
+#> 121       0        8                    0               0        7      0
+#> 122       0        8                    0               0        7      0
+#> 123       0        7                    0               0        7      0
+#> 124       0        7                    0               0        7      0
+#> 125       0        8                    0               0        8      1
+#> 126       0        8                    0               0        7      0
+#> 127       0        8                    0               0        8      0
+#> 128       0        7                    0               0        8     -4
+#> 129       0        7                    0               0        8     -4
+#> 130       0        8                    0               8        8     -4
+#> 131       0        8                    0               0        7     -4
+#> 132       0        7                    0               0        8      0
+#> 133       0        8                    0               0        7      0
+#> 134       0        8                    0               0        8      0
+#> 135       0        8                    0               0        7      0
+#> 136       0        8                    0               8        8      0
+#> 137       0        7                    0               0        8      0
+#> 138       0        8                    0               0        7      0
+#> 139       0        8                    0               0        7     -4
+#> 140       0        8                    0               0        8     -4
+#> 141       0        8                    0               0        8      0
+#> 142       0        8                    0               8        8      0
+#> 143       0        8                    0               8        7      0
+#> 144       0        7                    0               0        7      0
+#> 145       0        7                    0               0        8      0
+#> 146       0        7                    0               0        7      0
+#> 147       0        7                    0               0        7      0
+#> 148       0        8                    0               0        7      0
+#> 149       0        8                    0               0        8      1
+#> 150       0        8                    0               0        8      0
+#> 151       0        8                    0               8        7      0
+#> 152       0        8                    0               0        7      0
+#> 153      -4        8                   -4               0        7     -4
+#> 154      -4        7                   -4               0        8     -4
+#> 155      -4        7                   -4               0        8     -4
+#> 156       0        7                    0               0        7     -4
+#> 157       0        7                    0               0        8     -4
+#> 158       0        7                    0               0        7     -4
+#> 159       0        8                    0               0        7     -4
+#> 160       0        7                    0               8        8     -4
+#> 161       0        8                    0               0        7     -4
+#> 162      -4        7                   -4               0        8     -4
+#> 163      -4        8                   -4               0        1     -4
+#> 164       0        7                    0               0        8     -4
+#> 165       0        7                    0               0        8     -4
+#> 166       0        7                    0               8        8     -4
+#> 167       0        7                    0               0        7     -4
+#> 168       0        7                    0               8        7     -4
+#> 169       0        8                    0               0        7     -4
+#> 170      -4        7                   -4               8        8     -4
+#> 171      -4        7                   -4               8        8     -4
+#> 172       0        7                    0               0        7      0
+#> 173       0        7                    0               0        8      0
+#> 174       0        7                    0               0        8      0
+#> 175       0        7                    0               0        8      0
+#> 176       0        8                    0               0        7      0
+#> 177       0        7                    0               0        7      0
+#> 178       0        7                    0               8        8      0
+#> 179      -4       -4                   -4               0        7     -4
+#> 180      -4       -4                   -4               0        7     -4
+#> 181       1        7 HEART ATTACK       0               0        8     -4
+#> 182      -4       -4                   -4               0        8     -4
+#> 183       0        8                    0               0        8     -4
+#> 184       0        7                    0               0        7     -4
+#> 185       0        7                    0               0        8     -4
+#> 186       0        7                    0               0        8      0
+#> 187       0        7                    0               0        8      1
+#> 188       0        7                    0               8        8     -4
+#> 189      -4       -4                   -4               0        8     -4
+#> 190       0        8                    0               0        7     -4
+#> 191       0        7                    0               0        7     -4
+#> 192       0        8                    0               0        7     -4
+#> 193       0        8                    0               0        7     -4
+#> 194      -4       -4                   -4               0        7     -4
+#> 195       0        8                    0               8        7     -4
+#> 196       0        7                    0               0        7     -4
+#> 197       0        7                    0               0        7     -4
+#> 198       0        7                    0               0        8     -4
+#> 199       0        8                    0               8        7      0
+#> 200       0        8                    0               8        8     -4
+#> 201       0        7                    0               0        8     -4
+#> 202       0        8                    0               0        7     -4
+#> 203       0        7                    0               0        8     -4
+#> 204       0        7                    0               0        7      0
+#> 205       0        8                    0               0        8      0
+#> 206       0        7                    0               0        8      0
+#> 207       0        8                    0               8        7      0
+#> 208       0        8                    0               8        7      0
+#> 209       0        8                    0               0        7      0
+#> 210       0        8                    0               0        7      0
+#> 211      -4       -4                   -4               0        8     -4
+#> 212       0        8                    0               0        8     -4
+#> 213      -4       -4                   -4               0        7     -4
+#> 214       0        8                    0               0        8     -4
+#> 215       0        7                    0               1        7     -4
+#> 216       0        7                    0               8        7     -4
+#> 217       0        8                    0               0        7      0
+#> 218       0        7                    0               0        7      0
+#> 219       0        8                    0               0        7      0
+#> 220       0        8                    0               0        8      0
+#> 221       0        7                    0               0        8      1
+#> 222       0        8                    0               0        7      0
+#> 223       0        7                    0               0        8      1
+#> 224       0        7                    0               0        8      0
+#> 225       0        7                    0               0        8      0
+#> 226       0        8                    0               0        8     -4
+#> 227       0        8                    0               0        8      0
+#> 228       0        8                    0               0        7     -4
+#> 229       0        7                    0               0        8     -4
+#> 230       0        8                    0               0        8     -4
+#> 231       0        8                    0               8        7     -4
+#> 232       0        7                    0               0        7     -4
+#> 233       0        8                    0               0        8     -4
+#> 234       0        8                    0               0        7      0
+#> 235       0        7                    0               0        7      0
+#> 236       0        7                    0               0        7      0
+#> 237       0        8                    0               0        8      0
+#> 238       0        8                    0               1        8      0
+#> 239       0        8                    0               0        7      0
+#> 240       0        8                    0               0        7      0
+#> 241       0        8                    0               8        7      0
+#> 242       0        8                    0               0        7      0
+#> 243       0        8                    0               0        8     -4
+#> 244      -4        8                   -4               8        8     -4
+#> 245       0        7                    0               0        7      0
+#> 246       0        8                    0               0        7      0
+#> 247       0        8                    0               0        8      0
+#> 248       0        8                    0               0        7      0
+#> 249      -4        7                   -4               0        8     -4
+#> 250       0        8                    0               8        8     -4
+#> 251       0        8                    0               0        7     -4
+#> 252       0        7                    0               0        7     -4
+#> 253       0        7                    0               0        3     -4
+#> 254       0        7                    0               0        7     -4
+#> 255       0        8                    0               0        7     -4
+#> 256       0        8                    0               0        8     -4
+#> 257       0        8                    0               8        7      0
+#> 258       0        8                    0               0        8      0
+#> 259       0        7                    0               0        7      0
+#> 260      -4       -4                   -4               0        8     -4
+#> 261      -4       -4                   -4               0        7     -4
+#> 262       0        8                    0               0        7     -4
+#> 263       0        8                    0               0        8     -4
+#> 264       0        7                    0               0        8     -4
+#> 265       0        8                    0               0        7     -4
+#> 266       0        7                    0               0        7     -4
+#> 267       0        8                    0               0        8      0
+#> 268       0        7                    0               0        8      0
+#> 269       0        8                    0               0        8      0
+#> 270       0        8                    0               0        8     -4
+#> 271       0        7                    0               0        8     -4
+#> 272       0        8                    0               0        8      0
+#> 273       0        8                    0               0        8      0
+#> 274       0        7                    0               8        7      0
+#> 275       0        7                    0               0        8      1
+#> 276       0        8                    0               0        8      0
+#> 277      -4       -4                   -4               0        7     -4
+#> 278      -4        8                   -4               0        7     -4
+#> 279      -4        7                   -4               8        7     -4
+#> 280       0        8                    0               0        7     -4
+#> 281       0        8                    0               0        7     -4
+#> 282       0        7                    0               8        7     -4
+#> 283       0        7                    0               0        8     -4
+#> 284       0        8                    0               0        7     -4
+#> 285       0        8                    0               8        7     -4
+#> 286       0        8                    0               8        7      0
+#> 287       0        8                    0               0        8      0
+#> 288       0        7                    0               0        8      0
+#> 289       0        7                    0               0        7      0
+#> 290       0        7                    0               0        7      0
+#> 291       0        7                    0               0        7      0
+#> 292       0        8                    0               8        2      0
+#> 293       0        7                    0               8        7      0
+#> 294       0        8                    0               0        8     -4
+#> 295       0        7                    0               0        7     -4
+#> 296       0        8                    0               0        7     -4
+#> 297       0        8                    0               8        7      0
+#> 298       0        7                    0               0        7      0
+#> 299       0        7                    0               0        7      0
+#> 300       0        8                    0               0        8      0
+#> 301      -4       -4                   -4               8        7     -4
+#> 302      -4       -4                   -4               0        7     -4
+#> 303       0        7                    0               0        7     -4
+#> 304       0        7                    0               8        7     -4
+#> 305       0        8                    0               0        8      0
+#> 306       0        8                    0               0        7     -4
+#> 307       0        8                    0               8        7     -4
+#> 308       0        8                    0               0        7     -4
+#> 309       0        8                    0               8        7     -4
+#> 310       0        8                    0               8        7     -4
+#> 311       0        7                    0               0        7     -4
+#> 312       0        8                    0               0        8     -4
+#> 313       0        7                    0               0        8     -4
+#> 314      -4       -4                   -4               0        8     -4
+#> 315       0        8                    0               0        8     -4
+#> 316       0        8                    0               0        7     -4
+#> 317      -4        7                   -4               0        7     -4
+#> 318      -4        8                   -4               0        8     -4
+#> 319       0        8                    0               0        8     -4
+#> 320      -4       -4                   -4               0        8     -4
+#> 321      -4       -4                   -4               0        8     -4
+#> 322       0        7                    0               0        7     -4
+#> 323       0        8                    0               0        7     -4
+#> 324       0        8                    0               8        7     -4
+#> 325       0        8                    0               8        8     -4
+#> 326       0        8                    0               0        7     -4
+#> 327       0        7                    0               0        7     -4
+#> 328       0        7                    0               0        8     -4
+#> 329       0        8                    0               0        7      0
+#> 330       0        7                    0               8        7      0
+#> 331       0        8                    0               0        8     -4
+#> 332       0        8                    0               8        8     -4
+#> 333      -4       -4                   -4               0        7     -4
+#> 334      -4       -4                   -4               0        8     -4
+#> 335       0        8                    0               0        7     -4
+#> 336       0        8                    0               0        8     -4
+#> 337       0        7                    0               8        7     -4
+#> 338       0        7                    0               0        8     -4
+#> 339       0        8                    0               0        7     -4
+#> 340       0        8                    0               8        7     -4
+#> 341       0        8                    0               0        8     -4
+#> 342       0        7                    0               8        8      0
+#> 343       0        7                    0               0        7      0
+#> 344       0        8                    0               0        8      0
+#>     ANXIETIF BIPOLDX BIPOLDIF BRNINJ BRNINJIF CORT CORTIF CVD CVDIF DELIR
+#> 1         -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 2         -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 3         -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 4         -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 5         -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 6         -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 7         -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 8          7       1        8      0        7    0      7   0     7     0
+#> 9         -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 10        -4      -4       -4      0        1    0      7  -4    -4    -4
+#> 11         8       0        8      0        7    0      8   0     7     0
+#> 12         7       0        8      0        8    0      8   0     8     0
+#> 13        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 14        -4      -4       -4      0        8    0      2  -4    -4    -4
+#> 15        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 16        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 17         7       0        8      0        7    0      7   1     8     0
+#> 18         7       0        7      0        8    0      8   1     8     0
+#> 19        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 20        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 21        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 22         8       0        7      0        8    0      8   0     7     0
+#> 23         8       0        7      0        8    0      8   0     8     0
+#> 24        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 25        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 26        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 27        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 28        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 29        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 30        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 31        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 32         8       0        8      0        7    0      7   0     1     0
+#> 33         7       0        8      0        8    0      7   0     8     0
+#> 34         8       0        8      0        8    0      8   0     7     0
+#> 35         7       0        7      0        7    0      7   0     8     0
+#> 36         8       0        8      0        8    0      8   1     8     0
+#> 37         8       0        8      0        7    0      7   0     7     0
+#> 38         7       0        7      0        7    0      8   0     8     0
+#> 39         7       0        7      0        8    0      7   0     8     0
+#> 40        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 41        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 42        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 43        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 44        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 45        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 46         8       0        8      0        8    0      8   0     2     0
+#> 47         8       0        7      1        8    0      8   0     7     0
+#> 48        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 49         8       0        8      0        2    0      8   0     8     0
+#> 50         8       0        7      0        7    0      7   0     8     0
+#> 51         8       0        7      0        7    0      7   0     8     0
+#> 52        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 53         7       0        7      0        8    0      8   0     8     0
+#> 54         7       0        8      0        7    0      7   0     7     0
+#> 55        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 56        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 57        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 58        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 59        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 60        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 61        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 62        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 63        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 64        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 65        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 66        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 67        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 68        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 69        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 70         8       0        8      0        7    0      7   0     8     0
+#> 71         7       0        7      0        8    0      7   0     7     0
+#> 72        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 73        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 74        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 75        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 76        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 77        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 78         7       0        7      0        7    0      7   0     7     0
+#> 79         7       0        7      0        7    0      8   0     7     0
+#> 80         7       0        8      0        7    0      8   1     8     0
+#> 81         7       0        8      0        7    0      7   0     8     0
+#> 82        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 83        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 84        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 85        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 86        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 87        -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 88        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 89        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 90        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 91        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 92         8       0        8      0        8    0      8   0     7     0
+#> 93         8       0        8      0        8    0      8   0     8     0
+#> 94         8       0        7      0        7    0      7   0     8     0
+#> 95         8       0        7      0        8    0      8   0     8     0
+#> 96         8       0        8      0        7    0      7   0     7     0
+#> 97        -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 98        -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 99        -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 100       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 101       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 102       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 103        8       0        8      0        7    0      8   0     8     0
+#> 104        8       0        7      0        7    0      7   1     8     0
+#> 105       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 106       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 107       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 108       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 109       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 110       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 111       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 112       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 113        8       0        7      0        8    0      8   0     7     0
+#> 114        8       0        8      0        8    0      8   0     8     0
+#> 115        8       0        8      0        7    0      8   0     7     0
+#> 116       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 117       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 118        3       0        8      0        8    0      7   0     7     0
+#> 119        8       0        7      0        8    0      7   0     8     0
+#> 120        7       0        7      0        7    0      8   0     7     0
+#> 121        8       0        7      0        7    0      8   0     8     0
+#> 122        7       0        8      0        8    0      7   0     1     0
+#> 123        8       0        7      0        8    0      7   0     8     0
+#> 124        7       0        8      0        7    0      8   0     2     0
+#> 125        8       0        7      0        8    0      8   1     8     0
+#> 126        8       0        7      0        8    0      8   1     8     0
+#> 127        8       0        7      0        8    0      8   0     8     0
+#> 128       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 129       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 130       -4      -4       -4      0        7    1      7  -4    -4    -4
+#> 131       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 132        8       0        7      0        7    0      8   0     8     0
+#> 133        8       0        8      0        8    0      7   0     8     0
+#> 134        7       0        7      0        8    0      7   0     7     0
+#> 135        8       0        8      0        8    0      7   0     7     0
+#> 136        7       0        8      0        8    0      8   0     8     0
+#> 137        8       0        7      0        7    0      7   0     2     0
+#> 138        7       0        7      0        7    0      7   0     7     0
+#> 139       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 140       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 141        8       0        8      0        8    0      8   0     8     0
+#> 142        7       0        7      0        7    0      7   0     7     0
+#> 143        7       0        8      0        8    0      8   0     7     0
+#> 144        8       0        7      0        8    0      8   0     7     0
+#> 145        7       0        8      0        8    0      7   0     8     0
+#> 146        7       0        8      0        7    0      7   0     7     0
+#> 147        7       0        8      0        7    0      7   0     8     0
+#> 148        7       0        8      0        8    0      8   0     7     0
+#> 149        7       0        8      0        8    0      8   0     8     0
+#> 150        8       0        7      0        7    0      8   0     8     0
+#> 151        7       0        7      0        7    0      7   0     8     0
+#> 152        8       0        7      0        7    0      8   0     8     0
+#> 153       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 154       -4      -4       -4      1        7    0      7  -4    -4    -4
+#> 155       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 156       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 157       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 158       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 159       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 160       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 161       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 162       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 163       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 164       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 165       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 166       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 167       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 168       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 169       -4      -4       -4      1        8    0      8  -4    -4    -4
+#> 170       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 171       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 172        7       0        7      0        7    0      8   0     7     0
+#> 173        7       0        8      0        7    0      8   0     7     0
+#> 174        7       0        8      0        7    0      7   0     7     0
+#> 175        8       0        8      0        7    0      7   0     8     0
+#> 176        8       0        8      0        7    0      8   0     8     0
+#> 177        7       0        7      0        8    0      7   0     8     0
+#> 178        8       0        8      0        7    0      8   0     7     0
+#> 179       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 180       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 181       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 182       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 183       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 184       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 185       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 186        7       0        8      0        8    0      8   0     8     0
+#> 187        8       0        8      0        8    0      7   0     2     0
+#> 188       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 189       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 190       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 191       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 192       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 193       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 194       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 195       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 196       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 197       -4      -4       -4      0        2    0      7  -4    -4    -4
+#> 198       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 199        8       0        8      0        7    0      7   0     8     0
+#> 200       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 201       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 202       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 203       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 204        7       0        8      0        7    0      7   0     8     0
+#> 205        8       0        8      0        8    0      8   0     7     0
+#> 206        8       0        7      0        8    0      8   0     7     0
+#> 207        7       0        7      0        8    0      7   1     7     0
+#> 208        8       0        7      0        8    0      8   0     8     0
+#> 209        8       0        7      0        7    0      7   0     2     0
+#> 210        7       0        8      0        7    0      7   0     8     0
+#> 211       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 212       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 213       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 214       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 215       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 216       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 217        8       0        8      0        7    0      8   0     8     0
+#> 218        8       0        7      0        7    0      8   0     7     0
+#> 219        7       0        8      0        8    0      7   0     8     0
+#> 220        7       0        7      0        7    0      7   0     7     0
+#> 221        7       0        7      0        8    0      8   1     8     0
+#> 222        7       0        8      0        8    0      8   0     8     0
+#> 223        2       0        8      1        7    0      7   0     7     0
+#> 224        8       0        7      0        7    0      7   0     8     0
+#> 225        7       0        7      0        8    0      8   0     8     0
+#> 226       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 227        8       0        7      0        7    0      8   1     7     0
+#> 228       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 229       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 230       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 231       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 232       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 233       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 234        7       0        8      0        8    0      8   0     8     0
+#> 235        8       0        7      0        7    0      7   0     8     0
+#> 236        8       0        8      0        7    0      7   0     8     0
+#> 237        7       0        7      0        8    0      7   1     8     0
+#> 238        7       0        7      0        7    0      8   0     8     0
+#> 239        8       0        8      0        8    0      7   0     8     0
+#> 240        7       0        8      0        7    0      8   0     7     0
+#> 241        7       0        7      0        7    0      7   0     7     0
+#> 242        8       0        7      0        7    0      7   0     8     0
+#> 243       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 244       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 245        8       0        8      0        7    0      7   0     7     0
+#> 246        8       0        8      0        7    0      7   0     7     0
+#> 247        8       0        7      0        7    0      8   0     7     0
+#> 248        8       0        7      0        7    0      7   0     8     0
+#> 249       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 250       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 251       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 252       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 253       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 254       -4      -4       -4      0        8    0      1  -4    -4    -4
+#> 255       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 256       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 257        8       0        8      0        8    0      7   0     2     0
+#> 258        8       0        8      0        8    0      7   0     7     0
+#> 259        2       0        7      0        8    0      7   0     8     0
+#> 260       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 261       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 262       -4      -4       -4      0        7    0      1  -4    -4    -4
+#> 263       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 264       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 265       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 266       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 267        8       0        8      0        7    0      8   1     2     0
+#> 268        8       0        7      0        8    0      8   0     8     0
+#> 269        7       0        8      0        7    0      7   0     7     0
+#> 270       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 271       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 272        8       0        7      0        8    0      8   0     8     0
+#> 273        8       0        8      0        8    0      7   0     8     0
+#> 274        7       0        8      0        7    0      8   0     8     0
+#> 275        7       0        7      0        7    0      8   0     8     0
+#> 276        7       0        8      0        7    0      7   0     8     0
+#> 277       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 278       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 279       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 280       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 281       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 282       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 283       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 284       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 285       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 286        8       0        7      0        8    0      8   0     7     0
+#> 287        8       0        8      0        7    0      8   0     7     0
+#> 288        8       0        8      0        7    0      8   0     8     0
+#> 289        8       0        7      0        7    0      8   0     8     0
+#> 290        7       0        8      0        8    0      8   0     7     0
+#> 291        8       0        8      0        8    0      8   0     7     0
+#> 292        8       0        8      0        8    0      7   0     8     0
+#> 293        7       0        7      0        7    0      7   0     7     0
+#> 294       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 295       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 296       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 297        8       0        8      0        8    0      8   0     7     0
+#> 298        8       0        8      0        7    0      7   1     8     0
+#> 299        8       0        7      0        8    0      7   0     7     0
+#> 300        7       0        8      0        8    0      8   0     7     0
+#> 301       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 302       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 303       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 304       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 305        8       0        8      0        8    0      8   0     7     0
+#> 306       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 307       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 308       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 309       -4      -4       -4      1        7    0      7  -4    -4    -4
+#> 310       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 311       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 312       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 313       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 314       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 315       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 316       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 317       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 318       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 319       -4      -4       -4      1        7    0      7  -4    -4    -4
+#> 320       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 321       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 322       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 323       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 324       -4      -4       -4      0        8    0      8  -4    -4    -4
+#> 325       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 326       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 327       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 328       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 329        8       0        8      0        7    0      8   0     8     0
+#> 330        8       0        7      0        7    0      8   0     8     0
+#> 331       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 332       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 333       -4      -4       -4      1        8    0      8  -4    -4    -4
+#> 334       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 335       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 336       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 337       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 338       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 339       -4      -4       -4      0        7    0      7  -4    -4    -4
+#> 340       -4      -4       -4      0        8    0      7  -4    -4    -4
+#> 341       -4      -4       -4      0        7    0      8  -4    -4    -4
+#> 342        7       0        7      0        7    0      7   0     7     0
+#> 343        7       0        8      0        7    0      7   0     7     0
+#> 344        8       0        8      0        8    0      8   0     8     0
+#>     DELIRIF DEMUN DEMUNIF DEP DEPIF DOWNS DOWNSIF DYSILL DYSILLIF EPILEP
+#> 1        -4     8       7   0     8     0       8      0        8     -4
+#> 2        -4     8       8   0     7     0       8      0        7     -4
+#> 3        -4     0       8   0     8     0       7      0        7     -4
+#> 4        -4     0       7   0     8     0       8      0        8     -4
+#> 5        -4     8       8   1     7     0       7      0        8     -4
+#> 6        -4     8       8   0     7     0       8      0        2     -4
+#> 7        -4     0       7   0     8     0       8      0        8     -4
+#> 8         3    -4      -4   0     8     0       8      0        8      0
+#> 9        -4     0       7   0     7     0       8      0        7     -4
+#> 10       -4     8       8   0     7     0       8      0        8     -4
+#> 11        8    -4      -4   0     8     0       8      0        7      0
+#> 12        8    -4      -4   0     8     0       8      0        7      0
+#> 13       -4     8       8   0     8     0       7      0        7     -4
+#> 14       -4     8       8   0     7     0       7      0        8     -4
+#> 15       -4     8       8   0     7     0       8      0        7     -4
+#> 16       -4     0       7   0     8     0       7      0        8     -4
+#> 17        8    -4      -4   0     7     0       8      0        8      0
+#> 18        8    -4      -4   0     8     0       7      0        8      0
+#> 19       -4     0       1   0     8     0       8      0        7     -4
+#> 20       -4     0       7   0     8     0       8      0        7     -4
+#> 21       -4     0       8   0     8     0       7      0        8     -4
+#> 22        8    -4      -4   1     7     0       7      0        8      0
+#> 23        8    -4      -4   0     7     0       7      0        8      0
+#> 24       -4     0       8   0     8     0       8      0        7     -4
+#> 25       -4     0       7   1     7     0       8      0        8     -4
+#> 26       -4     0       7   0     7     0       8      0        7     -4
+#> 27       -4     0       7   1     8     0       8      0        7     -4
+#> 28       -4     0       7   1     8     0       8      0        7     -4
+#> 29       -4     8       7   0     7     0       7      0        8     -4
+#> 30       -4     8       8   0     8     0       7      0        8     -4
+#> 31       -4     8       8   1     8     0       7      0        7     -4
+#> 32        7    -4      -4   0     7     0       7      0        8      0
+#> 33        8    -4      -4   0     7     0       7      0        8      0
+#> 34        8    -4      -4   0     7     0       7      0        7      0
+#> 35        8    -4      -4   0     8     0       7      0        7      0
+#> 36        7    -4      -4   0     8     0       8      0        7      0
+#> 37        8    -4      -4   0     8     0       8      0        7      0
+#> 38        8    -4      -4   1     7     0       7      0        7      0
+#> 39        8    -4      -4   0     7     0       7      0        8      0
+#> 40       -4     0       7   1     7     0       8      0        7     -4
+#> 41       -4     8       8   0     7     0       7      0        7     -4
+#> 42       -4     0       8   0     8     0       8      0        7     -4
+#> 43       -4     0       8   0     8     0       7      0        8     -4
+#> 44       -4     0       7   1     8     0       7      0        8     -4
+#> 45       -4     0       8   1     7     0       7      0        7     -4
+#> 46        7    -4      -4   0     8     0       7      0        7      0
+#> 47        8    -4      -4   0     1     0       7      0        7      0
+#> 48       -4     1       7   0     7     0       8      0        7     -4
+#> 49        7    -4      -4   0     7     0       8      0        7      0
+#> 50        7    -4      -4   0     8     0       8      0        7      0
+#> 51        8    -4      -4   0     7     0       7      0        7      0
+#> 52       -4     8       7   0     8     0       8      0        8     -4
+#> 53        8    -4      -4   0     8     0       7      0        7      0
+#> 54        7    -4      -4   1     8     0       8      0        8      0
+#> 55       -4     8       7   0     8     0       7      0        7     -4
+#> 56       -4     0       8   0     8     0       7      0        8     -4
+#> 57       -4     8       8   0     7     0       8      0        8     -4
+#> 58       -4     8       8   0     8     0       8      0        7     -4
+#> 59       -4     0       7   1     8     0       8      0        7     -4
+#> 60       -4     8       7   0     7     0       7      0        8     -4
+#> 61       -4     0       7   0     7     0       7      0        7     -4
+#> 62       -4     8       7   0     8     0       8      0        7     -4
+#> 63       -4     8       7   0     8     0       8      0        8     -4
+#> 64       -4     8       7   0     8     0       7      0        7     -4
+#> 65       -4     0       7   0     3     0       8      0        7     -4
+#> 66       -4     8       7   1     7     0       8      0        7     -4
+#> 67       -4     0       8   0     1     0       8      0        8     -4
+#> 68       -4     8       8   0     7     0       8      0        7     -4
+#> 69       -4     8       7   0     7     0       8      0        8     -4
+#> 70        8    -4      -4   0     8     0       8      0        8      0
+#> 71        8    -4      -4   0     8     0       8      0        8      0
+#> 72       -4     8       7   0     8     0       8      0        8     -4
+#> 73       -4     0       8   0     8     0       8      0        8     -4
+#> 74       -4     0       7   0     3     0       7      0        8     -4
+#> 75       -4     8       7   0     8     0       7      0        7     -4
+#> 76       -4     0       7   0     8     0       7      0        7     -4
+#> 77       -4     0       7   0     8     0       8      0        7     -4
+#> 78        7    -4      -4   0     8     0       8      0        8      0
+#> 79        8    -4      -4   0     8     0       7      0        7      0
+#> 80        7    -4      -4   0     8     0       7      0        8      0
+#> 81        8    -4      -4   0     7     0       8      0        8      0
+#> 82       -4     0       7   1     3     0       8      0        7     -4
+#> 83       -4     0       7   0     8     0       8      0        7     -4
+#> 84       -4     0       8   0     8     0       8      0        8     -4
+#> 85       -4     0       7   0     8     0       7      0        8     -4
+#> 86       -4     0       7   0     7     0       7      0        8     -4
+#> 87       -4     8       8   0     7     0       8      0        7     -4
+#> 88       -4     8       8   1     7     0       8      0        8     -4
+#> 89       -4     8       7   0     8     0       7      0        7     -4
+#> 90       -4     0       7   0     3     0       7      0        8     -4
+#> 91       -4     0       7   0     8     0       7      0        8     -4
+#> 92        8    -4      -4   0     7     0       8      0        7      0
+#> 93        7    -4      -4   0     7     0       8      0        8      0
+#> 94        7    -4      -4   0     7     0       7      0        8      0
+#> 95        8    -4      -4   0     8     0       7      0        8      0
+#> 96        8    -4      -4   0     7     0       8      0        8      0
+#> 97       -4     8       7   0     8     0       8      0        8     -4
+#> 98       -4     8       7   1     1     0       8      0        8     -4
+#> 99       -4     8       7   1     8     0       7      0        8     -4
+#> 100      -4     8       7   0     8     0       7      0        7     -4
+#> 101      -4     0       8   0     8     0       7      0        7     -4
+#> 102      -4     0       7   0     7     0       7      0        7     -4
+#> 103       8    -4      -4   0     3     0       7      0        8      0
+#> 104       7    -4      -4   0     8     0       7      0        7      0
+#> 105      -4     0       8   1     2     0       8      0        8     -4
+#> 106      -4     0       8   0     7     0       8      0        8     -4
+#> 107      -4     8       7   1     8     0       8      0        8     -4
+#> 108      -4     0       8   0     7     0       7      0        7     -4
+#> 109      -4     8       8   0     8     0       8      0        7     -4
+#> 110      -4     8       8   0     8     0       8      0        8     -4
+#> 111      -4     0       7   0     2     0       7      0        8     -4
+#> 112      -4     0       7   0     7     0       7      0        7     -4
+#> 113       8    -4      -4   1     8     0       8      0        8      0
+#> 114       7    -4      -4   0     2     0       7      0        7      0
+#> 115       7    -4      -4   0     8     0       7      0        8      0
+#> 116      -4     1       7   0     2     0       8      0        8     -4
+#> 117      -4     0       7   0     8     0       8      0        7     -4
+#> 118       8    -4      -4   0     7     0       8      0        7      0
+#> 119       8    -4      -4   0     8     0       7      0        8      0
+#> 120       7    -4      -4   0     8     0       7      0        7      0
+#> 121       8    -4      -4   0     7     0       7      0        8      0
+#> 122       8    -4      -4   0     7     0       7      0        8      0
+#> 123       7    -4      -4   0     7     0       7      0        8      0
+#> 124       8    -4      -4   0     8     0       7      0        7      0
+#> 125       8    -4      -4   0     8     0       7      0        7      0
+#> 126       7    -4      -4   0     7     0       7      0        7      0
+#> 127       7    -4      -4   0     7     0       7      0        7      0
+#> 128      -4     8       7   0     8     0       8      0        7     -4
+#> 129      -4     8       7   0     8     0       8      0        8     -4
+#> 130      -4     0       7   0     8     0       7      0        7     -4
+#> 131      -4     0       7   1     8     0       7      0        8     -4
+#> 132       7    -4      -4   0     3     0       7      0        8      0
+#> 133       8    -4      -4   0     8     0       7      0        7      0
+#> 134       7    -4      -4   0     8     0       8      0        7      0
+#> 135       7    -4      -4   0     7     0       8      0        8      0
+#> 136       7    -4      -4   0     7     0       8      0        7      0
+#> 137       8    -4      -4   0     8     0       8      0        7      0
+#> 138       8    -4      -4   0     7     0       8      0        8      0
+#> 139      -4     0       7   0     7     0       7      0        8     -4
+#> 140      -4     8       7   0     3     0       8      0        8     -4
+#> 141       7    -4      -4   0     8     0       7      0        7      0
+#> 142       8    -4      -4   0     7     0       7      0        8      0
+#> 143       7    -4      -4   0     7     0       8      0        8      0
+#> 144       7    -4      -4   0     8     0       8      0        8      0
+#> 145       7    -4      -4   0     7     0       8      0        7      0
+#> 146       7    -4      -4   0     7     0       7      0        7      0
+#> 147       7    -4      -4   1     1     0       7      0        7      0
+#> 148       7    -4      -4   0     8     0       8      0        7      0
+#> 149       8    -4      -4   0     7     0       8      0        7      0
+#> 150       8    -4      -4   0     7     0       7      0        7      0
+#> 151       8    -4      -4   0     7     0       8      0        7      0
+#> 152       7    -4      -4   0     7     0       8      0        8      0
+#> 153      -4     0       8   0     8     0       7      0        8     -4
+#> 154      -4     0       7   1     8     0       7      0        7     -4
+#> 155      -4     0       8   0     7     0       7      0        7     -4
+#> 156      -4     8       8   0     8     0       8      0        8     -4
+#> 157      -4     0       7   1     8     0       8      0        7     -4
+#> 158      -4     8       8   0     3     0       7      0        8     -4
+#> 159      -4     8       8   0     7     0       8      0        7     -4
+#> 160      -4     8       7   0     8     0       7      1        8     -4
+#> 161      -4     0       7   0     7     0       8      0        7     -4
+#> 162      -4     0       7   0     7     0       8      0        7     -4
+#> 163      -4     8       7   1     7     0       7      0        8     -4
+#> 164      -4     0       8   0     7     0       8      0        7     -4
+#> 165      -4     0       8   0     2     0       8      0        7     -4
+#> 166      -4     8       7   0     7     0       8      0        2     -4
+#> 167      -4     8       8   0     8     0       7      0        7     -4
+#> 168      -4     1       8   0     7     0       8      0        2     -4
+#> 169      -4     0       7   0     8     0       8      0        7     -4
+#> 170      -4     0       8   1     3     0       7      0        8     -4
+#> 171      -4     8       8   0     7     0       8      0        7     -4
+#> 172       7    -4      -4   0     7     0       7      0        7      0
+#> 173       8    -4      -4   0     8     0       7      0        8      0
+#> 174       7    -4      -4   0     7     0       8      0        7      0
+#> 175       7    -4      -4   0     8     0       8      0        8      0
+#> 176       8    -4      -4   0     8     0       7      0        8      1
+#> 177       8    -4      -4   1     8     0       8      0        8      0
+#> 178       7    -4      -4   0     7     0       8      0        8      0
+#> 179      -4     1       8   0     7     0       7      0        7     -4
+#> 180      -4     0       7   0     7     0       7      0        8     -4
+#> 181      -4     8       8   0     8     0       7      0        7     -4
+#> 182      -4     8       7   0     8     0       8      0        7     -4
+#> 183      -4     0       7   0     8     0       7      0        7     -4
+#> 184      -4     0       7   0     8     0       8      0        8     -4
+#> 185      -4     8       7   0     7     0       7      0        7     -4
+#> 186       8    -4      -4   0     7     0       7      0        7      0
+#> 187       7    -4      -4   0     7     0       7      0        8      0
+#> 188      -4     0       7   0     7     0       8      0        8     -4
+#> 189      -4     0       2   1     8     0       7      0        7     -4
+#> 190      -4     8       8   1     7     0       7      0        7     -4
+#> 191      -4     1       7   1     3     0       7      0        7     -4
+#> 192      -4     0       7   0     7     0       8      0        8     -4
+#> 193      -4     8       7   0     8     0       7      0        8     -4
+#> 194      -4     0       7   0     7     0       7      0        7     -4
+#> 195      -4     0       1   0     7     0       8      0        8     -4
+#> 196      -4     0       7   0     2     0       8      0        8     -4
+#> 197      -4     0       7   0     2     0       8      0        7     -4
+#> 198      -4     0       7   0     8     0       8      0        8     -4
+#> 199       7    -4      -4   1     7     0       7      0        8      0
+#> 200      -4     0       7   0     8     0       8      0        7     -4
+#> 201      -4     0       7   0     8     0       8      0        8     -4
+#> 202      -4     0       7   0     7     0       7      0        8     -4
+#> 203      -4     8       8   0     8     0       8      0        8     -4
+#> 204       8    -4      -4   0     8     0       8      0        7      0
+#> 205       8    -4      -4   0     7     0       7      0        7      0
+#> 206       7    -4      -4   0     8     0       8      0        8      0
+#> 207       8    -4      -4   0     8     0       7      0        8      0
+#> 208       8    -4      -4   0     8     0       7      0        8      0
+#> 209       7    -4      -4   0     7     0       8      0        8      0
+#> 210       8    -4      -4   0     7     0       7      0        8      0
+#> 211      -4     0       8   1     7     0       7      0        7     -4
+#> 212      -4     8       7   0     7     0       8      0        7     -4
+#> 213      -4     0       7   0     3     0       8      0        7     -4
+#> 214      -4     0       7   0     8     0       8      0        7     -4
+#> 215      -4     8       7   0     7     0       7      0        8     -4
+#> 216      -4     8       8   0     8     0       7      0        8     -4
+#> 217       8    -4      -4   0     7     0       7      0        7      0
+#> 218       7    -4      -4   0     8     0       8      0        8      0
+#> 219       7    -4      -4   1     8     0       8      0        7      0
+#> 220       7    -4      -4   0     8     0       8      0        8      0
+#> 221       8    -4      -4   1     8     0       7      0        7      0
+#> 222       7    -4      -4   0     7     0       7      0        7      0
+#> 223       7    -4      -4   0     8     0       8      0        8      0
+#> 224       8    -4      -4   0     7     0       8      0        8      0
+#> 225       7    -4      -4   0     7     0       8      0        8      0
+#> 226      -4     8       7   0     2     0       8      0        7     -4
+#> 227       7    -4      -4   0     7     0       7      0        8      0
+#> 228      -4     8       7   0     7     0       7      0        8     -4
+#> 229      -4     8       7   0     8     0       7      0        8     -4
+#> 230      -4     8       8   0     7     0       8      0        8     -4
+#> 231      -4     8       7   0     8     0       8      0        8     -4
+#> 232      -4     8       8   0     3     0       7      0        8     -4
+#> 233      -4     0       8   0     7     0       8      0        8     -4
+#> 234       8    -4      -4   0     7     0       8      0        7      0
+#> 235       7    -4      -4   1     8     0       7      0        8      0
+#> 236       8    -4      -4   0     8     0       7      0        8      0
+#> 237       7    -4      -4   0     8     0       7      0        7      0
+#> 238       7    -4      -4   0     8     0       7      0        7      0
+#> 239       7    -4      -4   0     7     0       7      0        8      0
+#> 240       8    -4      -4   0     7     0       8      0        8      0
+#> 241       8    -4      -4   0     7     0       7      0        7      0
+#> 242       7    -4      -4   0     8     0       7      0        8      0
+#> 243      -4     8       8   0     8     0       7      0        8     -4
+#> 244      -4     8       8   0     7     0       8      0        7     -4
+#> 245       8    -4      -4   1     7     0       8      0        7      0
+#> 246       7    -4      -4   0     8     0       8      0        7      0
+#> 247       7    -4      -4   0     7     0       7      0        8      0
+#> 248       7    -4      -4   0     8     0       7      0        8      0
+#> 249      -4     8       8   0     8     0       8      0        7     -4
+#> 250      -4     0       7   1     7     0       8      0        7     -4
+#> 251      -4     0       8   0     7     0       7      0        8     -4
+#> 252      -4     0       8   0     3     0       8      0        8     -4
+#> 253      -4     0       7   0     8     0       8      0        8     -4
+#> 254      -4     1       7   0     7     0       8      0        7     -4
+#> 255      -4     8       7   0     7     0       7      0        7     -4
+#> 256      -4     0       7   0     8     0       7      0        7     -4
+#> 257       8    -4      -4   0     8     0       7      0        7      0
+#> 258       7    -4      -4   1     3     0       8      0        8      0
+#> 259       8    -4      -4   0     7     0       8      0        7      0
+#> 260      -4     8       8   0     8     0       7      1        8     -4
+#> 261      -4     0       8   1     7     0       8      0        8     -4
+#> 262      -4     8       7   0     8     0       7      0        8     -4
+#> 263      -4     8       8   0     8     0       8      0        8     -4
+#> 264      -4     0       8   0     8     0       7      0        7     -4
+#> 265      -4     0       8   0     8     0       8      0        8     -4
+#> 266      -4     8       7   1     8     0       8      0        8     -4
+#> 267       7    -4      -4   1     3     0       7      0        8      0
+#> 268       7    -4      -4   0     8     0       8      0        7      0
+#> 269       7    -4      -4   0     8     0       7      0        8      0
+#> 270      -4     0       7   0     7     0       7      0        8     -4
+#> 271      -4     0       7   0     7     0       8      0        8     -4
+#> 272       8    -4      -4   0     7     0       8      0        7      0
+#> 273       8    -4      -4   0     8     0       8      0        7      0
+#> 274       8    -4      -4   0     7     0       7      0        8      0
+#> 275       8    -4      -4   0     8     0       8      0        8      0
+#> 276       8    -4      -4   1     7     0       7      0        7      0
+#> 277      -4     8       7   0     8     0       8      0        7     -4
+#> 278      -4     0       7   0     7     0       8      0        7     -4
+#> 279      -4     8       7   0     7     0       8      0        7     -4
+#> 280      -4     0       8   0     7     0       8      0        7     -4
+#> 281      -4     0       7   0     8     0       8      0        7     -4
+#> 282      -4     0       8   1     7     0       8      0        7     -4
+#> 283      -4     8       8   1     7     0       7      0        8     -4
+#> 284      -4     8       8   0     7     0       7      0        8     -4
+#> 285      -4     0       7   1     7     0       7      0        7     -4
+#> 286       8    -4      -4   1     8     0       8      0        7      0
+#> 287       8    -4      -4   0     7     0       7      0        8      0
+#> 288       7    -4      -4   0     8     0       8      0        8      0
+#> 289       8    -4      -4   0     2     0       7      0        8      0
+#> 290       8    -4      -4   0     7     0       7      0        7      0
+#> 291       7    -4      -4   0     7     0       8      0        7      0
+#> 292       7    -4      -4   0     7     0       8      0        7      0
+#> 293       8    -4      -4   1     7     0       8      0        7      0
+#> 294      -4     0       7   0     8     0       7      0        7     -4
+#> 295      -4     8       8   1     8     0       7      0        8     -4
+#> 296      -4     8       7   0     8     0       7      0        7     -4
+#> 297       7    -4      -4   0     7     0       8      0        7      0
+#> 298       7    -4      -4   1     7     0       8      0        7      0
+#> 299       8    -4      -4   0     3     0       7      0        8      0
+#> 300       8    -4      -4   0     7     0       7      0        7      0
+#> 301      -4     0       7   0     8     0       7      0        7     -4
+#> 302      -4     0       8   0     8     0       8      0        8     -4
+#> 303      -4     8       1   0     8     0       7      0        8     -4
+#> 304      -4     8       7   0     8     0       8      0        7     -4
+#> 305       7    -4      -4   0     7     0       8      0        8      0
+#> 306      -4     8       7   0     8     0       8      0        7     -4
+#> 307      -4     0       8   0     8     0       7      0        8     -4
+#> 308      -4     8       7   0     2     0       7      0        7     -4
+#> 309      -4     8       8   0     8     0       8      0        7     -4
+#> 310      -4     0       8   0     7     0       8      0        8     -4
+#> 311      -4     0       7   0     7     0       8      0        8     -4
+#> 312      -4     8       7   0     8     0       7      0        7     -4
+#> 313      -4     8       8   0     8     0       8      0        8     -4
+#> 314      -4     0       8   0     8     0       8      0        7     -4
+#> 315      -4     0       7   0     7     0       8      0        8     -4
+#> 316      -4     1       8   1     7     0       8      0        8     -4
+#> 317      -4     0       8   0     2     0       7      0        7     -4
+#> 318      -4     8       8   0     8     0       7      0        7     -4
+#> 319      -4     8       8   0     8     0       7      0        8     -4
+#> 320      -4     8       7   0     8     0       8      0        7     -4
+#> 321      -4     8       8   0     8     0       7      0        7     -4
+#> 322      -4     8       8   0     8     0       8      0        7     -4
+#> 323      -4     0       7   0     8     0       8      0        8     -4
+#> 324      -4     0       7   0     1     0       8      0        7     -4
+#> 325      -4     0       7   0     8     0       8      0        8     -4
+#> 326      -4     8       8   0     8     0       8      0        7     -4
+#> 327      -4     0       7   0     8     0       7      0        7     -4
+#> 328      -4     8       7   0     7     0       8      0        8     -4
+#> 329       8    -4      -4   1     8     0       7      0        8      0
+#> 330       8    -4      -4   0     7     0       7      0        7      0
+#> 331      -4     0       8   0     7     0       7      0        8     -4
+#> 332      -4     0       8   1     7     0       8      0        8     -4
+#> 333      -4     8       7   0     8     0       8      0        7     -4
+#> 334      -4     0       8   1     8     0       7      0        7     -4
+#> 335      -4     0       7   1     7     0       8      0        7     -4
+#> 336      -4     8       8   0     7     0       8      0        8     -4
+#> 337      -4     0       8   0     7     0       7      0        7     -4
+#> 338      -4     0       7   0     8     0       7      0        7     -4
+#> 339      -4     8       7   0     8     0       8      0        7     -4
+#> 340      -4     0       8   0     3     0       7      0        8     -4
+#> 341      -4     0       8   0     8     0       8      0        7     -4
+#> 342       7    -4      -4   0     7     0       7      0        7      0
+#> 343       8    -4      -4   0     8     0       8      0        8      0
+#> 344       7    -4      -4   0     8     0       8      0        7      0
+#>     EPILEPIF ESSTREM ESSTREIF FTLDMO FTLDMOIF FTLDNOS FTLDNOIF HIV HIVIF HUNT
+#> 1         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 2         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 3         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 4         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 5         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 6         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 7         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 8          8       0        8      0        7       0        7   0     8    0
+#> 9         -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 10        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 11         7       0        8      0        8       0        8   0     7    0
+#> 12         7       0        8      0        7       0        8   0     8    0
+#> 13        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 14        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 15        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 16        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 17         7       0        7      0        8       0        7   0     7    0
+#> 18         8       0        8      0        7       0        8   0     2    0
+#> 19        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 20        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 21        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 22         8       0        8      0        8       0        8   0     7    0
+#> 23         8       0        7      0        7       0        8   0     7    0
+#> 24        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 25        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 26        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 27        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 28        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 29        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 30        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 31        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 32         8       0        7      0        7       0        8   0     8    0
+#> 33         7       0        8      0        7       0        8   0     7    0
+#> 34         7       0        8      0        8       0        8   0     8    0
+#> 35         8       0        7      0        7       0        8   0     8    0
+#> 36         8       0        7      0        8       0        7   0     7    0
+#> 37         7       0        7      0        8       0        8   0     8    0
+#> 38         8       0        7      0        7       0        8   0     8    0
+#> 39         8       0        7      0        8       1        8   0     7    0
+#> 40        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 41        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 42        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 43        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 44        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 45        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 46         8       0        8      0        8       0        1   0     7    0
+#> 47         7       0        7      0        8       0        8   0     8    0
+#> 48        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 49         8       0        8      0        7       0        1   0     7    0
+#> 50         8       0        7      0        8       0        7   0     8    0
+#> 51         7       0        8      0        7       0        7   0     7    0
+#> 52        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 53         8       0        7      0        7       0        8   0     8    0
+#> 54         8       0        7      0        8       0        8   0     8    0
+#> 55        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 56        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 57        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 58        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 59        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 60        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 61        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 62        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 63        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 64        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 65        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 66        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 67        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 68        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 69        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 70         8       0        7      0        7       0        7   0     8    0
+#> 71         7       0        7      0        7       0        8   0     8    0
+#> 72        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 73        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 74        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 75        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 76        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 77        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 78         8       0        8      0        7       0        8   0     7    0
+#> 79         8       0        8      0        8       0        8   0     7    0
+#> 80         8       0        8      0        8       0        8   0     8    0
+#> 81         7       0        8      0        7       0        7   0     8    0
+#> 82        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 83        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 84        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 85        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 86        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 87        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 88        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 89        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 90        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 91        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 92         7       0        8      0        8       0        7   0     8    0
+#> 93         7       0        8      0        7       0        8   0     8    0
+#> 94         8       0        8      0        7       0        7   0     8    0
+#> 95         7       0        7      0        8       0        7   0     8    0
+#> 96         8       0        8      0        7       0        8   0     8    0
+#> 97        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 98        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 99        -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 100       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 101       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 102       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 103        8       0        8      0        7       0        7   0     8    0
+#> 104        8       0        8      0        7       0        8   0     2    0
+#> 105       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 106       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 107       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 108       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 109       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 110       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 111       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 112       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 113        7       0        8      0        8       0        8   0     7    0
+#> 114        8       1        8      0        7       0        8   0     7    0
+#> 115        8       0        8      0        7       0        8   0     7    0
+#> 116       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 117       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 118        8       0        8      0        8       0        7   0     8    0
+#> 119        7       0        7      0        8       0        8   0     7    0
+#> 120        7       0        8      0        8       0        7   0     8    0
+#> 121        7       0        8      0        7       0        8   0     8    0
+#> 122        8       0        8      0        8       0        8   0     7    0
+#> 123        8       0        7      0        7       0        7   0     8    0
+#> 124        8       0        7      0        7       0        8   0     7    0
+#> 125        7       0        8      0        7       0        7   0     8    0
+#> 126        7       0        7      0        7       0        8   0     7    0
+#> 127        7       0        8      0        7       0        8   0     7    0
+#> 128       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 129       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 130       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 131       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 132        7       0        7      0        8       0        8   0     8    0
+#> 133        8       0        7      0        8       0        8   0     8    0
+#> 134        8       0        7      0        8       0        8   0     7    0
+#> 135        7       0        7      0        7       0        8   0     8    0
+#> 136        8       0        8      0        8       0        7   0     7    0
+#> 137        8       0        7      0        7       0        7   0     8    0
+#> 138        8       0        7      0        7       0        8   0     8    0
+#> 139       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 140       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 141        7       0        8      0        8       1        7   0     8    0
+#> 142        7       0        8      0        8       0        8   0     8    0
+#> 143        8       0        7      0        7       0        8   0     8    0
+#> 144        8       0        7      0        7       0        8   0     8    0
+#> 145        8       0        8      0        8       0        8   0     8    0
+#> 146        7       1        8      0        7       0        7   0     8    0
+#> 147        8       0        7      0        7       0        7   0     7    0
+#> 148        7       0        7      0        8       0        8   0     7    0
+#> 149        8       0        8      0        8       0        8   0     8    0
+#> 150        7       0        7      0        8       0        8   0     7    0
+#> 151        8       0        8      0        7       0        8   0     8    0
+#> 152        8       0        8      0        7       0        7   0     8    0
+#> 153       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 154       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 155       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 156       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 157       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 158       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 159       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 160       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 161       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 162       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 163       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 164       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 165       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 166       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 167       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 168       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 169       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 170       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 171       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 172        8       0        7      0        7       0        8   0     7    0
+#> 173        8       0        7      0        7       0        8   0     7    0
+#> 174        8       0        8      0        7       0        7   0     7    0
+#> 175        8       0        8      0        7       0        8   0     8    0
+#> 176        7       0        8      0        8       0        7   0     8    0
+#> 177        8       0        7      0        7       0        7   0     8    0
+#> 178        8       0        8      0        7       0        8   0     8    0
+#> 179       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 180       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 181       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 182       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 183       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 184       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 185       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 186        7       0        8      0        8       0        7   0     8    0
+#> 187        8       0        8      0        8       0        8   0     8    0
+#> 188       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 189       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 190       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 191       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 192       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 193       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 194       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 195       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 196       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 197       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 198       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 199        8       0        8      0        8       0        8   0     8    0
+#> 200       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 201       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 202       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 203       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 204        8       0        7      0        8       0        8   0     7    0
+#> 205        7       0        7      0        8       0        8   0     7    0
+#> 206        7       0        7      0        8       0        7   0     7    0
+#> 207        7       0        8      0        7       0        8   0     8    0
+#> 208        7       0        8      0        7       0        8   0     8    0
+#> 209        8       0        8      0        8       0        7   0     7    0
+#> 210        7       0        7      0        7       0        8   0     7    0
+#> 211       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 212       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 213       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 214       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 215       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 216       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 217        8       0        7      0        8       0        7   0     8    0
+#> 218        8       0        7      0        8       0        7   0     8    0
+#> 219        8       0        8      0        7       0        8   0     8    0
+#> 220        7       0        8      0        8       0        7   0     8    0
+#> 221        8       0        8      0        7       0        8   0     7    0
+#> 222        7       0        7      0        8       0        8   0     7    0
+#> 223        8       0        8      0        7       0        8   0     7    0
+#> 224        7       0        8      0        8       0        7   0     8    0
+#> 225        7       0        8      0        7       0        7   0     8    0
+#> 226       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 227        8       0        7      0        7       0        1   0     8    0
+#> 228       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 229       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 230       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 231       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 232       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 233       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 234        8       0        7      0        8       0        7   0     8    0
+#> 235        8       0        8      0        7       0        8   0     8    0
+#> 236        8       0        8      0        8       0        7   0     8    0
+#> 237        8       0        8      0        8       0        8   0     8    0
+#> 238        7       0        7      0        8       0        8   0     8    0
+#> 239        8       0        8      0        7       0        7   0     8    0
+#> 240        7       0        7      0        7       0        8   0     7    0
+#> 241        7       0        7      0        7       0        7   0     7    0
+#> 242        8       0        7      0        8       0        8   0     7    0
+#> 243       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 244       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 245        8       0        8      0        8       0        8   0     8    0
+#> 246        8       0        8      0        8       0        7   0     8    0
+#> 247        8       0        8      0        8       0        8   0     7    0
+#> 248        7       0        8      0        8       0        8   0     8    0
+#> 249       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 250       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 251       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 252       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 253       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 254       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 255       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 256       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 257        8       0        8      0        7       0        8   0     8    0
+#> 258        8       0        8      0        8       0        8   0     8    0
+#> 259        8       0        7      0        7       0        8   0     8    0
+#> 260       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 261       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 262       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 263       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 264       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 265       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 266       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 267        7       0        7      0        7       0        7   0     7    0
+#> 268        8       0        8      0        8       0        8   0     8    0
+#> 269        8       0        8      0        8       0        7   0     8    0
+#> 270       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 271       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 272        8       0        8      0        8       0        7   0     8    0
+#> 273        8       0        7      0        7       0        8   0     7    0
+#> 274        8       0        7      0        7       0        7   0     8    0
+#> 275        7       0        8      0        7       0        8   0     7    0
+#> 276        7       0        7      0        8       0        7   0     8    0
+#> 277       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 278       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 279       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 280       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 281       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 282       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 283       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 284       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 285       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 286        8       0        7      0        8       1        8   0     8    0
+#> 287        7       0        7      0        8       0        8   0     7    0
+#> 288        7       0        8      0        7       0        7   0     8    0
+#> 289        8       0        7      0        8       0        8   0     7    0
+#> 290        7       0        7      0        7       0        7   0     7    0
+#> 291        7       0        8      0        8       0        8   0     8    0
+#> 292        8       0        8      0        7       0        8   0     7    0
+#> 293        7       0        7      0        7       0        7   0     8    0
+#> 294       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 295       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 296       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 297        7       0        8      0        8       0        7   0     8    0
+#> 298        8       0        7      0        8       0        8   0     7    0
+#> 299        7       0        8      0        8       0        8   0     8    0
+#> 300        8       0        7      0        7       0        7   0     7    0
+#> 301       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 302       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 303       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 304       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 305        7       0        8      0        8       0        8   0     7    0
+#> 306       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 307       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 308       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 309       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 310       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 311       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 312       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 313       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 314       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 315       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 316       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 317       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 318       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 319       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 320       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 321       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 322       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 323       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 324       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 325       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 326       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 327       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 328       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 329        8       0        8      0        8       0        7   0     8    0
+#> 330        8       0        8      0        8       0        8   0     8    0
+#> 331       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 332       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 333       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 334       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 335       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 336       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 337       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 338       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 339       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 340       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 341       -4      -4       -4     -4       -4      -4       -4  -4    -4    0
+#> 342        7       0        8      0        7       0        8   0     8    0
+#> 343        8       0        8      0        7       0        8   0     7    0
+#> 344        7       0        7      0        8       0        7   0     8    0
+#>     HUNTIF HYCEPH HYCEPHIF IMPSUB IMPSUBIF MEDS MEDSIF MSA MSAIF NACCALZD
+#> 1        8      0        7     -4       -4    0      7  -4    -4        1
+#> 2        8      0        7     -4       -4    0      8  -4    -4        8
+#> 3        8      0        7     -4       -4    0      8  -4    -4        8
+#> 4        8      0        8     -4       -4    0      8  -4    -4        1
+#> 5        8      0        7     -4       -4    0      8  -4    -4        8
+#> 6        8      0        7     -4       -4    0      8  -4    -4        8
+#> 7        7      0        8     -4       -4    0      8  -4    -4        8
+#> 8        7      0        8      0        7    0      7   0     8        8
+#> 9        7      0        7     -4       -4    0      8  -4    -4        8
+#> 10       8      0        7     -4       -4    0      8  -4    -4        1
+#> 11       8      0        7      0        8    0      7   0     7        8
+#> 12       7      0        8      0        7    0      8   0     7        8
+#> 13       8      0        8     -4       -4    0      7  -4    -4        0
+#> 14       8      0        8     -4       -4    0      7  -4    -4        1
+#> 15       7      0        7     -4       -4    0      8  -4    -4        8
+#> 16       8      0        8     -4       -4    0      8  -4    -4        1
+#> 17       7      0        8      0        7    0      7   0     8        1
+#> 18       8      0        8      0        7    0      7   0     8        8
+#> 19       7      0        8     -4       -4    0      7  -4    -4        8
+#> 20       7      0        8     -4       -4    0      7  -4    -4        1
+#> 21       7      0        8     -4       -4    0      8  -4    -4        8
+#> 22       7      0        8      0        7    0      8   0     7        1
+#> 23       7      0        8      0        8    0      7   0     8        0
+#> 24       8      0        8     -4       -4    0      8  -4    -4        8
+#> 25       8      0        8     -4       -4    0      7  -4    -4        8
+#> 26       8      0        8     -4       -4    0      8  -4    -4        1
+#> 27       8      0        8     -4       -4    0      8  -4    -4        8
+#> 28       7      0        7     -4       -4    0      7  -4    -4        8
+#> 29       8      0        7     -4       -4    0      8  -4    -4        8
+#> 30       7      0        8     -4       -4    0      8  -4    -4        0
+#> 31       7      0        8     -4       -4    0      7  -4    -4        8
+#> 32       7      0        8      0        8    0      8   0     8        0
+#> 33       8      0        7      0        8    0      8   0     8        8
+#> 34       7      0        7      0        8    0      8   0     8        8
+#> 35       7      0        8      0        7    0      7   0     7        1
+#> 36       8      0        8      0        7    0      7   0     8        1
+#> 37       8      0        8      0        8    0      8   0     8        8
+#> 38       7      0        8      0        7    0      7   0     7        8
+#> 39       8      0        7      0        7    0      7   0     8        1
+#> 40       8      0        7     -4       -4    0      7  -4    -4        8
+#> 41       8      0        8     -4       -4    0      7  -4    -4        8
+#> 42       7      0        8     -4       -4    0      8  -4    -4        1
+#> 43       7      0        8     -4       -4    0      8  -4    -4        1
+#> 44       7      0        8     -4       -4    0      7  -4    -4        8
+#> 45       7      0        7     -4       -4    0      8  -4    -4        1
+#> 46       7      0        8      0        8    0      8   0     8        1
+#> 47       8      0        7      0        8    0      7   0     8        1
+#> 48       7      0        8     -4       -4    0      7  -4    -4        0
+#> 49       8      0        7      0        8    0      8   0     8        8
+#> 50       8      0        8      0        8    0      8   0     7        8
+#> 51       7      0        8      0        7    0      7   0     7        0
+#> 52       7      0        8     -4       -4    0      7  -4    -4        1
+#> 53       8      0        8      0        8    0      7   0     8        1
+#> 54       8      0        7      0        7    0      8   0     8        1
+#> 55       7      0        7     -4       -4    0      8  -4    -4        8
+#> 56       7      0        8     -4       -4    0      7  -4    -4        8
+#> 57       8      0        8     -4       -4    0      8  -4    -4        8
+#> 58       7      0        7     -4       -4    0      7  -4    -4        1
+#> 59       8      0        7     -4       -4    0      8  -4    -4        1
+#> 60       7      0        7     -4       -4    0      7  -4    -4        8
+#> 61       8      0        8     -4       -4    0      7  -4    -4        8
+#> 62       7      0        8     -4       -4    0      7  -4    -4        1
+#> 63       8      0        7     -4       -4    0      7  -4    -4        1
+#> 64       7      0        8     -4       -4    0      7  -4    -4        8
+#> 65       7      0        8     -4       -4    0      8  -4    -4        8
+#> 66       7      0        8     -4       -4    0      7  -4    -4        1
+#> 67       7      0        7     -4       -4    0      7  -4    -4        8
+#> 68       8      0        7     -4       -4    0      7  -4    -4        8
+#> 69       7      0        8     -4       -4    0      7  -4    -4        1
+#> 70       7      0        8      0        8    0      7   0     8        1
+#> 71       7      0        8      0        8    0      8   0     7        0
+#> 72       8      0        8     -4       -4    0      8  -4    -4        1
+#> 73       8      0        7     -4       -4    0      8  -4    -4        8
+#> 74       7      0        7     -4       -4    0      7  -4    -4        8
+#> 75       7      0        8     -4       -4    0      7  -4    -4        8
+#> 76       8      0        7     -4       -4    0      7  -4    -4        8
+#> 77       7      0        7     -4       -4    0      7  -4    -4        8
+#> 78       8      0        7      0        7    0      8   0     7        8
+#> 79       7      0        8      0        8    0      7   0     7        8
+#> 80       7      0        7      0        7    0      7   0     8        1
+#> 81       7      0        8      0        8    0      7   0     7        0
+#> 82       7      0        7     -4       -4    0      8  -4    -4        8
+#> 83       7      0        8     -4       -4    0      8  -4    -4        0
+#> 84       7      0        7     -4       -4    0      7  -4    -4        0
+#> 85       7      0        7     -4       -4    0      8  -4    -4        8
+#> 86       8      0        8     -4       -4    0      8  -4    -4        1
+#> 87       8      0        8     -4       -4    0      2  -4    -4        1
+#> 88       7      0        7     -4       -4    0      7  -4    -4        1
+#> 89       7      0        8     -4       -4    0      8  -4    -4        1
+#> 90       8      0        7     -4       -4    0      7  -4    -4        8
+#> 91       7      0        7     -4       -4    0      8  -4    -4        8
+#> 92       7      0        8      0        8    0      7   0     7        0
+#> 93       7      0        8      0        7    0      7   0     8        8
+#> 94       8      0        8      0        8    0      7   0     8        0
+#> 95       8      0        7      0        7    0      7   0     8        8
+#> 96       8      0        8      0        8    0      8   0     8        0
+#> 97       8      0        8     -4       -4    0      8  -4    -4        0
+#> 98       8      0        8     -4       -4    0      8  -4    -4        0
+#> 99       7      0        8     -4       -4    0      8  -4    -4        1
+#> 100      7      0        8     -4       -4    0      8  -4    -4        1
+#> 101      7      0        8     -4       -4    0      8  -4    -4        0
+#> 102      7      0        7     -4       -4    0      8  -4    -4        8
+#> 103      8      0        8      0        8    0      8   0     7        1
+#> 104      8      0        7      0        7    0      8   0     8        1
+#> 105      7      0        7     -4       -4    0      8  -4    -4        1
+#> 106      8      0        8     -4       -4    0      7  -4    -4        8
+#> 107      7      0        7     -4       -4    0      8  -4    -4        8
+#> 108      7      0        8     -4       -4    0      8  -4    -4        8
+#> 109      7      0        8     -4       -4    0      7  -4    -4        8
+#> 110      8      0        7     -4       -4    0      8  -4    -4        8
+#> 111      7      0        8     -4       -4    0      8  -4    -4        8
+#> 112      8      0        7     -4       -4    0      8  -4    -4        0
+#> 113      7      0        8      0        7    0      8   0     8        8
+#> 114      7      0        7      0        7    0      7   0     8        8
+#> 115      7      0        7      0        8    0      7   0     7        0
+#> 116      7      0        7     -4       -4    0      7  -4    -4        8
+#> 117      8      0        8     -4       -4    0      2  -4    -4        8
+#> 118      7      0        8      0        8    0      8   0     7        8
+#> 119      7      0        8      0        7    0      7   0     8        8
+#> 120      8      0        7      0        8    0      7   0     8        8
+#> 121      7      0        8      0        7    0      7   0     7        8
+#> 122      8      0        7      0        7    0      7   0     8        8
+#> 123      7      0        8      0        8    0      8   0     7        0
+#> 124      8      0        7      0        8    0      8   0     8        8
+#> 125      7      0        8      0        8    0      7   0     8        8
+#> 126      8      0        8      0        7    0      7   0     7        1
+#> 127      7      0        7      0        8    0      7   0     8        1
+#> 128      8      0        7     -4       -4    0      7  -4    -4        8
+#> 129      7      0        8     -4       -4    0      7  -4    -4        8
+#> 130      7      0        8     -4       -4    0      8  -4    -4        0
+#> 131      7      0        8     -4       -4    0      8  -4    -4        0
+#> 132      7      0        8      0        8    0      7   0     7        0
+#> 133      7      0        8      0        8    0      8   0     7        1
+#> 134      8      0        8      0        8    0      8   0     8        8
+#> 135      7      0        8      0        8    0      8   0     7        1
+#> 136      8      0        7      0        8    0      8   0     7        0
+#> 137      7      0        8      0        8    0      8   0     7        1
+#> 138      8      0        7      0        8    0      8   0     7        1
+#> 139      7      0        8     -4       -4    0      8  -4    -4        0
+#> 140      7      0        8     -4       -4    0      8  -4    -4        0
+#> 141      8      0        8      0        8    0      8   0     7        8
+#> 142      8      0        8      0        8    0      7   0     8        1
+#> 143      7      0        8      0        8    0      7   0     7        1
+#> 144      7      0        7      0        7    0      7   0     8        8
+#> 145      8      0        8      0        8    0      8   0     8        0
+#> 146      8      0        7      0        8    0      7   0     8        8
+#> 147      8      0        7      0        7    0      7   0     8        8
+#> 148      7      0        7      0        8    0      8   0     8        1
+#> 149      8      0        8      0        8    0      7   0     7        8
+#> 150      8      0        7      0        8    0      8   0     8        1
+#> 151      8      0        8      0        8    0      7   0     7        1
+#> 152      7      0        7      0        8    0      8   0     7        0
+#> 153      7      0        8     -4       -4    1      8  -4    -4        8
+#> 154      7      0        8     -4       -4    0      8  -4    -4        1
+#> 155      7      0        8     -4       -4    0      8  -4    -4        8
+#> 156      7      0        7     -4       -4    0      8  -4    -4        1
+#> 157      8      0        8     -4       -4    0      8  -4    -4        8
+#> 158      7      0        7     -4       -4    0      8  -4    -4        0
+#> 159      8      0        7     -4       -4    0      7  -4    -4        8
+#> 160      8      0        7     -4       -4    0      7  -4    -4        8
+#> 161      8      0        8     -4       -4    0      8  -4    -4        8
+#> 162      8      0        8     -4       -4    0      7  -4    -4        8
+#> 163      7      0        8     -4       -4    0      7  -4    -4        8
+#> 164      7      0        7     -4       -4    0      7  -4    -4        8
+#> 165      7      0        8     -4       -4    0      7  -4    -4        1
+#> 166      8      0        7     -4       -4    0      7  -4    -4        8
+#> 167      8      0        7     -4       -4    0      7  -4    -4        1
+#> 168      7      0        8     -4       -4    0      8  -4    -4        8
+#> 169      7      0        8     -4       -4    0      8  -4    -4        1
+#> 170      7      0        8     -4       -4    0      7  -4    -4        1
+#> 171      7      0        7     -4       -4    0      8  -4    -4        1
+#> 172      8      0        7      0        8    0      7   0     7        1
+#> 173      8      0        7      0        8    0      8   0     8        1
+#> 174      7      0        7      0        7    0      8   0     7        0
+#> 175      7      0        8      0        8    0      7   0     8        1
+#> 176      8      0        7      0        8    0      8   0     7        8
+#> 177      8      0        8      0        7    0      8   0     7        8
+#> 178      8      0        8      0        8    1      7   0     7        1
+#> 179      8      0        7     -4       -4    0      8  -4    -4        8
+#> 180      7      0        7     -4       -4    0      8  -4    -4        8
+#> 181      7      0        8     -4       -4    0      7  -4    -4        1
+#> 182      8      0        7     -4       -4    0      7  -4    -4        8
+#> 183      8      0        8     -4       -4    0      7  -4    -4        1
+#> 184      7      0        7     -4       -4    0      7  -4    -4        0
+#> 185      7      0        8     -4       -4    0      7  -4    -4        8
+#> 186      8      0        7      0        8    0      7   0     7        8
+#> 187      8      0        8      0        8    0      8   0     7        8
+#> 188      7      0        8     -4       -4    0      7  -4    -4        1
+#> 189      8      0        7     -4       -4    0      8  -4    -4        8
+#> 190      7      0        7     -4       -4    0      8  -4    -4        1
+#> 191      8      0        8     -4       -4    0      7  -4    -4        0
+#> 192      8      0        8     -4       -4    0      7  -4    -4        1
+#> 193      7      0        8     -4       -4    0      8  -4    -4        1
+#> 194      7      0        8     -4       -4    0      7  -4    -4        8
+#> 195      8      0        7     -4       -4    0      8  -4    -4        8
+#> 196      8      0        8     -4       -4    0      8  -4    -4        1
+#> 197      8      0        8     -4       -4    0      8  -4    -4        8
+#> 198      8      0        7     -4       -4    0      7  -4    -4        8
+#> 199      8      0        8      0        7    0      7   0     8        8
+#> 200      8      0        8     -4       -4    0      7  -4    -4        1
+#> 201      7      0        8     -4       -4    0      7  -4    -4        8
+#> 202      7      0        7     -4       -4    0      8  -4    -4        0
+#> 203      7      0        7     -4       -4    0      7  -4    -4        1
+#> 204      7      0        8      0        7    0      8   0     8        8
+#> 205      8      0        8      0        7    0      8   0     8        0
+#> 206      8      0        7      0        7    0      8   0     7        1
+#> 207      8      0        8      0        8    0      8   0     8        1
+#> 208      8      0        7      0        7    0      7   0     8        1
+#> 209      7      0        8      0        7    0      8   0     7        0
+#> 210      7      0        8      0        7    0      7   0     8        1
+#> 211      7      0        8     -4       -4    0      8  -4    -4        8
+#> 212      7      0        8     -4       -4    0      8  -4    -4        8
+#> 213      8      0        7     -4       -4    0      7  -4    -4        1
+#> 214      8      0        7     -4       -4    0      8  -4    -4        0
+#> 215      8      0        7     -4       -4    0      7  -4    -4        1
+#> 216      7      0        8     -4       -4    0      8  -4    -4        8
+#> 217      7      0        8      0        7    0      7   0     8        0
+#> 218      7      0        8      0        7    0      7   0     8        1
+#> 219      8      0        8      0        8    0      7   0     8        0
+#> 220      7      0        8      0        7    0      7   0     8        8
+#> 221      8      0        7      0        7    0      7   0     7        8
+#> 222      7      0        8      0        8    0      7   0     8        8
+#> 223      7      0        7      0        8    0      8   0     8        8
+#> 224      7      0        8      0        8    0      7   0     7        1
+#> 225      8      0        7      0        8    0      7   0     7        8
+#> 226      8      0        7     -4       -4    0      7  -4    -4        0
+#> 227      7      0        7      0        7    0      7   0     8        1
+#> 228      7      0        8     -4       -4    0      8  -4    -4        1
+#> 229      8      0        8     -4       -4    0      8  -4    -4        8
+#> 230      8      0        8     -4       -4    0      7  -4    -4        8
+#> 231      7      0        7     -4       -4    0      7  -4    -4        8
+#> 232      8      0        7     -4       -4    0      8  -4    -4        1
+#> 233      8      0        7     -4       -4    1      8  -4    -4        8
+#> 234      7      0        8      0        7    0      8   0     8        8
+#> 235      7      0        7      0        7    0      8   0     8        8
+#> 236      7      0        7      0        7    0      8   0     7        1
+#> 237      7      0        8      0        8    0      7   0     7        8
+#> 238      7      0        7      0        8    0      7   0     8        1
+#> 239      7      0        7      0        7    0      8   0     7        1
+#> 240      7      0        7      0        7    0      8   0     8        0
+#> 241      7      0        7      0        8    0      8   0     8        8
+#> 242      8      0        7      0        7    0      7   0     7        1
+#> 243      7      0        7     -4       -4    0      7  -4    -4        8
+#> 244      7      0        7     -4       -4    0      7  -4    -4        8
+#> 245      8      0        8      0        8    0      7   0     8        8
+#> 246      8      0        8      0        7    0      7   0     7        8
+#> 247      8      0        7      0        8    0      8   0     7        8
+#> 248      8      0        7      0        8    0      7   0     7        1
+#> 249      7      0        8     -4       -4    0      7  -4    -4        1
+#> 250      7      0        7     -4       -4    0      8  -4    -4        0
+#> 251      8      0        7     -4       -4    0      8  -4    -4        8
+#> 252      7      0        8     -4       -4    0      7  -4    -4        8
+#> 253      8      0        8     -4       -4    0      7  -4    -4        8
+#> 254      8      0        8     -4       -4    0      8  -4    -4        8
+#> 255      7      0        7     -4       -4    0      7  -4    -4        8
+#> 256      8      0        7     -4       -4    0      7  -4    -4        8
+#> 257      7      0        8      0        8    0      7   0     8        8
+#> 258      7      0        8      0        7    0      7   0     7        0
+#> 259      7      0        8      0        8    0      8   0     8        1
+#> 260      7      0        8     -4       -4    1      8  -4    -4        1
+#> 261      8      0        7     -4       -4    0      7  -4    -4        1
+#> 262      7      0        7     -4       -4    0      8  -4    -4        8
+#> 263      8      0        8     -4       -4    0      7  -4    -4        1
+#> 264      7      0        7     -4       -4    0      8  -4    -4        1
+#> 265      8      0        7     -4       -4    0      8  -4    -4        8
+#> 266      8      0        8     -4       -4    0      7  -4    -4        8
+#> 267      7      0        7      0        8    0      7   0     8        8
+#> 268      8      0        8      0        7    0      8   0     8        1
+#> 269      7      0        7      0        8    0      7   0     8        1
+#> 270      8      0        7     -4       -4    0      8  -4    -4        0
+#> 271      7      0        7     -4       -4    0      8  -4    -4        0
+#> 272      7      0        8      0        7    0      8   0     8        8
+#> 273      7      0        7      0        7    0      8   0     7        1
+#> 274      7      0        8      0        7    0      7   0     7        0
+#> 275      7      0        8      0        8    0      7   0     7        8
+#> 276      8      0        8      0        7    0      8   0     7        8
+#> 277      8      0        7     -4       -4    0      8  -4    -4        8
+#> 278      8      0        7     -4       -4    0      8  -4    -4        8
+#> 279      8      0        8     -4       -4    0      7  -4    -4        8
+#> 280      7      0        7     -4       -4    0      7  -4    -4        8
+#> 281      7      0        7     -4       -4    0      7  -4    -4        8
+#> 282      7      0        8     -4       -4    0      8  -4    -4        8
+#> 283      8      0        8     -4       -4    0      7  -4    -4        8
+#> 284      8      0        8     -4       -4    0      7  -4    -4        8
+#> 285      8      0        8     -4       -4    0      8  -4    -4        8
+#> 286      8      0        7      0        8    0      7   0     7        8
+#> 287      8      0        7      0        7    0      8   0     8        1
+#> 288      8      0        7      0        8    0      8   0     8        1
+#> 289      8      0        7      0        7    0      7   0     8        8
+#> 290      8      0        7      0        8    0      7   0     8        1
+#> 291      7      0        8      0        8    0      7   0     8        1
+#> 292      7      0        7      0        8    0      8   0     8        1
+#> 293      7      0        7      0        7    0      7   0     7        1
+#> 294      7      0        8     -4       -4    0      8  -4    -4        8
+#> 295      7      0        8     -4       -4    0      8  -4    -4        1
+#> 296      7      0        7     -4       -4    0      7  -4    -4        8
+#> 297      7      0        7      0        7    0      7   0     7        1
+#> 298      8      0        7      0        7    0      7   0     7        0
+#> 299      8      0        8      0        7    0      7   0     7        8
+#> 300      7      0        7      0        8    0      8   0     8        1
+#> 301      7      0        8     -4       -4    0      8  -4    -4        0
+#> 302      8      0        7     -4       -4    0      8  -4    -4        1
+#> 303      8      0        8     -4       -4    0      8  -4    -4        1
+#> 304      8      0        8     -4       -4    0      8  -4    -4        8
+#> 305      8      0        8      0        7    0      7   0     8        1
+#> 306      8      0        7     -4       -4    0      7  -4    -4        8
+#> 307      8      0        7     -4       -4    0      8  -4    -4        8
+#> 308      8      0        8     -4       -4    0      8  -4    -4        0
+#> 309      7      0        7     -4       -4    0      7  -4    -4        8
+#> 310      8      0        7     -4       -4    0      8  -4    -4        1
+#> 311      7      0        7     -4       -4    0      7  -4    -4        0
+#> 312      8      0        8     -4       -4    0      8  -4    -4        8
+#> 313      7      0        8     -4       -4    0      7  -4    -4        8
+#> 314      8      0        8     -4       -4    0      8  -4    -4        8
+#> 315      7      0        7     -4       -4    0      8  -4    -4        8
+#> 316      7      0        7     -4       -4    0      2  -4    -4        1
+#> 317      8      0        8     -4       -4    0      8  -4    -4        8
+#> 318      7      0        8     -4       -4    0      7  -4    -4        8
+#> 319      8      0        8     -4       -4    1      8  -4    -4        1
+#> 320      7      0        7     -4       -4    0      7  -4    -4        0
+#> 321      7      0        8     -4       -4    0      8  -4    -4        1
+#> 322      7      0        8     -4       -4    0      8  -4    -4        8
+#> 323      8      0        8     -4       -4    0      7  -4    -4        0
+#> 324      7      0        7     -4       -4    0      8  -4    -4        1
+#> 325      8      0        7     -4       -4    0      7  -4    -4        8
+#> 326      8      0        8     -4       -4    0      8  -4    -4        1
+#> 327      7      0        8     -4       -4    0      8  -4    -4        8
+#> 328      8      0        7     -4       -4    0      8  -4    -4        0
+#> 329      7      0        7      0        8    0      8   0     8        1
+#> 330      7      0        7      0        8    0      7   0     8        1
+#> 331      8      0        8     -4       -4    0      7  -4    -4        8
+#> 332      7      0        8     -4       -4    0      2  -4    -4        0
+#> 333      8      0        7     -4       -4    0      7  -4    -4        0
+#> 334      8      0        7     -4       -4    0      7  -4    -4        1
+#> 335      7      0        8     -4       -4    0      7  -4    -4        0
+#> 336      7      0        7     -4       -4    0      7  -4    -4        8
+#> 337      8      0        8     -4       -4    0      7  -4    -4        0
+#> 338      7      0        7     -4       -4    0      7  -4    -4        1
+#> 339      8      0        7     -4       -4    0      8  -4    -4        8
+#> 340      7      0        7     -4       -4    0      8  -4    -4        1
+#> 341      7      0        8     -4       -4    0      8  -4    -4        8
+#> 342      8      0        7      0        8    0      8   0     8        0
+#> 343      8      0        8      0        7    0      7   0     7        8
+#> 344      7      0        7      0        7    0      8   0     7        0
+#>     NACCALZP NACCLBDE NACCLBDP NEOP NEOPIF OTHCOGIF OTHPSYIF POSSAD POSSADIF
+#> 1          1        0        7    0      8       -4        8      0        7
+#> 2          7        0        7    0      8       -4        8      0        8
+#> 3          7        0        7    0      7       -4        7      8        7
+#> 4          7        8        7    0      7       -4        7      1        7
+#> 5          1        0        7    0      8       -4        8      0        1
+#> 6          1        8        7    0      8       -4        8      8        7
+#> 7          1        8        7    0      8       -4        7      8        8
+#> 8          8        8        1    0      7        8        7     -4       -4
+#> 9          1        0        7    0      7       -4        7      8        8
+#> 10         8        8        8    0      8       -4        7      0        7
+#> 11         7        8        8    0      7        7        7     -4       -4
+#> 12         8        0        7    0      7        8        8     -4       -4
+#> 13         7        0        7    0      8       -4        7      0        7
+#> 14         8        8        7    0      7       -4        8      8        7
+#> 15         8        8        7    0      7       -4        8      8        8
+#> 16         1        8        7    0      7       -4        8      0        7
+#> 17         8        0        7    0      7        7        7     -4       -4
+#> 18         7        0        7    0      8        8        7     -4       -4
+#> 19         8        0        8    0      8       -4        8      8        8
+#> 20         7        0        8    0      8       -4        7      0        7
+#> 21         8        8        8    0      8       -4        8      8        1
+#> 22         1        0        2    0      8        7        8     -4       -4
+#> 23         1        8        7    0      8        8        8     -4       -4
+#> 24         7        0        8    0      8       -4        7      8        7
+#> 25         8        0        8    0      8       -4        7      0        8
+#> 26         8        0        7    0      8       -4        8      0        7
+#> 27         1        0        7    0      7       -4        7      0        1
+#> 28         1        0        7    0      7       -4        7      0        8
+#> 29         8        0        7    0      8       -4        8      0        7
+#> 30         1        8        7    0      7       -4        8      8        7
+#> 31         8        1        8    0      8       -4        7      8        1
+#> 32         1        8        7    0      8        8        8     -4       -4
+#> 33         8        1        8    0      7        7        7     -4       -4
+#> 34         7        8        7    0      8        7        8     -4       -4
+#> 35         8        0        8    0      8        7        8     -4       -4
+#> 36         8        8        8    0      7        8        7     -4       -4
+#> 37         1        8        8    0      8        8        8     -4       -4
+#> 38         8        8        8    0      7        8        8     -4       -4
+#> 39         1        0        8    0      8        7        7     -4       -4
+#> 40         1        8        7    0      7       -4        7      0        8
+#> 41         1        0        7    0      7       -4        7      8        8
+#> 42         8        0        7    0      8       -4        7      8        8
+#> 43         8        8        8    0      8       -4        7      0        1
+#> 44         8        8        8    0      8       -4        7      0        7
+#> 45         8        8        8    0      7       -4        7      0        7
+#> 46         7        8        8    0      8        7        7     -4       -4
+#> 47         1        8        7    0      8        8        7     -4       -4
+#> 48         8        8        7    0      7       -4        7      8        7
+#> 49         7        8        7    0      7        7        7     -4       -4
+#> 50         1        8        8    0      8        7        7     -4       -4
+#> 51         8        0        7    0      8        8        8     -4       -4
+#> 52         8        8        2    0      7       -4        7      1        8
+#> 53         7        8        1    0      8        8        8     -4       -4
+#> 54         8        8        7    0      8        7        8     -4       -4
+#> 55         8        8        8    0      8       -4        7      8        8
+#> 56         7        0        7    0      8       -4        7      0        8
+#> 57         1        0        8    0      7       -4        7      0        7
+#> 58         8        8        7    0      8       -4        7      0        7
+#> 59         8        0        7    0      8       -4        7      0        7
+#> 60         8        0        7    0      7       -4        8      1        7
+#> 61         1        0        7    0      7       -4        7      0        8
+#> 62         8        0        7    0      7       -4        7      8        8
+#> 63         7        0        8    0      8       -4        7      8        8
+#> 64         8        8        8    0      7       -4        8      0        7
+#> 65         7        0        8    0      8       -4        8      0        8
+#> 66         7        8        7    0      7       -4        7      0        8
+#> 67         2        8        8    0      8       -4        8      8        8
+#> 68         8        8        7    0      8       -4        8      0        7
+#> 69         1        0        8    0      8       -4        8      0        7
+#> 70         8        8        8    0      8        8        7     -4       -4
+#> 71         8        0        7    0      8        8        7     -4       -4
+#> 72         1        8        8    0      8       -4        7      0        8
+#> 73         1        0        7    0      7       -4        8      0        8
+#> 74         7        8        7    0      8       -4        7      8        8
+#> 75         8        1        8    0      7       -4        8      0        7
+#> 76         7        1        8    0      8       -4        7      0        8
+#> 77         8        8        7    0      7       -4        8      8        8
+#> 78         8        8        8    0      8        7        7     -4       -4
+#> 79         1        8        8    0      7        8        8     -4       -4
+#> 80         8        8        7    0      8        7        7     -4       -4
+#> 81         1        8        8    0      8        8        8     -4       -4
+#> 82         1        8        8    0      7       -4        7      8        8
+#> 83         8        8        7    0      7       -4        8      1        7
+#> 84         1        0        8    0      8       -4        8      0        7
+#> 85         1        8        8    0      8       -4        7      8        7
+#> 86         8        0        7    0      7       -4        8      1        8
+#> 87         1        0        8    0      7       -4        8      0        8
+#> 88         8        8        8    0      8       -4        8      8        8
+#> 89         8        8        8    0      7       -4        7      8        1
+#> 90         1        8        8    0      8       -4        7      8        8
+#> 91         8        0        7    0      8       -4        8      0        7
+#> 92         1        0        7    0      8        8        8     -4       -4
+#> 93         7        0        8    0      7        7        8     -4       -4
+#> 94         1        0        7    0      7        7        7     -4       -4
+#> 95         8        0        8    0      8        8        8     -4       -4
+#> 96         8        8        7    0      8        7        8     -4       -4
+#> 97         7        0        7    0      8       -4        8      8        8
+#> 98         7        8        7    0      7       -4        7      8        7
+#> 99         1        8        7    0      7       -4        8      0        8
+#> 100        1        0        1    0      8       -4        7      0        7
+#> 101        8        1        7    0      8       -4        7      8        1
+#> 102        8        8        8    0      7       -4        8      0        8
+#> 103        1        0        7    0      8        8        8     -4       -4
+#> 104        1        0        8    0      8        7        7     -4       -4
+#> 105        1        8        7    0      8       -4        7      8        7
+#> 106        7        0        8    0      7       -4        8      0        8
+#> 107        8        8        7    0      7       -4        8      8        8
+#> 108        8        0        8    0      8       -4        7      8        8
+#> 109        8        0        7    0      8       -4        8      8        7
+#> 110        8        8        7    0      8       -4        8      0        8
+#> 111        1        8        7    0      8       -4        7      8        7
+#> 112        8        0        7    0      8       -4        7      0        7
+#> 113        1        8        8    0      7        8        8     -4       -4
+#> 114        7        8        7    0      7        7        8     -4       -4
+#> 115        1        8        7    0      7        8        8     -4       -4
+#> 116        8        0        8    0      8       -4        8      0        8
+#> 117        8        8        7    0      7       -4        8      8        7
+#> 118        8        8        8    0      7        7        8     -4       -4
+#> 119        1        8        7    0      8        8        8     -4       -4
+#> 120        1        0        7    0      7        8        7     -4       -4
+#> 121        8        8        7    0      8        8        8     -4       -4
+#> 122        1        8        7    0      8        8        7     -4       -4
+#> 123        7        8        8    0      7        8        8     -4       -4
+#> 124        8        0        7    0      7        8        7     -4       -4
+#> 125        8        8        7    0      8        7        8     -4       -4
+#> 126        8        8        7    0      7        8        7     -4       -4
+#> 127        1        0        7    0      7        7        8     -4       -4
+#> 128        1        0        7    0      8       -4        8      8        7
+#> 129        8        8        7    0      7       -4        7      8        8
+#> 130        8        0        7    0      8       -4        8      8        8
+#> 131        1        8        8    0      7       -4        7      8        8
+#> 132        8        8        7    0      8        8        3     -4       -4
+#> 133        1        8        7    0      8        8        7     -4       -4
+#> 134        8        8        8    0      8        7        8     -4       -4
+#> 135        1        8        7    0      7        7        8     -4       -4
+#> 136        8        8        7    0      7        7        7     -4       -4
+#> 137        7        1        2    0      7        8        7     -4       -4
+#> 138        8        0        7    0      7        8        8     -4       -4
+#> 139        7        8        8    0      7       -4        7      8        8
+#> 140        8        0        8    0      8       -4        7      0        7
+#> 141        1        8        1    0      8        8        7     -4       -4
+#> 142        8        0        8    0      7        1        8     -4       -4
+#> 143        8        8        1    0      7        8        8     -4       -4
+#> 144        1        8        7    0      7        8        7     -4       -4
+#> 145        1        8        2    0      8        8        8     -4       -4
+#> 146        1        8        8    0      7        7        8     -4       -4
+#> 147        8        8        7    0      7        7        7     -4       -4
+#> 148        8        8        8    0      7        8        7     -4       -4
+#> 149        7        8        8    0      7        7        7     -4       -4
+#> 150        1        8        8    0      7        8        7     -4       -4
+#> 151        8        0        8    0      8        8        7     -4       -4
+#> 152        1        0        7    0      7        7        7     -4       -4
+#> 153        2        0        8    0      7       -4        8      8        7
+#> 154        8        0        7    0      8       -4        7      8        7
+#> 155        7        1        7    0      8       -4        7      1        8
+#> 156        8        0        7    0      8       -4        8      0        8
+#> 157        7        0        8    0      8       -4        7      8        7
+#> 158        8        8        8    0      7       -4        8      8        7
+#> 159        8        1        8    0      8       -4        8      8        7
+#> 160        7        0        7    0      8       -4        7      0        7
+#> 161        8        0        8    1      7       -4        7      0        8
+#> 162        7        0        8    0      7       -4        7      8        1
+#> 163        1        1        8    0      8       -4        7      8        7
+#> 164        8        0        8    0      8       -4        8      8        7
+#> 165        1        8        8    0      8       -4        8      8        7
+#> 166        8        0        8    0      7       -4        8      0        2
+#> 167        8        8        8    0      7       -4        7      8        8
+#> 168        2        8        8    0      8       -4        7      0        7
+#> 169        1        0        7    0      7       -4        8      0        7
+#> 170        8        0        8    0      8       -4        7      1        8
+#> 171        1        8        1    0      8       -4        7      0        8
+#> 172        8        8        7    0      8        2        7     -4       -4
+#> 173        8        8        7    0      8        7        7     -4       -4
+#> 174        8        0        7    0      8        8        7     -4       -4
+#> 175        8        8        7    0      7        8        7     -4       -4
+#> 176        8        8        8    0      7        7        8     -4       -4
+#> 177        1        0        8    0      8        8        8     -4       -4
+#> 178        8        0        8    0      7        8        7     -4       -4
+#> 179        8        8        7    0      8       -4        8      0        8
+#> 180        7        0        8    0      8       -4        8      8        7
+#> 181        1        0        8    0      7       -4        8      0        7
+#> 182        8        0        8    0      8       -4        7      8        8
+#> 183        7        0        8    0      7       -4        8      8        7
+#> 184        1        0        8    0      7       -4        7      0        8
+#> 185        8        0        8    0      7       -4        8      0        8
+#> 186        1        8        8    0      8        8        8     -4       -4
+#> 187        1        8        8    0      7        7        8     -4       -4
+#> 188        7        8        8    0      8       -4        7      8        8
+#> 189        8        0        7    0      8       -4        8      0        7
+#> 190        7        8        8    0      8       -4        3      8        7
+#> 191        8        8        8    0      7       -4        7      8        8
+#> 192        8        0        7    0      8       -4        8      8        7
+#> 193        3        8        7    0      8       -4        7      8        8
+#> 194        7        8        7    0      8       -4        7      8        8
+#> 195        8        8        8    0      7       -4        7      8        8
+#> 196        8        0        7    0      7       -4        8      8        8
+#> 197        8        8        8    0      8       -4        7      0        7
+#> 198        8        0        8    0      7       -4        7      8        8
+#> 199        1        0        1    0      8        7        7     -4       -4
+#> 200        8        8        8    0      7       -4        7      0        8
+#> 201        8        0        7    0      7       -4        8      0        8
+#> 202        1        0        7    0      8       -4        8      0        7
+#> 203        8        8        8    0      7       -4        7      8        8
+#> 204        8        8        8    0      7        7        8     -4       -4
+#> 205        8        0        8    0      8        7        7     -4       -4
+#> 206        8        0        7    0      8        7        7     -4       -4
+#> 207        1        8        7    0      8        7        8     -4       -4
+#> 208        7        8        8    0      7        8        7     -4       -4
+#> 209        1        8        8    0      7        8        8     -4       -4
+#> 210        8        0        8    0      8        8        7     -4       -4
+#> 211        1        8        8    0      7       -4        8      8        7
+#> 212        8        8        7    0      8       -4        7      1        7
+#> 213        8        0        2    0      7       -4        8      8        7
+#> 214        8        8        7    0      8       -4        7      0        8
+#> 215        1        0        7    0      8       -4        8      0        7
+#> 216        7        8        8    0      7       -4        7      1        8
+#> 217        1        8        8    0      7        8        8     -4       -4
+#> 218        1        8        8    0      7        8        7     -4       -4
+#> 219        7        8        7    0      8        7        8     -4       -4
+#> 220        8        0        7    0      7        7        7     -4       -4
+#> 221        8        8        8    0      7        7        8     -4       -4
+#> 222        7        8        7    0      8        8        7     -4       -4
+#> 223        8        8        7    0      7        7        8     -4       -4
+#> 224        8        8        2    0      7        7        8     -4       -4
+#> 225        8        8        8    0      8        8        7     -4       -4
+#> 226        8        0        8    0      7       -4        8      0        1
+#> 227        8        0        8    0      8        7        7     -4       -4
+#> 228        7        0        7    0      7       -4        8      8        7
+#> 229        1        0        7    0      8       -4        7      0        7
+#> 230        2        0        8    0      8       -4        7      8        7
+#> 231        1        0        7    0      8       -4        7      0        7
+#> 232        8        8        8    0      8       -4        7      0        8
+#> 233        8        8        7    0      7       -4        8      0        8
+#> 234        7        0        8    0      7        7        8     -4       -4
+#> 235        1        8        7    0      7        7        7     -4       -4
+#> 236        1        0        8    0      8        8        7     -4       -4
+#> 237        1        8        7    0      8        8        8     -4       -4
+#> 238        8        0        1    0      7        7        7     -4       -4
+#> 239        8        0        7    0      7        7        8     -4       -4
+#> 240        8        8        2    0      8        7        8     -4       -4
+#> 241        8        8        7    0      8        7        7     -4       -4
+#> 242        7        8        8    0      7        8        7     -4       -4
+#> 243        8        8        8    0      7       -4        7      0        7
+#> 244        1        0        7    0      7       -4        7      0        8
+#> 245        8        0        7    0      8        8        7     -4       -4
+#> 246        8        8        8    0      7        7        8     -4       -4
+#> 247        8        8        8    0      7        8        8     -4       -4
+#> 248        1        1        8    0      8        8        8     -4       -4
+#> 249        2        0        8    0      7       -4        7      0        7
+#> 250        8        8        8    0      8       -4        7      8        8
+#> 251        8        0        8    0      7       -4        7      8        8
+#> 252        8        8        8    0      7       -4        8      0        7
+#> 253        1        0        8    0      8       -4        8      8        1
+#> 254        8        8        7    0      8       -4        2      0        8
+#> 255        7        0        2    0      7       -4        8      0        8
+#> 256        8        8        7    0      7       -4        8      8        8
+#> 257        8        0        7    0      8        8        7     -4       -4
+#> 258        8        8        8    0      8        7        7     -4       -4
+#> 259        8        8        8    0      7        7        7     -4       -4
+#> 260        8        8        7    0      7       -4        7      0        7
+#> 261        7        0        7    0      7       -4        7      8        7
+#> 262        8        8        8    0      7       -4        7      0        7
+#> 263        7        0        8    0      7       -4        7      8        7
+#> 264        1        0        7    0      7       -4        7      0        7
+#> 265        8        0        8    0      8       -4        7      8        7
+#> 266        1        8        8    0      8       -4        8      8        8
+#> 267        8        8        7    0      7        7        7     -4       -4
+#> 268        7        0        8    0      7        7        8     -4       -4
+#> 269        8        0        7    0      8        7        8     -4       -4
+#> 270        7        0        8    0      7       -4        7      8        7
+#> 271        8        8        7    0      7       -4        7      0        8
+#> 272        8        8        7    0      8        7        8     -4       -4
+#> 273        8        8        7    0      8        7        7     -4       -4
+#> 274        7        0        7    0      8        7        7     -4       -4
+#> 275        1        0        8    0      7        8        8     -4       -4
+#> 276        8        8        7    0      8        7        8     -4       -4
+#> 277        1        8        8    0      8       -4        8      8        8
+#> 278        8        0        8    0      7       -4        8      8        7
+#> 279        7        0        7    0      8       -4        7      0        8
+#> 280        1        0        7    0      8       -4        7      1        8
+#> 281        8        8        8    0      7       -4        7      8        7
+#> 282        8        0        7    0      8       -4        7      8        8
+#> 283        1        8        8    0      8       -4        7      8        7
+#> 284        8        8        7    0      7       -4        7      0        8
+#> 285        1        8        7    0      7       -4        7      8        7
+#> 286        8        8        7    0      8        8        8     -4       -4
+#> 287        8        0        8    0      8        8        8     -4       -4
+#> 288        8        0        8    0      7        8        7     -4       -4
+#> 289        8        8        1    0      8        7        7     -4       -4
+#> 290        7        8        7    0      7        7        8     -4       -4
+#> 291        8        8        8    0      7        7        8     -4       -4
+#> 292        1        8        7    0      8        8        8     -4       -4
+#> 293        8        0        8    0      7        8        7     -4       -4
+#> 294        7        8        7    0      8       -4        8      1        8
+#> 295        1        0        8    0      8       -4        8      8        8
+#> 296        7        8        7    0      8       -4        7      8        7
+#> 297        1        8        8    0      7        8        7     -4       -4
+#> 298        8        0        7    0      8        7        8     -4       -4
+#> 299        8        0        8    0      7        7        8     -4       -4
+#> 300        1        8        8    0      7        1        7     -4       -4
+#> 301        1        8        7    0      7       -4        7      0        1
+#> 302        8        0        1    0      8       -4        7      0        7
+#> 303        8        0        7    0      8       -4        8      1        8
+#> 304        8        8        7    0      7       -4        7      8        8
+#> 305        8        8        8    0      8        8        7     -4       -4
+#> 306        7        8        7    0      7       -4        7      0        7
+#> 307        8        8        8    0      8       -4        7      1        8
+#> 308        8        8        8    0      7       -4        7      0        8
+#> 309        7        1        7    0      8       -4        8      1        7
+#> 310        8        0        8    0      8       -4        7      0        7
+#> 311        8        8        7    0      7       -4        7      0        7
+#> 312        1        0        7    0      7       -4        7      8        8
+#> 313        8        8        8    0      8       -4        8      1        1
+#> 314        1        8        7    0      8       -4        8      8        7
+#> 315        8        0        7    0      8       -4        8      1        7
+#> 316        8        0        7    0      8       -4        7      8        8
+#> 317        8        8        7    0      8       -4        8      8        8
+#> 318        8        8        7    0      7       -4        7      8        7
+#> 319        8        8        7    0      8       -4        7      0        7
+#> 320        1        8        7    0      8       -4        7      8        2
+#> 321        8        8        7    0      8       -4        7      8        1
+#> 322        1        8        8    0      8       -4        8      0        7
+#> 323        8        8        8    0      8       -4        8      8        7
+#> 324        8        8        7    0      7       -4        7      8        8
+#> 325        8        8        8    0      8       -4        8      8        7
+#> 326        7        8        7    0      8       -4        8      0        7
+#> 327        8        0        1    0      8       -4        8      8        8
+#> 328        8        0        7    0      7       -4        8      0        8
+#> 329        8        1        7    0      8        7        7     -4       -4
+#> 330        8        8        7    0      8        7        8     -4       -4
+#> 331        8        8        7    0      8       -4        7      8        7
+#> 332        7        0        8    0      8       -4        8      0        8
+#> 333        8        1        7    0      7       -4        8      8        7
+#> 334        1        0        7    0      7       -4        7      8        8
+#> 335        1        0        7    0      8       -4        7      1        8
+#> 336        8        0        8    0      7       -4        8      0        8
+#> 337        8        8        7    0      7       -4        8      0        8
+#> 338        8        8        8    0      7       -4        7      0        8
+#> 339        1        8        8    0      8       -4        7      8        7
+#> 340        1        8        8    0      8       -4        7      0        7
+#> 341        1        8        7    0      7       -4        8      8        8
+#> 342        8        8        8    0      8        8        7     -4       -4
+#> 343        8        0        8    0      8        8        7     -4       -4
+#> 344        7        0        3    0      8        7        8     -4       -4
+#>     PPAPH PPAPHIF PRION PRIONIF PROBAD PROBADIF PSP PSPIF PTSDDX PTSDDXIF
+#> 1       1       7     0       8      0        7   0     7     -4       -4
+#> 2       1       7     0       7      0        1   0     7     -4       -4
+#> 3       0       8     0       8      8        7   0     8     -4       -4
+#> 4       0       8     0       7      1        8   0     8     -4       -4
+#> 5       0       8     0       7      1        8   0     8     -4       -4
+#> 6       0       7     0       8      0        1   0     7     -4       -4
+#> 7       8       7     0       7      8        8   0     7     -4       -4
+#> 8      -4      -4     0       8     -4       -4   0     8      0        7
+#> 9       0       8     0       8      0        1   0     8     -4       -4
+#> 10      0       7     0       8      1        7   0     8     -4       -4
+#> 11     -4      -4     0       8     -4       -4   0     7      0        8
+#> 12     -4      -4     0       7     -4       -4   0     8      0        8
+#> 13      8       8     0       8      8        8   0     7     -4       -4
+#> 14      8       7     0       7      0        8   0     7     -4       -4
+#> 15      0       7     0       8      1        7   0     7     -4       -4
+#> 16      8       8     0       8      1        1   0     8     -4       -4
+#> 17     -4      -4     0       8     -4       -4   0     7      0        7
+#> 18     -4      -4     0       7     -4       -4   0     7      0        8
+#> 19      8       7     0       7      8        7   0     8     -4       -4
+#> 20      0       8     0       7      8        7   0     8     -4       -4
+#> 21      0       8     0       7      0        7   1     7     -4       -4
+#> 22     -4      -4     0       8     -4       -4   0     8      0        8
+#> 23     -4      -4     0       8     -4       -4   0     7      0        7
+#> 24      0       8     0       7      8        1   0     7     -4       -4
+#> 25      8       8     0       8      0        1   0     8     -4       -4
+#> 26      0       8     0       8      8        7   0     8     -4       -4
+#> 27      0       8     0       7      0        8   0     7     -4       -4
+#> 28      0       8     0       8      1        8   0     7     -4       -4
+#> 29      1       8     0       8      0        7   0     8     -4       -4
+#> 30      8       8     0       8      8        7   0     7     -4       -4
+#> 31      0       7     0       7      1        1   0     7     -4       -4
+#> 32     -4      -4     0       7     -4       -4   0     7      0        8
+#> 33     -4      -4     0       8     -4       -4   0     7      0        7
+#> 34     -4      -4     0       7     -4       -4   0     7      0        8
+#> 35     -4      -4     0       8     -4       -4   0     7      0        7
+#> 36     -4      -4     0       8     -4       -4   0     8      0        8
+#> 37     -4      -4     0       7     -4       -4   0     7      0        8
+#> 38     -4      -4     0       7     -4       -4   0     8      0        7
+#> 39     -4      -4     0       8     -4       -4   0     7      0        7
+#> 40      0       8     0       8      8        7   0     8     -4       -4
+#> 41      0       8     0       7      8        8   0     7     -4       -4
+#> 42      8       8     0       8      1        7   0     7     -4       -4
+#> 43      0       8     0       7      8        7   0     7     -4       -4
+#> 44      8       7     0       7      8        1   0     8     -4       -4
+#> 45      8       7     0       7      8        7   0     7     -4       -4
+#> 46     -4      -4     0       7     -4       -4   0     7      0        8
+#> 47     -4      -4     0       8     -4       -4   0     8      0        8
+#> 48      0       8     0       7      1        1   0     8     -4       -4
+#> 49     -4      -4     0       8     -4       -4   0     7      0        8
+#> 50     -4      -4     0       8     -4       -4   0     8      0        8
+#> 51     -4      -4     0       7     -4       -4   0     7      0        8
+#> 52      8       8     0       8      8        8   0     7     -4       -4
+#> 53     -4      -4     0       7     -4       -4   0     7      0        7
+#> 54     -4      -4     0       7     -4       -4   0     7      0        8
+#> 55      8       8     0       8      8        1   0     8     -4       -4
+#> 56      0       8     0       8      0        1   0     8     -4       -4
+#> 57      0       7     0       7      8        8   0     8     -4       -4
+#> 58      8       1     0       8      1        7   0     7     -4       -4
+#> 59      0       8     0       7      8        8   0     7     -4       -4
+#> 60      0       8     0       8      0        8   0     8     -4       -4
+#> 61      0       8     0       7      0        8   0     7     -4       -4
+#> 62      8       8     0       7      8        8   0     7     -4       -4
+#> 63      8       7     0       7      8        1   0     7     -4       -4
+#> 64      0       8     0       7      1        1   0     7     -4       -4
+#> 65      1       7     0       7      0        8   0     8     -4       -4
+#> 66      0       7     0       7      0        1   0     8     -4       -4
+#> 67      0       7     0       7      0        8   0     8     -4       -4
+#> 68      0       7     0       8      8        7   0     8     -4       -4
+#> 69      8       7     0       7      8        8   0     7     -4       -4
+#> 70     -4      -4     0       8     -4       -4   0     7      0        7
+#> 71     -4      -4     0       7     -4       -4   0     8      0        8
+#> 72      0       7     0       8      1        8   0     7     -4       -4
+#> 73      8       8     0       8      0        7   0     7     -4       -4
+#> 74      0       8     0       7      1        8   0     8     -4       -4
+#> 75      0       8     0       7      8        1   0     7     -4       -4
+#> 76      0       8     0       7      0        7   0     8     -4       -4
+#> 77      0       7     0       7      8        7   0     8     -4       -4
+#> 78     -4      -4     0       8     -4       -4   0     8      0        3
+#> 79     -4      -4     0       8     -4       -4   0     8      0        8
+#> 80     -4      -4     0       7     -4       -4   0     7      0        7
+#> 81     -4      -4     0       8     -4       -4   0     8      0        8
+#> 82      8       7     0       7      0        7   0     7     -4       -4
+#> 83      0       7     0       8      8        8   0     8     -4       -4
+#> 84      0       7     0       8      8        8   0     8     -4       -4
+#> 85      0       7     0       8      0        1   0     8     -4       -4
+#> 86      8       8     0       8      1        8   0     7     -4       -4
+#> 87      8       7     0       8      0        1   0     8     -4       -4
+#> 88      8       8     0       7      1        1   0     8     -4       -4
+#> 89      0       7     0       8      0        8   0     7     -4       -4
+#> 90      0       7     0       8      1        8   0     8     -4       -4
+#> 91      0       7     0       8      1        8   0     8     -4       -4
+#> 92     -4      -4     0       8     -4       -4   0     8      0        8
+#> 93     -4      -4     0       7     -4       -4   0     7      0        8
+#> 94     -4      -4     0       8     -4       -4   0     7      0        8
+#> 95     -4      -4     0       8     -4       -4   0     8      0        7
+#> 96     -4      -4     0       7     -4       -4   0     8      0        7
+#> 97      8       8     0       7      8        8   0     8     -4       -4
+#> 98      8       8     0       8      8        1   0     7     -4       -4
+#> 99      0       8     0       7      1        8   0     8     -4       -4
+#> 100     0       8     0       8      1        7   0     7     -4       -4
+#> 101     0       7     0       7      8        1   0     7     -4       -4
+#> 102     0       7     0       7      8        8   0     7     -4       -4
+#> 103    -4      -4     0       8     -4       -4   0     8      0        8
+#> 104    -4      -4     0       7     -4       -4   0     7      0        8
+#> 105     0       7     0       8      8        8   0     8     -4       -4
+#> 106     8       8     0       8      8        7   0     8     -4       -4
+#> 107     8       7     0       7      8        7   0     7     -4       -4
+#> 108     0       8     0       8      0        8   0     7     -4       -4
+#> 109     8       8     0       8      8        7   0     7     -4       -4
+#> 110     0       8     0       7      8        8   0     8     -4       -4
+#> 111     8       8     0       8      8        7   0     8     -4       -4
+#> 112     8       8     0       7      1        1   0     7     -4       -4
+#> 113    -4      -4     0       7     -4       -4   0     7      0        7
+#> 114    -4      -4     0       7     -4       -4   0     7      0        8
+#> 115    -4      -4     0       7     -4       -4   0     8      0        8
+#> 116     0       7     0       8      8        8   0     8     -4       -4
+#> 117     0       8     0       7      8        8   0     8     -4       -4
+#> 118    -4      -4     0       7     -4       -4   0     8      0        8
+#> 119    -4      -4     0       8     -4       -4   0     7      0        7
+#> 120    -4      -4     0       8     -4       -4   0     7      0        8
+#> 121    -4      -4     0       8     -4       -4   0     8      0        8
+#> 122    -4      -4     0       8     -4       -4   0     8      0        8
+#> 123    -4      -4     0       8     -4       -4   0     7      0        7
+#> 124    -4      -4     0       7     -4       -4   0     7      0        8
+#> 125    -4      -4     0       7     -4       -4   0     7      0        8
+#> 126    -4      -4     0       8     -4       -4   0     7      0        8
+#> 127    -4      -4     0       8     -4       -4   0     7      0        7
+#> 128     0       8     0       8      0        1   0     7     -4       -4
+#> 129     0       8     0       8      0        7   0     7     -4       -4
+#> 130     8       7     0       7      1        7   0     8     -4       -4
+#> 131     0       7     0       8      8        8   0     7     -4       -4
+#> 132    -4      -4     0       8     -4       -4   0     7      0        8
+#> 133    -4      -4     0       7     -4       -4   0     8      0        7
+#> 134    -4      -4     0       7     -4       -4   0     8      0        7
+#> 135    -4      -4     0       8     -4       -4   0     7      0        7
+#> 136    -4      -4     0       7     -4       -4   0     7      0        8
+#> 137    -4      -4     0       8     -4       -4   0     7      0        8
+#> 138    -4      -4     0       7     -4       -4   0     7      0        8
+#> 139     8       8     0       7      0        8   0     8     -4       -4
+#> 140     8       7     0       8      8        8   0     7     -4       -4
+#> 141    -4      -4     0       7     -4       -4   0     7      0        7
+#> 142    -4      -4     0       7     -4       -4   0     8      0        8
+#> 143    -4      -4     0       7     -4       -4   0     8      0        7
+#> 144    -4      -4     0       7     -4       -4   0     8      0        7
+#> 145    -4      -4     0       8     -4       -4   0     8      0        8
+#> 146    -4      -4     0       8     -4       -4   0     8      0        8
+#> 147    -4      -4     0       8     -4       -4   0     7      0        7
+#> 148    -4      -4     0       8     -4       -4   0     7      0        8
+#> 149    -4      -4     0       7     -4       -4   0     8      0        7
+#> 150    -4      -4     0       7     -4       -4   0     7      0        7
+#> 151    -4      -4     0       8     -4       -4   0     7      0        8
+#> 152    -4      -4     0       8     -4       -4   0     7      0        7
+#> 153     0       7     0       7      1        1   0     8     -4       -4
+#> 154     0       7     0       7      8        8   0     8     -4       -4
+#> 155     8       7     0       8      1        8   0     8     -4       -4
+#> 156     0       7     0       8      1        1   0     7     -4       -4
+#> 157     8       7     0       7      0        7   0     7     -4       -4
+#> 158     8       1     0       8      1        1   0     8     -4       -4
+#> 159     8       8     0       8      1        7   0     8     -4       -4
+#> 160     1       8     0       8      8        1   0     7     -4       -4
+#> 161     0       7     0       8      1        8   0     8     -4       -4
+#> 162     0       7     0       7      0        7   0     8     -4       -4
+#> 163     0       8     0       8      1        1   0     7     -4       -4
+#> 164     8       7     0       7      8        1   0     7     -4       -4
+#> 165     0       8     0       7      0        7   0     7     -4       -4
+#> 166     8       7     0       8      1        7   0     7     -4       -4
+#> 167     0       8     0       8      8        8   0     8     -4       -4
+#> 168     8       8     0       7      1        1   0     7     -4       -4
+#> 169     8       8     0       7      8        7   0     8     -4       -4
+#> 170     8       7     0       8      8        8   0     8     -4       -4
+#> 171     8       8     0       7      8        8   0     7     -4       -4
+#> 172    -4      -4     0       8     -4       -4   0     8      0        8
+#> 173    -4      -4     0       8     -4       -4   0     8      0        7
+#> 174    -4      -4     0       7     -4       -4   0     7      0        8
+#> 175    -4      -4     0       8     -4       -4   0     7      0        8
+#> 176    -4      -4     0       7     -4       -4   0     7      0        7
+#> 177    -4      -4     0       7     -4       -4   0     8      0        8
+#> 178    -4      -4     0       8     -4       -4   0     7      0        8
+#> 179     8       7     0       7      0        1   0     7     -4       -4
+#> 180     1       8     0       8      8        7   0     8     -4       -4
+#> 181     8       7     0       8      1        1   0     7     -4       -4
+#> 182     0       7     0       7      1        8   0     8     -4       -4
+#> 183     8       8     0       8      0        1   0     7     -4       -4
+#> 184     0       1     0       8      0        8   0     7     -4       -4
+#> 185     8       7     0       8      0        7   0     7     -4       -4
+#> 186    -4      -4     0       7     -4       -4   0     8      0        7
+#> 187    -4      -4     0       8     -4       -4   0     7      0        7
+#> 188     8       8     0       8      1        1   0     8     -4       -4
+#> 189     0       7     0       8      8        1   0     8     -4       -4
+#> 190     0       7     0       7      1        7   0     8     -4       -4
+#> 191     8       7     0       7      0        8   0     8     -4       -4
+#> 192     8       8     0       7      1        8   0     7     -4       -4
+#> 193     0       7     0       8      1        8   0     8     -4       -4
+#> 194     0       8     0       8      1        1   0     8     -4       -4
+#> 195     0       7     0       8      0        8   0     7     -4       -4
+#> 196     1       8     0       8      8        1   0     7     -4       -4
+#> 197     8       7     0       7      8        1   0     7     -4       -4
+#> 198     8       7     0       7      8        7   0     8     -4       -4
+#> 199    -4      -4     0       8     -4       -4   0     8      0        7
+#> 200     8       7     0       8      8        7   0     7     -4       -4
+#> 201     0       7     0       8      8        7   0     8     -4       -4
+#> 202     8       8     0       7      8        7   0     8     -4       -4
+#> 203     8       7     0       7      8        8   0     8     -4       -4
+#> 204    -4      -4     0       8     -4       -4   0     8      0        8
+#> 205    -4      -4     0       7     -4       -4   0     8      0        7
+#> 206    -4      -4     0       7     -4       -4   0     7      0        7
+#> 207    -4      -4     0       8     -4       -4   0     7      0        8
+#> 208    -4      -4     0       8     -4       -4   0     7      0        8
+#> 209    -4      -4     0       8     -4       -4   0     8      0        8
+#> 210    -4      -4     0       8     -4       -4   0     7      0        8
+#> 211     8       8     0       8      1        8   0     7     -4       -4
+#> 212     8       8     0       7      1        8   1     8     -4       -4
+#> 213     8       8     0       7      1        7   0     8     -4       -4
+#> 214     8       8     0       7      0        7   0     7     -4       -4
+#> 215     0       8     0       7      1        8   0     7     -4       -4
+#> 216     0       8     0       8      8        7   0     7     -4       -4
+#> 217    -4      -4     0       7     -4       -4   0     8      0        7
+#> 218    -4      -4     0       7     -4       -4   0     7      0        7
+#> 219    -4      -4     0       7     -4       -4   0     7      0        7
+#> 220    -4      -4     0       7     -4       -4   0     7      0        7
+#> 221    -4      -4     0       8     -4       -4   0     7      0        8
+#> 222    -4      -4     0       7     -4       -4   0     8      0        8
+#> 223    -4      -4     0       8     -4       -4   0     8      0        7
+#> 224    -4      -4     0       7     -4       -4   0     7      0        7
+#> 225    -4      -4     0       7     -4       -4   0     7      0        7
+#> 226     0       7     0       7      1        1   0     8     -4       -4
+#> 227    -4      -4     0       7     -4       -4   0     8      0        7
+#> 228     0       7     0       8      0        8   0     8     -4       -4
+#> 229     8       7     0       7      1        8   0     8     -4       -4
+#> 230     0       7     0       7      0        1   0     7     -4       -4
+#> 231     1       7     0       7      1        8   0     7     -4       -4
+#> 232     0       8     0       8      0        8   0     7     -4       -4
+#> 233     0       8     0       7      8        8   0     8     -4       -4
+#> 234    -4      -4     0       7     -4       -4   0     7      0        8
+#> 235    -4      -4     0       8     -4       -4   0     8      0        8
+#> 236    -4      -4     0       7     -4       -4   0     7      0        7
+#> 237    -4      -4     0       7     -4       -4   1     8      0        7
+#> 238    -4      -4     0       8     -4       -4   0     7      0        8
+#> 239    -4      -4     0       8     -4       -4   0     8      0        7
+#> 240    -4      -4     0       8     -4       -4   0     7      0        7
+#> 241    -4      -4     0       7     -4       -4   0     8      0        8
+#> 242    -4      -4     0       8     -4       -4   0     7      0        8
+#> 243     0       7     0       8      8        8   0     8     -4       -4
+#> 244     0       7     0       7      0        7   0     8     -4       -4
+#> 245    -4      -4     0       8     -4       -4   0     7      0        7
+#> 246    -4      -4     0       8     -4       -4   0     8      0        8
+#> 247    -4      -4     0       7     -4       -4   0     8      0        7
+#> 248    -4      -4     0       8     -4       -4   0     8      0        7
+#> 249     0       7     0       7      1        8   0     8     -4       -4
+#> 250     8       7     0       8      8        7   0     7     -4       -4
+#> 251     0       8     0       8      8        1   0     8     -4       -4
+#> 252     8       7     0       7      1        8   0     8     -4       -4
+#> 253     8       7     0       8      0        1   0     7     -4       -4
+#> 254     8       7     0       8      8        1   0     8     -4       -4
+#> 255     0       7     0       8      8        8   0     8     -4       -4
+#> 256     0       7     0       7      0        1   0     7     -4       -4
+#> 257    -4      -4     0       8     -4       -4   0     8      0        8
+#> 258    -4      -4     0       8     -4       -4   0     8      0        8
+#> 259    -4      -4     0       8     -4       -4   0     8      0        7
+#> 260     0       7     0       7      8        1   0     7     -4       -4
+#> 261     0       7     0       8      1        7   0     7     -4       -4
+#> 262     0       1     0       7      8        1   0     8     -4       -4
+#> 263     8       7     0       8      8        7   0     7     -4       -4
+#> 264     0       1     0       8      8        1   0     7     -4       -4
+#> 265     0       1     0       8      8        1   0     7     -4       -4
+#> 266     0       8     0       7      8        8   0     7     -4       -4
+#> 267    -4      -4     0       8     -4       -4   0     8      0        8
+#> 268    -4      -4     0       8     -4       -4   0     8      0        8
+#> 269    -4      -4     0       8     -4       -4   0     7      0        7
+#> 270     0       7     0       8      8        8   0     7     -4       -4
+#> 271     0       7     0       8      8        8   0     8     -4       -4
+#> 272    -4      -4     0       7     -4       -4   0     7      0        8
+#> 273    -4      -4     0       8     -4       -4   0     8      0        7
+#> 274    -4      -4     0       8     -4       -4   0     7      0        8
+#> 275    -4      -4     0       7     -4       -4   0     8      0        7
+#> 276    -4      -4     0       7     -4       -4   0     7      0        8
+#> 277     0       8     0       7      1        1   0     7     -4       -4
+#> 278     8       7     0       7      8        8   0     8     -4       -4
+#> 279     8       8     0       7      1        1   0     8     -4       -4
+#> 280     8       8     0       8      8        8   0     8     -4       -4
+#> 281     0       8     0       8      8        1   0     7     -4       -4
+#> 282     0       7     0       8      8        1   0     8     -4       -4
+#> 283     8       8     0       7      1        7   0     7     -4       -4
+#> 284     0       8     0       8      1        8   0     8     -4       -4
+#> 285     8       8     0       7      8        1   0     7     -4       -4
+#> 286    -4      -4     0       7     -4       -4   0     8      0        7
+#> 287    -4      -4     0       7     -4       -4   0     8      0        7
+#> 288    -4      -4     0       8     -4       -4   0     7      0        7
+#> 289    -4      -4     0       7     -4       -4   0     8      0        8
+#> 290    -4      -4     0       7     -4       -4   0     7      0        8
+#> 291    -4      -4     0       8     -4       -4   0     7      0        8
+#> 292    -4      -4     0       7     -4       -4   0     8      0        8
+#> 293    -4      -4     0       8     -4       -4   0     7      0        8
+#> 294     8       8     0       7      1        1   0     7     -4       -4
+#> 295     0       7     0       8      8        7   0     7     -4       -4
+#> 296     8       7     0       7      8        1   0     8     -4       -4
+#> 297    -4      -4     0       7     -4       -4   0     7      0        7
+#> 298    -4      -4     0       7     -4       -4   0     8      0        8
+#> 299    -4      -4     0       7     -4       -4   0     7      0        8
+#> 300    -4      -4     0       7     -4       -4   0     8      0        7
+#> 301     8       8     0       7      1        1   0     7     -4       -4
+#> 302     0       7     0       8      0        8   0     7     -4       -4
+#> 303     0       7     0       8      0        7   0     7     -4       -4
+#> 304     8       8     0       7      1        8   0     8     -4       -4
+#> 305    -4      -4     0       8     -4       -4   0     8      0        7
+#> 306     8       8     0       8      8        8   0     8     -4       -4
+#> 307     8       8     0       7      8        7   0     8     -4       -4
+#> 308     0       8     0       8      8        8   0     7     -4       -4
+#> 309     8       1     0       8      8        8   0     7     -4       -4
+#> 310     8       7     0       7      8        7   0     8     -4       -4
+#> 311     8       7     0       7      8        8   0     8     -4       -4
+#> 312     0       7     0       8      8        8   0     7     -4       -4
+#> 313     8       7     0       8      8        7   0     8     -4       -4
+#> 314     0       7     0       7      1        8   0     7     -4       -4
+#> 315     0       7     0       8      8        7   0     7     -4       -4
+#> 316     0       8     0       7      0        8   0     8     -4       -4
+#> 317     8       7     0       7      0        8   0     7     -4       -4
+#> 318     0       7     0       7      0        7   0     8     -4       -4
+#> 319     0       7     0       7      0        8   0     8     -4       -4
+#> 320     8       7     0       7      1        8   0     7     -4       -4
+#> 321     8       8     0       7      0        1   0     7     -4       -4
+#> 322     8       7     0       8      1        7   0     7     -4       -4
+#> 323     8       7     0       8      0        7   0     8     -4       -4
+#> 324     0       7     0       7      8        7   0     7     -4       -4
+#> 325     8       8     0       8      0        7   0     8     -4       -4
+#> 326     0       8     0       7      1        7   0     8     -4       -4
+#> 327     0       7     0       7      8        1   0     7     -4       -4
+#> 328     8       8     0       7      0        7   0     7     -4       -4
+#> 329    -4      -4     0       7     -4       -4   0     7      0        8
+#> 330    -4      -4     0       7     -4       -4   0     7      0        8
+#> 331     8       7     0       7      1        8   0     8     -4       -4
+#> 332     8       7     0       8      8        8   0     8     -4       -4
+#> 333     0       7     0       8      8        8   0     8     -4       -4
+#> 334     8       7     0       7      8        7   0     7     -4       -4
+#> 335     0       7     0       8      1        1   0     7     -4       -4
+#> 336     0       7     0       8      8        1   0     7     -4       -4
+#> 337     8       7     0       7      1        1   0     8     -4       -4
+#> 338     8       8     0       8      1        1   0     8     -4       -4
+#> 339     8       8     0       7      8        8   0     8     -4       -4
+#> 340     0       8     0       7      1        8   0     7     -4       -4
+#> 341     0       7     0       7      8        1   0     8     -4       -4
+#> 342    -4      -4     0       7     -4       -4   0     8      0        8
+#> 343    -4      -4     0       8     -4       -4   0     8      0        7
+#> 344    -4      -4     0       7     -4       -4   0     8      0        8
+#>     SCHIZOP SCHIZOIF STROKE STROKIF VASC VASCIF VASCPS VASCPSIF std_MOCATOTS
+#> 1        -4       -4      0       7    0      7     -4       -4           NA
+#> 2        -4       -4      0       7    0      1      8        7           NA
+#> 3        -4       -4      0       2    8      8      8        8           NA
+#> 4        -4       -4      0       8    0      8      8        8           NA
+#> 5        -4       -4      0       7    8      7      0        7           NA
+#> 6        -4       -4      0       7    0      8      8        7           NA
+#> 7        -4       -4      1       7    0      7      8        7           NA
+#> 8         0        8     -4      -4   -4     -4     -4       -4           NA
+#> 9        -4       -4      0       7    0      8      0        7           NA
+#> 10       -4       -4      0       7    8      8      8        8           NA
+#> 11        0        8     -4      -4   -4     -4     -4       -4  -1.54086853
+#> 12        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 13       -4       -4      0       8    8      7      8        7           NA
+#> 14       -4       -4      0       7    8      7      8        7           NA
+#> 15       -4       -4      0       8    0      7      8        8           NA
+#> 16       -4       -4      0       7    8      7      8        8           NA
+#> 17        0        7     -4      -4   -4     -4     -4       -4   0.78975677
+#> 18        0        8     -4      -4   -4     -4     -4       -4   1.76927177
+#> 19       -4       -4      0       7    0      7      8        8           NA
+#> 20       -4       -4      0       8    8      7      8        7           NA
+#> 21       -4       -4      0       7    0      7      0        7           NA
+#> 22        0        7     -4      -4   -4     -4     -4       -4   0.52270564
+#> 23        0        7     -4      -4   -4     -4     -4       -4  -3.61239831
+#> 24       -4       -4      0       8    8      7      0        8           NA
+#> 25       -4       -4      0       7    0      8     -4       -4           NA
+#> 26       -4       -4      0       7    0      8      0        8           NA
+#> 27       -4       -4      0       8    8      8      0        8           NA
+#> 28       -4       -4      0       8    8      7      8        7           NA
+#> 29       -4       -4      0       8    0      7      1        7           NA
+#> 30       -4       -4      0       2    8      7      8        7           NA
+#> 31       -4       -4      0       8    8      7      0        8           NA
+#> 32        0        7     -4      -4   -4     -4     -4       -4           NA
+#> 33        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 34        0        7     -4      -4   -4     -4     -4       -4           NA
+#> 35        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 36        0        8     -4      -4   -4     -4     -4       -4   2.79761242
+#> 37        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 38        0        7     -4      -4   -4     -4     -4       -4  -0.49081646
+#> 39        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 40       -4       -4      0       8    8      8     -4       -4           NA
+#> 41       -4       -4      0       8    0      7      0        8           NA
+#> 42       -4       -4      0       7    0      8      8        8           NA
+#> 43       -4       -4      0       7    0      8      0        8           NA
+#> 44       -4       -4      0       7    0      8     -4       -4           NA
+#> 45       -4       -4      0       7    8      7     -4       -4           NA
+#> 46        0        7     -4      -4   -4     -4     -4       -4  -2.82196289
+#> 47        0        8     -4      -4   -4     -4     -4       -4  -5.49995653
+#> 48       -4       -4      0       8    8      8     -4       -4           NA
+#> 49        0        8     -4      -4   -4     -4     -4       -4   1.93636640
+#> 50        0        7     -4      -4   -4     -4     -4       -4           NA
+#> 51        0        7     -4      -4   -4     -4     -4       -4           NA
+#> 52       -4       -4      0       8    8      7      8        7           NA
+#> 53        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 54        0        7     -4      -4   -4     -4     -4       -4  -1.13424069
+#> 55       -4       -4      0       7    0      8     -4       -4           NA
+#> 56       -4       -4      0       7    0      7     -4       -4           NA
+#> 57       -4       -4      0       8    0      7      0        7           NA
+#> 58       -4       -4      0       8    8      7     -4       -4           NA
+#> 59       -4       -4      0       7    8      7     -4       -4           NA
+#> 60       -4       -4      0       8    8      7     -4       -4           NA
+#> 61       -4       -4      0       8    1      8     -4       -4           NA
+#> 62       -4       -4      0       7    8      8      8        7           NA
+#> 63       -4       -4      0       8    8      7      8        7           NA
+#> 64       -4       -4      1       7    8      8      8        8           NA
+#> 65       -4       -4      0       8    0      7     -4       -4           NA
+#> 66       -4       -4      0       8    0      7      8        8           NA
+#> 67       -4       -4      0       7    0      7      8        7           NA
+#> 68       -4       -4      0       8    0      7      0        8           NA
+#> 69       -4       -4      0       7    0      7      0        8           NA
+#> 70        0        8     -4      -4   -4     -4     -4       -4   0.24111762
+#> 71        0        8     -4      -4   -4     -4     -4       -4   0.91542218
+#> 72       -4       -4      0       7    8      7      8        8           NA
+#> 73       -4       -4      0       7    0      8      8        7           NA
+#> 74       -4       -4      0       8    0      8      0        7           NA
+#> 75       -4       -4      0       8    0      8     -4       -4           NA
+#> 76       -4       -4      0       8    0      8      8        8           NA
+#> 77       -4       -4      0       7    8      7      0        7           NA
+#> 78        0        7     -4      -4   -4     -4     -4       -4  -0.96548265
+#> 79        0        7     -4      -4   -4     -4     -4       -4  -1.32026254
+#> 80        0        7     -4      -4   -4     -4     -4       -4           NA
+#> 81        0        7     -4      -4   -4     -4     -4       -4  -2.34320039
+#> 82       -4       -4      0       7    0      7     -4       -4           NA
+#> 83       -4       -4      0       8    0      7     -4       -4           NA
+#> 84       -4       -4      0       7    8      7     -4       -4           NA
+#> 85       -4       -4      0       7    0      7      8        7           NA
+#> 86       -4       -4      0       7    0      7      0        8           NA
+#> 87       -4       -4      0       8    8      8      8        7           NA
+#> 88       -4       -4      0       7    0      8      8        7           NA
+#> 89       -4       -4      0       7    8      8      0        8           NA
+#> 90       -4       -4      0       8    0      7      0        7           NA
+#> 91       -4       -4      0       2    8      7      8        8           NA
+#> 92        0        7     -4      -4   -4     -4     -4       -4  -3.82682040
+#> 93        0        7     -4      -4   -4     -4     -4       -4   0.92002528
+#> 94        0        8     -4      -4   -4     -4     -4       -4           NA
+#> 95        0        8     -4      -4   -4     -4     -4       -4   0.26743214
+#> 96        0        8     -4      -4   -4     -4     -4       -4  -0.12462398
+#> 97       -4       -4      0       8    0      8      0        8           NA
+#> 98       -4       -4      0       7    0      7      8        7           NA
+#> 99       -4       -4      0       7    0      7      0        7           NA
+#> 100      -4       -4      0       8    0      8      0        8           NA
+#> 101      -4       -4      0       8    8      7      0        1           NA
+#> 102      -4       -4      0       8    8      7      8        7           NA
+#> 103       0        8     -4      -4   -4     -4     -4       -4  -0.14442440
+#> 104       0        8     -4      -4   -4     -4     -4       -4  -3.28087335
+#> 105      -4       -4      0       7    8      7     -4       -4           NA
+#> 106      -4       -4      0       8    8      7     -4       -4           NA
+#> 107      -4       -4      1       8    0      8      8        7           NA
+#> 108      -4       -4      0       1    8      8      0        8           NA
+#> 109      -4       -4      0       8    8      8      0        8           NA
+#> 110      -4       -4      0       8    8      2      0        8           NA
+#> 111      -4       -4      0       7    8      8      0        7           NA
+#> 112      -4       -4      0       7    0      7      1        8           NA
+#> 113       0        7     -4      -4   -4     -4     -4       -4  -0.31513072
+#> 114       0        8     -4      -4   -4     -4     -4       -4  -0.79403252
+#> 115       0        8     -4      -4   -4     -4     -4       -4   0.75122996
+#> 116      -4       -4      0       7    0      8      8        7           NA
+#> 117      -4       -4      0       8    8      7      0        8           NA
+#> 118       0        7     -4      -4   -4     -4     -4       -4  -1.51217351
+#> 119       0        7     -4      -4   -4     -4     -4       -4   2.23344575
+#> 120       0        8     -4      -4   -4     -4     -4       -4   1.07898881
+#> 121       0        8     -4      -4   -4     -4     -4       -4  -1.83909537
+#> 122       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 123       0        7     -4      -4   -4     -4     -4       -4   0.97043172
+#> 124       0        7     -4      -4   -4     -4     -4       -4  -0.33600515
+#> 125       0        7     -4      -4   -4     -4     -4       -4   0.82949688
+#> 126       0        7     -4      -4   -4     -4     -4       -4  -3.28646708
+#> 127       0        7     -4      -4   -4     -4     -4       -4  -0.56503625
+#> 128      -4       -4      0       7    0      7      0        8           NA
+#> 129      -4       -4      0       8    0      8      1        7           NA
+#> 130      -4       -4      0       8    1      7      8        8           NA
+#> 131      -4       -4      0       8    8      8      0        7           NA
+#> 132       0        8     -4      -4   -4     -4     -4       -4  -1.65258722
+#> 133       0        7     -4      -4   -4     -4     -4       -4  -0.89018640
+#> 134       0        8     -4      -4   -4     -4     -4       -4  -0.17245900
+#> 135       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 136       0        8     -4      -4   -4     -4     -4       -4   1.13397787
+#> 137       0        8     -4      -4   -4     -4     -4       -4   0.08932861
+#> 138       0        7     -4      -4   -4     -4     -4       -4   1.22207413
+#> 139      -4       -4      0       8    8      7      8        8           NA
+#> 140      -4       -4      0       8    8      7      0        7           NA
+#> 141       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 142       0        7     -4      -4   -4     -4     -4       -4  -3.28106427
+#> 143       0        7     -4      -4   -4     -4     -4       -4   1.81441470
+#> 144       0        7     -4      -4   -4     -4     -4       -4   1.18353297
+#> 145       0        7     -4      -4   -4     -4     -4       -4   0.17900567
+#> 146       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 147       0        8     -4      -4   -4     -4     -4       -4  -1.71614067
+#> 148       0        7     -4      -4   -4     -4     -4       -4   0.18124688
+#> 149       0        8     -4      -4   -4     -4     -4       -4  -3.41114186
+#> 150       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 151       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 152       0        8     -4      -4   -4     -4     -4       -4  -1.84291738
+#> 153      -4       -4      0       8    8      7     -4       -4           NA
+#> 154      -4       -4      0       7    0      7     -4       -4           NA
+#> 155      -4       -4      0       8    0      7     -4       -4           NA
+#> 156      -4       -4      0       7    8      7      8        7           NA
+#> 157      -4       -4      0       7    8      7      8        8           NA
+#> 158      -4       -4      1       8    0      8      8        7           NA
+#> 159      -4       -4      0       7    0      7      8        7           NA
+#> 160      -4       -4      0       8    0      7      0        7           NA
+#> 161      -4       -4      0       8    8      1      8        8           NA
+#> 162      -4       -4      0       7    0      8     -4       -4           NA
+#> 163      -4       -4      0       7    0      7     -4       -4           NA
+#> 164      -4       -4      0       7    0      7      0        7           NA
+#> 165      -4       -4      0       8    8      7      0        8           NA
+#> 166      -4       -4      1       8    8      7      8        8           NA
+#> 167      -4       -4      0       8    8      8      0        7           NA
+#> 168      -4       -4      0       7    8      8      8        7           NA
+#> 169      -4       -4      0       8    0      8      0        7           NA
+#> 170      -4       -4      0       7    8      7     -4       -4           NA
+#> 171      -4       -4      0       7    0      8     -4       -4           NA
+#> 172       0        7     -4      -4   -4     -4     -4       -4  -6.13908679
+#> 173       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 174       0        7     -4      -4   -4     -4     -4       -4   0.01198206
+#> 175       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 176       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 177       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 178       0        8     -4      -4   -4     -4     -4       -4   1.50953446
+#> 179      -4       -4      0       7    0      8     -4       -4           NA
+#> 180      -4       -4      0       8    0      8     -4       -4           NA
+#> 181      -4       -4      0       7    0      8      8        8           NA
+#> 182      -4       -4      0       7    0      7     -4       -4           NA
+#> 183      -4       -4      0       7    0      8      8        8           NA
+#> 184      -4       -4      0       8    0      8      0        7           NA
+#> 185      -4       -4      0       7    8      8      0        7           NA
+#> 186       0        8     -4      -4   -4     -4     -4       -4   1.24800681
+#> 187       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 188      -4       -4      0       7    0      7      0        8           NA
+#> 189      -4       -4      0       8    1      7     -4       -4           NA
+#> 190      -4       -4      0       7    8      7      8        8           NA
+#> 191      -4       -4      0       7    0      7      0        7           NA
+#> 192      -4       -4      0       8    8      7      0        8           NA
+#> 193      -4       -4      0       7    0      7      8        8           NA
+#> 194      -4       -4      0       8    0      8     -4       -4           NA
+#> 195      -4       -4      0       7    0      8      8        8           NA
+#> 196      -4       -4      0       7    0      7      8        7           NA
+#> 197      -4       -4      0       7    0      8      8        8           NA
+#> 198      -4       -4      0       8    8      8      8        7           NA
+#> 199       0        8     -4      -4   -4     -4     -4       -4   0.33447740
+#> 200      -4       -4      0       7    0      7      0        7           NA
+#> 201      -4       -4      0       7    8      8      8        2           NA
+#> 202      -4       -4      0       8    0      8      8        7           NA
+#> 203      -4       -4      0       8    0      7      0        7           NA
+#> 204       0        7     -4      -4   -4     -4     -4       -4  -8.96697279
+#> 205       0        7     -4      -4   -4     -4     -4       -4  -7.83422727
+#> 206       0        7     -4      -4   -4     -4     -4       -4  -0.82189055
+#> 207       0        8     -4      -4   -4     -4     -4       -4  -0.38641159
+#> 208       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 209       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 210       0        7     -4      -4   -4     -4     -4       -4   0.76804535
+#> 211      -4       -4      0       8    8      7     -4       -4           NA
+#> 212      -4       -4      0       8    0      7      0        7           NA
+#> 213      -4       -4      0       7    8      7     -4       -4           NA
+#> 214      -4       -4      0       8    0      7      8        8           NA
+#> 215      -4       -4      0       7    8      8      0        8           NA
+#> 216      -4       -4      0       8    0      8      8        8           NA
+#> 217       0        8     -4      -4   -4     -4     -4       -4  -5.78411598
+#> 218       0        8     -4      -4   -4     -4     -4       -4  -6.69849673
+#> 219       0        8     -4      -4   -4     -4     -4       -4  -0.92746262
+#> 220       0        8     -4      -4   -4     -4     -4       -4   0.18357148
+#> 221       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 222       0        7     -4      -4   -4     -4     -4       -4  -0.02952977
+#> 223       0        7     -4      -4   -4     -4     -4       -4   0.73162046
+#> 224       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 225       0        7     -4      -4   -4     -4     -4       -4  -7.63057596
+#> 226      -4       -4      0       8    8      8      0        7           NA
+#> 227       0        7     -4      -4   -4     -4     -4       -4   0.94154578
+#> 228      -4       -4      0       7    8      7      0        7           NA
+#> 229      -4       -4      0       8    1      7      8        7           NA
+#> 230      -4       -4      0       7    8      8      8        7           NA
+#> 231      -4       -4      0       8    0      8      0        7           NA
+#> 232      -4       -4      0       7    1      7      0        8           NA
+#> 233      -4       -4      0       7    0      8      0        8           NA
+#> 234       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 235       0        7     -4      -4   -4     -4     -4       -4  -0.68100734
+#> 236       0        8     -4      -4   -4     -4     -4       -4   0.72160021
+#> 237       0        8     -4      -4   -4     -4     -4       -4   1.74453805
+#> 238       0        7     -4      -4   -4     -4     -4       -4  -0.04080061
+#> 239       0        8     -4      -4   -4     -4     -4       -4   2.37667036
+#> 240       0        7     -4      -4   -4     -4     -4       -4   1.17879058
+#> 241       0        7     -4      -4   -4     -4     -4       -4   0.50323544
+#> 242       0        8     -4      -4   -4     -4     -4       -4  -0.82491285
+#> 243      -4       -4      0       7    8      7      0        8           NA
+#> 244      -4       -4      0       3    8      7     -4       -4           NA
+#> 245       0        7     -4      -4   -4     -4     -4       -4   0.15427195
+#> 246       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 247       0        8     -4      -4   -4     -4     -4       -4   2.28824389
+#> 248       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 249      -4       -4      0       7    0      8     -4       -4           NA
+#> 250      -4       -4      0       7    0      8      0        8           NA
+#> 251      -4       -4      0       2    8      8      0        8           NA
+#> 252      -4       -4      0       7    0      7      8        7           NA
+#> 253      -4       -4      0       8    0      8      8        7           NA
+#> 254      -4       -4      0       7    0      8      0        7           NA
+#> 255      -4       -4      0       2    8      8      8        8           NA
+#> 256      -4       -4      0       8    0      8      8        7           NA
+#> 257       0        8     -4      -4   -4     -4     -4       -4  -2.36015507
+#> 258       0        8     -4      -4   -4     -4     -4       -4   0.25396926
+#> 259       0        8     -4      -4   -4     -4     -4       -4  -1.40045482
+#> 260      -4       -4      0       7    0      7     -4       -4           NA
+#> 261      -4       -4      0       8    8      8     -4       -4           NA
+#> 262      -4       -4      0       7    0      7      0        7           NA
+#> 263      -4       -4      0       8    1      8      0        8           NA
+#> 264      -4       -4      0       7    8      7      0        7           NA
+#> 265      -4       -4      0       7    8      7      0        7           NA
+#> 266      -4       -4      0       8    0      7      0        8           NA
+#> 267       0        8     -4      -4   -4     -4     -4       -4   0.93143541
+#> 268       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 269       0        8     -4      -4   -4     -4     -4       -4  -1.31109363
+#> 270      -4       -4      0       7    8      7      0        7           NA
+#> 271      -4       -4      0       7    8      8      8        7           NA
+#> 272       0        8     -4      -4   -4     -4     -4       -4  -6.81339135
+#> 273       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 274       0        7     -4      -4   -4     -4     -4       -4   0.77834418
+#> 275       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 276       0        7     -4      -4   -4     -4     -4       -4  -4.83945941
+#> 277      -4       -4      0       8    0      7     -4       -4           NA
+#> 278      -4       -4      0       7    8      8     -4       -4           NA
+#> 279      -4       -4      0       8    0      8     -4       -4           NA
+#> 280      -4       -4      0       7    8      8      0        8           NA
+#> 281      -4       -4      0       7    0      8      8        8           NA
+#> 282      -4       -4      0       7    0      7      0        7           NA
+#> 283      -4       -4      0       8    0      7      8        8           NA
+#> 284      -4       -4      0       8    8      8      8        8           NA
+#> 285      -4       -4      0       7    0      7      0        7           NA
+#> 286       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 287       0        7     -4      -4   -4     -4     -4       -4           NA
+#> 288       0        7     -4      -4   -4     -4     -4       -4   2.07495172
+#> 289       0        7     -4      -4   -4     -4     -4       -4   0.89878336
+#> 290       0        8     -4      -4   -4     -4     -4       -4   0.81193769
+#> 291       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 292       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 293       0        7     -4      -4   -4     -4     -4       -4  -2.47649120
+#> 294      -4       -4      0       8    8      8      8        8           NA
+#> 295      -4       -4      0       7    8      8      8        7           NA
+#> 296      -4       -4      0       8    0      7      8        7           NA
+#> 297       0        7     -4      -4   -4     -4     -4       -4  -0.59461682
+#> 298       0        8     -4      -4   -4     -4     -4       -4  -2.09770704
+#> 299       0        7     -4      -4   -4     -4     -4       -4  -0.84485255
+#> 300       0        8     -4      -4   -4     -4     -4       -4   1.68605719
+#> 301      -4       -4      0       7    0      8     -4       -4           NA
+#> 302      -4       -4      0       7    8      7     -4       -4           NA
+#> 303      -4       -4      1       7    0      7      8        8           NA
+#> 304      -4       -4      1       7    8      8      8        8           NA
+#> 305       0        8     -4      -4   -4     -4     -4       -4   3.12276257
+#> 306      -4       -4      0       8    8      8      8        8           NA
+#> 307      -4       -4      0       7    8      8      8        7           NA
+#> 308      -4       -4      0       7    0      7      8        7           NA
+#> 309      -4       -4      0       3    0      7      8        8           NA
+#> 310      -4       -4      0       8    0      7      8        7           NA
+#> 311      -4       -4      0       7    8      7      0        1           NA
+#> 312      -4       -4      0       8    0      8      8        8           NA
+#> 313      -4       -4      0       7    0      7      0        8           NA
+#> 314      -4       -4      0       7    8      7     -4       -4           NA
+#> 315      -4       -4      0       7    1      7      8        7           NA
+#> 316      -4       -4      0       7    8      8      0        7           NA
+#> 317      -4       -4      0       7    8      8     -4       -4           NA
+#> 318      -4       -4      0       8    8      8     -4       -4           NA
+#> 319      -4       -4      0       7    8      8      0        7           NA
+#> 320      -4       -4      0       7    0      7     -4       -4           NA
+#> 321      -4       -4      0       8    0      7     -4       -4           NA
+#> 322      -4       -4      0       8    8      7      0        7           NA
+#> 323      -4       -4      0       7    0      7      8        8           NA
+#> 324      -4       -4      1       8    0      8      8        7           NA
+#> 325      -4       -4      0       7    8      7      1        7           NA
+#> 326      -4       -4      0       8    0      8      0        7           NA
+#> 327      -4       -4      0       7    0      7      0        8           NA
+#> 328      -4       -4      1       8    8      7      8        7           NA
+#> 329       0        7     -4      -4   -4     -4     -4       -4   0.85536052
+#> 330       0        8     -4      -4   -4     -4     -4       -4   2.64069919
+#> 331      -4       -4      1       8    8      8      8        7           NA
+#> 332      -4       -4      0       8    0      7      8        7           NA
+#> 333      -4       -4      0       8    8      7     -4       -4           NA
+#> 334      -4       -4      0       8    0      7     -4       -4           NA
+#> 335      -4       -4      0       7    8      8      8        7           NA
+#> 336      -4       -4      0       8    0      7      0        7           NA
+#> 337      -4       -4      0       7    8      8      0        8           NA
+#> 338      -4       -4      0       2    8      7      8        7           NA
+#> 339      -4       -4      0       7    8      7      0        7           NA
+#> 340      -4       -4      0       8    0      7      8        8           NA
+#> 341      -4       -4      0       8    0      7      8        8           NA
+#> 342       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 343       0        8     -4      -4   -4     -4     -4       -4           NA
+#> 344       0        8     -4      -4   -4     -4     -4       -4           NA
+#>      std_OTRAILA std_OTRAILB std_OTRLARR std_OTRLBRR std_DIGFORCT std_DIGFORSL
+#> 1             NA          NA          NA          NA           NA           NA
+#> 2             NA          NA          NA          NA           NA           NA
+#> 3             NA          NA          NA          NA           NA           NA
+#> 4             NA          NA          NA          NA           NA           NA
+#> 5             NA          NA          NA          NA           NA           NA
+#> 6             NA          NA          NA          NA           NA           NA
+#> 7             NA          NA          NA          NA           NA           NA
+#> 8             NA          NA          NA          NA           NA           NA
+#> 9             NA          NA          NA          NA           NA           NA
+#> 10            NA          NA          NA          NA           NA           NA
+#> 11            NA          NA          NA          NA           NA  0.318876799
+#> 12            NA          NA          NA          NA           NA           NA
+#> 13            NA          NA          NA          NA           NA           NA
+#> 14            NA          NA          NA          NA           NA           NA
+#> 15            NA          NA          NA          NA           NA           NA
+#> 16            NA          NA          NA          NA           NA           NA
+#> 17            NA          NA          NA          NA   0.28383958 -1.288071350
+#> 18            NA          NA          NA          NA  -1.37733647  0.318876799
+#> 19            NA          NA          NA          NA           NA           NA
+#> 20            NA          NA          NA          NA           NA           NA
+#> 21            NA          NA          NA          NA           NA           NA
+#> 22            NA          NA          NA          NA   2.25060315  1.607009984
+#> 23            NA          NA          NA          NA   1.56249172  0.643272827
+#> 24            NA          NA          NA          NA           NA           NA
+#> 25            NA          NA          NA          NA           NA           NA
+#> 26            NA          NA          NA          NA           NA           NA
+#> 27            NA          NA          NA          NA           NA           NA
+#> 28            NA          NA          NA          NA           NA           NA
+#> 29            NA          NA          NA          NA           NA           NA
+#> 30            NA          NA          NA          NA           NA           NA
+#> 31            NA          NA          NA          NA           NA           NA
+#> 32            NA          NA          NA          NA           NA           NA
+#> 33            NA          NA          NA          NA           NA           NA
+#> 34            NA          NA          NA          NA           NA           NA
+#> 35            NA          NA          NA          NA   0.42788045 -2.297050904
+#> 36            NA          NA          NA          NA   0.87898703  0.029972094
+#> 37            NA          NA          NA          NA           NA           NA
+#> 38            NA          NA          NA          NA  -1.27149568  0.808916984
+#> 39            NA          NA          NA          NA           NA           NA
+#> 40            NA          NA          NA          NA           NA           NA
+#> 41            NA          NA          NA          NA           NA           NA
+#> 42            NA          NA          NA          NA           NA           NA
+#> 43            NA          NA          NA          NA           NA           NA
+#> 44            NA          NA          NA          NA           NA           NA
+#> 45            NA          NA          NA          NA           NA           NA
+#> 46            NA          NA          NA          NA   0.74293578 -0.899353071
+#> 47            NA          NA          NA          NA           NA  1.838833841
+#> 48            NA          NA          NA          NA           NA           NA
+#> 49            NA          NA          NA          NA  -0.77756587 -0.691069132
+#> 50            NA          NA          NA          NA           NA           NA
+#> 51            NA          NA          NA          NA           NA           NA
+#> 52            NA          NA          NA          NA           NA           NA
+#> 53            NA          NA          NA          NA           NA           NA
+#> 54            NA          NA          NA          NA  -0.92347098  0.283605737
+#> 55            NA          NA          NA          NA           NA           NA
+#> 56            NA          NA          NA          NA           NA           NA
+#> 57            NA          NA          NA          NA           NA           NA
+#> 58            NA          NA          NA          NA           NA           NA
+#> 59            NA          NA          NA          NA           NA           NA
+#> 60            NA          NA          NA          NA           NA           NA
+#> 61            NA          NA          NA          NA           NA           NA
+#> 62            NA          NA          NA          NA           NA           NA
+#> 63            NA          NA          NA          NA           NA           NA
+#> 64            NA          NA          NA          NA           NA           NA
+#> 65            NA          NA          NA          NA           NA           NA
+#> 66            NA          NA          NA          NA           NA           NA
+#> 67            NA          NA          NA          NA           NA           NA
+#> 68            NA          NA          NA          NA           NA           NA
+#> 69            NA          NA          NA          NA           NA           NA
+#> 70            NA          NA          NA          NA   0.79310601 -0.447465886
+#> 71            NA          NA          NA          NA  -0.82031995 -0.329725803
+#> 72            NA          NA          NA          NA           NA           NA
+#> 73            NA          NA          NA          NA           NA           NA
+#> 74            NA          NA          NA          NA           NA           NA
+#> 75            NA          NA          NA          NA           NA           NA
+#> 76            NA          NA          NA          NA           NA           NA
+#> 77            NA          NA          NA          NA           NA           NA
+#> 78            NA          NA          NA          NA  -1.77386357  0.302203646
+#> 79            NA          NA          NA          NA   0.24330157 -0.154269972
+#> 80            NA          NA          NA          NA   0.17645144 -0.992084904
+#> 81            NA          NA          NA          NA  -1.57067477 -0.242575035
+#> 82            NA          NA          NA          NA           NA           NA
+#> 83            NA          NA          NA          NA           NA           NA
+#> 84            NA          NA          NA          NA           NA           NA
+#> 85            NA          NA          NA          NA           NA           NA
+#> 86            NA          NA          NA          NA           NA           NA
+#> 87            NA          NA          NA          NA           NA           NA
+#> 88            NA          NA          NA          NA           NA           NA
+#> 89            NA          NA          NA          NA           NA           NA
+#> 90            NA          NA          NA          NA           NA           NA
+#> 91            NA          NA          NA          NA           NA           NA
+#> 92            NA          NA          NA          NA  -0.17681702 -0.548373154
+#> 93            NA          NA          NA          NA  -0.09086686  0.309065125
+#> 94            NA          NA          NA          NA   0.71584612  1.019328300
+#> 95            NA          NA          NA          NA  -0.62792360  0.201136715
+#> 96            NA          NA          NA          NA  -1.05038013  0.980081606
+#> 97            NA          NA          NA          NA           NA           NA
+#> 98            NA          NA          NA          NA           NA           NA
+#> 99            NA          NA          NA          NA           NA           NA
+#> 100           NA          NA          NA          NA           NA           NA
+#> 101           NA          NA          NA          NA           NA           NA
+#> 102           NA          NA          NA          NA           NA           NA
+#> 103           NA          NA          NA          NA   0.88132497  0.395190455
+#> 104           NA          NA          NA          NA           NA  0.473683844
+#> 105           NA          NA          NA          NA           NA           NA
+#> 106           NA          NA          NA          NA           NA           NA
+#> 107           NA          NA          NA          NA           NA           NA
+#> 108           NA          NA          NA          NA           NA           NA
+#> 109           NA          NA          NA          NA           NA           NA
+#> 110           NA          NA          NA          NA           NA           NA
+#> 111           NA          NA          NA          NA           NA           NA
+#> 112           NA          NA          NA          NA           NA           NA
+#> 113           NA          NA          NA          NA  -0.35135576 -0.743292670
+#> 114           NA          NA          NA          NA  -2.10803199 -0.003594474
+#> 115           NA          NA          NA          NA           NA -2.942763911
+#> 116           NA          NA          NA          NA           NA           NA
+#> 117           NA          NA          NA          NA           NA           NA
+#> 118           NA          NA          NA          NA   2.97850890  1.493561109
+#> 119           NA          NA          NA          NA   0.39601965 -0.034893651
+#> 120           NA          NA          NA          NA   1.73023936  2.311752694
+#> 121           NA          NA          NA          NA  -0.87134993 -0.774591847
+#> 122 -0.181006318          NA         NaN          NA   0.47241980  0.812732955
+#> 123           NA          NA          NA          NA  -0.47754346 -0.813838541
+#> 124           NA          NA          NA          NA   0.78982612  0.694992872
+#> 125           NA          NA          NA          NA  -0.80530346  0.792634369
+#> 126           NA          NA          NA          NA   0.06825965  0.033312826
+#> 127           NA          NA          NA          NA   1.03732294 -2.935291632
+#> 128           NA          NA          NA          NA           NA           NA
+#> 129           NA          NA          NA          NA           NA           NA
+#> 130           NA          NA          NA          NA           NA           NA
+#> 131           NA          NA          NA          NA           NA           NA
+#> 132           NA          NA          NA          NA  -1.45686516 -0.506946728
+#> 133           NA          NA          NA          NA  -1.05350866  0.232751469
+#> 134           NA          NA          NA          NA   2.10423740  1.908381333
+#> 135           NA          NA          NA          NA           NA           NA
+#> 136           NA          NA          NA          NA  -0.02714527 -1.138716514
+#> 137           NA          NA          NA          NA   0.30936110 -1.236833250
+#> 138           NA          NA          NA          NA  -0.60240208  1.021508033
+#> 139           NA          NA          NA          NA           NA           NA
+#> 140           NA          NA          NA          NA           NA           NA
+#> 141           NA          NA          NA          NA           NA           NA
+#> 142           NA          NA          NA          NA           NA  0.425236276
+#> 143           NA          NA          NA          NA  -0.72811271  1.253239534
+#> 144           NA          NA          NA          NA  -1.25561944  0.385989582
+#> 145           NA          NA          NA          NA  -0.68201297  0.158074050
+#> 146           NA  0.17444964         NaN   0.2373196  -0.99941930  1.044947350
+#> 147           NA          NA          NA          NA  -0.17360628  0.236567439
+#> 148           NA          NA          NA          NA   0.16056215  2.080631993
+#> 149           NA          NA          NA          NA  -0.39559463 -0.354319415
+#> 150           NA          NA          NA          NA           NA           NA
+#> 151           NA          NA         NaN   0.9704463   1.44703176  1.301687102
+#> 152           NA          NA          NA          NA  -0.86580125 -2.700965760
+#> 153           NA          NA          NA          NA           NA           NA
+#> 154           NA          NA          NA          NA           NA           NA
+#> 155           NA          NA          NA          NA           NA           NA
+#> 156           NA          NA          NA          NA           NA           NA
+#> 157           NA          NA          NA          NA           NA           NA
+#> 158           NA          NA          NA          NA           NA           NA
+#> 159           NA          NA          NA          NA           NA           NA
+#> 160           NA          NA          NA          NA           NA           NA
+#> 161           NA          NA          NA          NA           NA           NA
+#> 162           NA          NA          NA          NA           NA           NA
+#> 163           NA          NA          NA          NA           NA           NA
+#> 164           NA          NA          NA          NA           NA           NA
+#> 165           NA          NA          NA          NA           NA           NA
+#> 166           NA          NA          NA          NA           NA           NA
+#> 167           NA          NA          NA          NA           NA           NA
+#> 168           NA          NA          NA          NA           NA           NA
+#> 169           NA          NA          NA          NA           NA           NA
+#> 170           NA          NA          NA          NA           NA           NA
+#> 171           NA          NA          NA          NA           NA           NA
+#> 172           NA          NA          NA          NA   0.28469932 -2.064225708
+#> 173           NA          NA          NA          NA   0.60416922  1.691047937
+#> 174           NA          NA          NA          NA   0.48956901 -1.503225014
+#> 175           NA          NA          NA          NA           NA           NA
+#> 176           NA          NA          NA          NA           NA           NA
+#> 177           NA          NA          NA          NA           NA           NA
+#> 178           NA          NA          NA          NA  -0.05101644  1.492535671
+#> 179           NA          NA          NA          NA           NA           NA
+#> 180           NA          NA          NA          NA           NA           NA
+#> 181           NA          NA          NA          NA           NA           NA
+#> 182           NA          NA          NA          NA           NA           NA
+#> 183           NA          NA          NA          NA           NA           NA
+#> 184           NA          NA          NA          NA           NA           NA
+#> 185           NA          NA          NA          NA           NA           NA
+#> 186           NA          NA          NA          NA  -2.48566175 -0.734184152
+#> 187           NA          NA          NA          NA           NA           NA
+#> 188           NA          NA          NA          NA           NA           NA
+#> 189           NA          NA          NA          NA           NA           NA
+#> 190           NA          NA          NA          NA           NA           NA
+#> 191           NA          NA          NA          NA           NA           NA
+#> 192           NA          NA          NA          NA           NA           NA
+#> 193           NA          NA          NA          NA           NA           NA
+#> 194           NA          NA          NA          NA           NA           NA
+#> 195           NA          NA          NA          NA           NA           NA
+#> 196           NA          NA          NA          NA           NA           NA
+#> 197           NA          NA          NA          NA           NA           NA
+#> 198           NA          NA          NA          NA           NA           NA
+#> 199           NA          NA          NA          NA  -0.81805116           NA
+#> 200           NA          NA          NA          NA           NA           NA
+#> 201           NA          NA          NA          NA           NA           NA
+#> 202           NA          NA          NA          NA           NA           NA
+#> 203           NA          NA          NA          NA           NA           NA
+#> 204           NA          NA          NA          NA  -0.07176682 -0.440444745
+#> 205           NA          NA          NA          NA  -0.11951691  0.279630104
+#> 206           NA          NA          NA          NA   0.73494616 -1.268448003
+#> 207           NA          NA          NA          NA  -1.41553655 -0.489503113
+#> 208 -0.305166817  1.52977846         NaN   1.1303481   1.21470279  0.318876799
+#> 209 -0.992102404          NA         NaN   1.2346811  -0.13861695  1.029139974
+#> 210           NA          NA          NA          NA  -0.15771698  0.240383410
+#> 211           NA          NA          NA          NA           NA           NA
+#> 212           NA          NA          NA          NA           NA           NA
+#> 213           NA          NA          NA          NA           NA           NA
+#> 214           NA          NA          NA          NA           NA           NA
+#> 215           NA          NA          NA          NA           NA           NA
+#> 216           NA          NA          NA          NA           NA           NA
+#> 217           NA          NA          NA          NA  -0.85334097 -0.021038089
+#> 218           NA          NA          NA          NA  -0.45953450 -0.829418000
+#> 219           NA          NA          NA          NA  -2.19711069  1.468169977
+#> 220           NA          NA          NA          NA  -1.82240426  0.640166718
+#> 221           NA          NA          NA          NA  -1.39039771 -0.128966498
+#> 222           NA          NA          NA          NA  -0.61232173  0.209471813
+#> 223           NA          NA          NA          NA  -1.32353453 -1.171807844
+#> 224  0.147857323 -0.50549359          NA  -2.3204578  -0.52637157 -2.009622776
+#> 225           NA          NA          NA          NA  -0.92972806  1.096345113
+#> 226           NA          NA          NA          NA           NA           NA
+#> 227           NA          NA          NA          NA  -2.25646132 -0.498703986
+#> 228           NA          NA          NA          NA           NA           NA
+#> 229           NA          NA          NA          NA           NA           NA
+#> 230           NA          NA          NA          NA           NA           NA
+#> 231           NA          NA          NA          NA           NA           NA
+#> 232           NA          NA          NA          NA           NA           NA
+#> 233           NA          NA          NA          NA           NA           NA
+#> 234           NA          NA          NA          NA           NA           NA
+#> 235           NA          NA          NA          NA   0.36580920  0.294954587
+#> 236           NA          NA          NA          NA   0.83764536 -1.183348111
+#> 237           NA          NA          NA          NA           NA  1.212356602
+#> 238           NA          NA          NA          NA   0.43428887  1.922619777
+#> 239           NA          NA          NA          NA  -1.32238736           NA
+#> 240           NA          NA          NA          NA   0.42473885  1.912808103
+#> 241           NA          NA          NA          NA   1.78760861  1.212356602
+#> 242           NA          NA          NA          NA   0.02138236           NA
+#> 243           NA          NA          NA          NA           NA           NA
+#> 244           NA          NA          NA          NA           NA           NA
+#> 245           NA          NA          NA          NA   0.75490594  0.282420637
+#> 246           NA          NA          NA          NA           NA           NA
+#> 247           NA          NA          NA          NA           NA  0.311855657
+#> 248           NA          NA          NA          NA           NA           NA
+#> 249           NA          NA          NA          NA           NA           NA
+#> 250           NA          NA          NA          NA           NA           NA
+#> 251           NA          NA          NA          NA           NA           NA
+#> 252           NA          NA          NA          NA           NA           NA
+#> 253           NA          NA          NA          NA           NA           NA
+#> 254           NA          NA          NA          NA           NA           NA
+#> 255           NA          NA          NA          NA           NA           NA
+#> 256           NA          NA          NA          NA           NA           NA
+#> 257           NA          NA          NA          NA  -0.97747815  0.278153528
+#> 258           NA          NA          NA          NA  -1.10162838 -0.618531446
+#> 259           NA          NA          NA          NA  -0.39801477 -4.602814316
+#> 260           NA          NA          NA          NA           NA           NA
+#> 261           NA          NA          NA          NA           NA           NA
+#> 262           NA          NA          NA          NA           NA           NA
+#> 263           NA          NA          NA          NA           NA           NA
+#> 264           NA          NA          NA          NA           NA           NA
+#> 265           NA          NA          NA          NA           NA           NA
+#> 266           NA          NA          NA          NA           NA           NA
+#> 267           NA          NA          NA          NA  -0.95524957 -1.262292638
+#> 268  0.007874094          NA          NA          NA   0.71547650  0.986236971
+#> 269           NA          NA          NA          NA   1.12838300  1.735746840
+#> 270           NA          NA          NA          NA           NA           NA
+#> 271           NA          NA          NA          NA           NA           NA
+#> 272           NA          NA          NA          NA   0.17009911 -2.181965791
+#> 273           NA          NA          NA          NA           NA           NA
+#> 274           NA          NA          NA          NA           NA  1.304637296
+#> 275           NA          NA          NA          NA           NA           NA
+#> 276           NA          NA          NA          NA   2.69258069 -2.648957197
+#> 277           NA          NA          NA          NA           NA           NA
+#> 278           NA          NA          NA          NA           NA           NA
+#> 279           NA          NA          NA          NA           NA           NA
+#> 280           NA          NA          NA          NA           NA           NA
+#> 281           NA          NA          NA          NA           NA           NA
+#> 282           NA          NA          NA          NA           NA           NA
+#> 283           NA          NA          NA          NA           NA           NA
+#> 284           NA          NA          NA          NA           NA           NA
+#> 285           NA          NA          NA          NA           NA           NA
+#> 286           NA          NA          NA          NA           NA           NA
+#> 287           NA          NA          NA          NA           NA           NA
+#> 288           NA          NA          NA          NA   0.25050059 -0.167286816
+#> 289           NA          NA          NA          NA   0.27915065  2.169547855
+#> 290           NA          NA          NA          NA  -1.05506906  2.130301161
+#> 291           NA  0.02892823         NaN   0.8209529  -0.25790610           NA
+#> 292 -0.964587370  1.33638658          NA  -2.8275215   0.72070721           NA
+#> 293           NA          NA          NA          NA   1.54652023 -0.167286816
+#> 294           NA          NA          NA          NA           NA           NA
+#> 295           NA          NA          NA          NA           NA           NA
+#> 296           NA          NA          NA          NA           NA           NA
+#> 297           NA          NA          NA          NA  -1.14850567  1.290398852
+#> 298           NA          NA          NA          NA           NA -0.179185867
+#> 299           NA          NA          NA          NA  -1.25318624 -1.860971095
+#> 300           NA          NA          NA          NA   1.58784883  1.388423232
+#> 301           NA          NA          NA          NA           NA           NA
+#> 302           NA          NA          NA          NA           NA           NA
+#> 303           NA          NA          NA          NA           NA           NA
+#> 304           NA          NA          NA          NA           NA           NA
+#> 305           NA          NA          NA          NA   0.37777936 -0.830671356
+#> 306           NA          NA          NA          NA           NA           NA
+#> 307           NA          NA          NA          NA           NA           NA
+#> 308           NA          NA          NA          NA           NA           NA
+#> 309           NA          NA          NA          NA           NA           NA
+#> 310           NA          NA          NA          NA           NA           NA
+#> 311           NA          NA          NA          NA           NA           NA
+#> 312           NA          NA          NA          NA           NA           NA
+#> 313           NA          NA          NA          NA           NA           NA
+#> 314           NA          NA          NA          NA           NA           NA
+#> 315           NA          NA          NA          NA           NA           NA
+#> 316           NA          NA          NA          NA           NA           NA
+#> 317           NA          NA          NA          NA           NA           NA
+#> 318           NA          NA          NA          NA           NA           NA
+#> 319           NA          NA          NA          NA           NA           NA
+#> 320           NA          NA          NA          NA           NA           NA
+#> 321           NA          NA          NA          NA           NA           NA
+#> 322           NA          NA          NA          NA           NA           NA
+#> 323           NA          NA          NA          NA           NA           NA
+#> 324           NA          NA          NA          NA           NA           NA
+#> 325           NA          NA          NA          NA           NA           NA
+#> 326           NA          NA          NA          NA           NA           NA
+#> 327           NA          NA          NA          NA           NA           NA
+#> 328           NA          NA          NA          NA           NA           NA
+#> 329           NA          NA          NA          NA   1.12406370  0.611658074
+#> 330           NA          NA          NA          NA           NA  0.670528116
+#> 331           NA          NA          NA          NA           NA           NA
+#> 332           NA          NA          NA          NA           NA           NA
+#> 333           NA          NA          NA          NA           NA           NA
+#> 334           NA          NA          NA          NA           NA           NA
+#> 335           NA          NA          NA          NA           NA           NA
+#> 336           NA          NA          NA          NA           NA           NA
+#> 337           NA          NA          NA          NA           NA           NA
+#> 338           NA          NA          NA          NA           NA           NA
+#> 339           NA          NA          NA          NA           NA           NA
+#> 340           NA          NA          NA          NA           NA           NA
+#> 341           NA          NA          NA          NA           NA           NA
+#> 342           NA          NA          NA          NA           NA           NA
+#> 343           NA          NA          NA          NA           NA           NA
+#> 344           NA          NA          NA          NA           NA           NA
+#>     std_DIGBACCT std_DIGBACLS   std_TRAILA   std_TRAILB    std_WAIS
+#> 1             NA           NA  0.932795890 -0.924752926  9.93631716
+#> 2             NA           NA  0.410442828  0.077816607 42.77735202
+#> 3             NA           NA  0.374160183           NA 31.80587516
+#> 4             NA           NA -4.065874999           NA 42.61630183
+#> 5             NA           NA  0.330084035  1.410229656 34.81329776
+#> 6             NA           NA           NA           NA 32.43753011
+#> 7             NA           NA -3.321492065  0.246634905  1.90704547
+#> 8             NA           NA           NA           NA          NA
+#> 9             NA           NA  0.025572740 -3.352066906 19.36484305
+#> 10            NA           NA  0.066204729  1.645069765 23.16316856
+#> 11    0.62018591   0.98679509 -2.318427201 -0.386170342          NA
+#> 12            NA           NA           NA           NA          NA
+#> 13            NA           NA  1.500393987           NA 39.74098886
+#> 14            NA           NA -4.577663475  1.757148816 55.78285953
+#> 15            NA           NA  0.856737883 -0.410781900 36.83388850
+#> 16            NA           NA           NA  1.414755410 -3.93204055
+#> 17            NA   0.07202890  0.463217665  1.393566894          NA
+#> 18    0.14306703           NA           NA -1.228192341          NA
+#> 19            NA           NA  0.680266929  1.209279461 43.39227137
+#> 20            NA           NA  0.372519648 -1.968111892 36.68351740
+#> 21            NA           NA  1.055798469  1.915300682 12.64147159
+#> 22    0.90545899  -0.01193157 -0.341683203  0.342414848          NA
+#> 23   -0.26147050   1.52636508  0.973748733  2.085703585          NA
+#> 24            NA           NA -5.085601477  0.658663813 30.62609614
+#> 25            NA           NA  1.445440993  1.774865669 68.43198046
+#> 26            NA           NA -0.127023743 -0.776133855 61.03853733
+#> 27            NA           NA  0.202204934           NA 44.27892981
+#> 28            NA           NA -0.500328568  0.539525519 52.31554172
+#> 29            NA           NA  0.327753233  1.980936328 20.23518946
+#> 30            NA           NA  1.240647258  1.738992970 58.76754378
+#> 31            NA           NA  0.845861037           NA 55.86044342
+#> 32            NA           NA           NA           NA          NA
+#> 33            NA           NA           NA           NA          NA
+#> 34            NA           NA           NA           NA          NA
+#> 35   -0.69059260   0.72069574 -6.310630878 -4.387036868          NA
+#> 36   -0.18838910  -0.90960431  0.760679402 -0.008798404          NA
+#> 37            NA           NA           NA           NA          NA
+#> 38    1.73262875   1.58565385  0.967699852  1.048853766          NA
+#> 39            NA           NA           NA           NA          NA
+#> 40            NA           NA -0.306883328  0.698298812 57.41710544
+#> 41            NA           NA           NA           NA          NA
+#> 42            NA           NA           NA           NA          NA
+#> 43            NA           NA  0.676021671 -0.809042895 50.40893207
+#> 44            NA           NA  0.464866795  0.027555581 48.43282884
+#> 45            NA           NA  0.355233103 -1.100856301 83.17622257
+#> 46    3.07991169  -0.98041573  1.460771269  0.211175088          NA
+#> 47   -0.41897179   0.07961333  0.750274843           NA          NA
+#> 48            NA           NA  1.286851157  2.661179084 58.71797220
+#> 49    1.29994368   0.80572041  1.271972775 -0.515049833          NA
+#> 50            NA           NA           NA           NA          NA
+#> 51            NA           NA           NA           NA          NA
+#> 52            NA           NA           NA -1.274995392 33.06030658
+#> 53            NA           NA  0.315487897  0.588806078          NA
+#> 54   -1.51923104   1.55775010 -1.346242493           NA          NA
+#> 55            NA           NA -0.602922509 -6.482850316 10.92400718
+#> 56            NA           NA -1.056586127           NA 56.31815605
+#> 57            NA           NA -2.220576751 -1.272839195 54.53898523
+#> 58            NA           NA  0.157697099 -5.972056108 46.49752836
+#> 59            NA           NA -6.955245847 -2.950660424 18.73983529
+#> 60            NA           NA  0.369179575  1.972361897 43.39227137
+#> 61            NA           NA  1.450584689  1.063029340 19.93436093
+#> 62            NA           NA  0.310302177  1.873613480 45.40651301
+#> 63            NA           NA           NA           NA 54.42109770
+#> 64            NA           NA  0.067153787           NA  4.89728000
+#> 65            NA           NA -2.267879079  0.039366412 41.27065819
+#> 66            NA           NA  1.344291070           NA 55.68276533
+#> 67            NA           NA  0.782107117  1.077023693 47.54445251
+#> 68            NA           NA -1.662515568  1.067464180          NA
+#> 69            NA           NA  1.196148018  1.218838973 57.13432112
+#> 70    1.23233395   1.95503774  0.493614516  0.788268461          NA
+#> 71    1.85996051  -0.37834412 -2.310625102 -4.386559790          NA
+#> 72            NA           NA -1.200853334  0.545735007 30.40045317
+#> 73            NA           NA  0.665670792  0.440482257 47.84644439
+#> 74            NA           NA  0.870464526           NA 48.10773249
+#> 75            NA           NA -0.278941615  0.435839478 30.96195232
+#> 76            NA           NA -1.539205639           NA 13.18010492
+#> 77            NA           NA  0.203996902 -0.567116825 15.74259260
+#> 78    1.01981851   0.06785833 -0.087514918  0.098020448          NA
+#> 79   -1.85882457   0.52099871           NA  1.002132807          NA
+#> 80   -0.03814517  -1.22136953  0.671991332  1.229391982          NA
+#> 81    1.84524576  -1.24627358 -6.834841244 -0.280709047          NA
+#> 82            NA           NA -3.183214738  0.254905063 26.18376907
+#> 83            NA           NA -1.089992391 -5.689115378  2.27842840
+#> 84            NA           NA  0.671351473  0.120284552 34.79464319
+#> 85            NA           NA -2.027707884  0.713858861 30.62609614
+#> 86            NA           NA -5.259676295           NA          NA
+#> 87            NA           NA  0.817267810           NA -5.47599331
+#> 88            NA           NA           NA -5.626239660 -5.47599331
+#> 89            NA           NA           NA  1.471126796          NA
+#> 90            NA           NA  0.316187970 -0.133287810 47.46027174
+#> 91            NA           NA -0.282278628 -4.700153427 47.36448569
+#> 92   -0.45947492   0.03467283           NA  0.430918131          NA
+#> 93   -3.20930748           NA -0.223401230 -0.154476326          NA
+#> 94    0.53238977   2.55483503  0.712087548 -2.079773853          NA
+#> 95   -0.48455953  -1.64543530  0.921334714  0.657487475          NA
+#> 96   -1.90337389   0.84982285 -3.351302736  0.188974772          NA
+#> 97            NA           NA  0.909295952 -0.305942032 41.16052572
+#> 98            NA           NA           NA  1.397910822  2.72395745
+#> 99            NA           NA  1.031504179  0.645767558  0.88851055
+#> 100           NA           NA  0.619689993  0.131132812  9.61288483
+#> 101           NA           NA -6.911964051 -0.006937458 32.01866524
+#> 102           NA           NA -1.599770919  0.978279483 58.09186602
+#> 103   0.72129936   1.07442393  0.576727203  0.388450185          NA
+#> 104   1.29875669  -0.48116398  0.117496796  0.087376119          NA
+#> 105           NA           NA -0.858472538 -5.916968856          NA
+#> 106           NA           NA  0.304404728 -6.042720291 30.95855613
+#> 107           NA           NA -1.606195546 -0.928402408          NA
+#> 108           NA           NA -0.985134195  0.402630980 28.65735654
+#> 109           NA           NA  0.985456834  0.397506308 49.76801082
+#> 110           NA           NA  0.491057140           NA          NA
+#> 111           NA           NA  0.284036690  1.161968406 39.10617287
+#> 112           NA           NA -1.168446535 -0.538139437          NA
+#> 113  -2.67863191  -0.26904328  0.117752315  0.325071078          NA
+#> 114  -2.23913995   1.34880474 -1.063266273 -2.558440371          NA
+#> 115   0.79916566  -0.13207104 -0.155939036  0.960332588          NA
+#> 116           NA           NA  1.912261852  0.997334312 49.63230346
+#> 117           NA           NA  1.767458872           NA 70.74295774
+#> 118   0.19504998   1.47381799 -3.656656942           NA          NA
+#> 119  -0.26952660   0.65866797 -0.836502716 -0.806764252          NA
+#> 120   0.25776151   1.53607810 -0.381725740  1.897679557          NA
+#> 121   0.72233809   1.52362608  0.344515872 -4.554176047          NA
+#> 122   0.30793074  -0.06931790           NA           NA          NA
+#> 123  -0.75918779   2.30142003           NA  0.845841888          NA
+#> 124   0.15742306  -0.21874216 -6.766417126  0.804154687          NA
+#> 125   2.75788165   0.75364270 -1.400389479  0.317780780          NA
+#> 126  -1.04652713           NA -0.944499145           NA          NA
+#> 127  -0.90856176  -1.57973916  1.208290866           NA          NA
+#> 128           NA           NA  0.250094653  0.447762719 -1.93484326
+#> 129           NA           NA -1.598288149 -5.857842763 49.21909344
+#> 130           NA           NA -1.182020534 -0.615703953          NA
+#> 131           NA           NA  1.090750989 -0.103138699 52.12059482
+#> 132  -1.36431846           NA -0.008795449  1.165018971          NA
+#> 133           NA  -0.76848985           NA -0.955410041          NA
+#> 134   0.20500357   0.23344050  1.459602383  0.800379357          NA
+#> 135           NA           NA           NA           NA          NA
+#> 136  -1.18872617  -1.38440752  0.400792021 -2.736526938          NA
+#> 137   0.59432631  -0.68132569 -0.736150419  0.685567095          NA
+#> 138   1.00873366  -4.05399397 -0.837990607 -4.550067383          NA
+#> 139           NA           NA -0.504996917 -0.613911410 39.99623663
+#> 140           NA           NA  0.634172238  1.616895024 29.18896750
+#> 141           NA           NA  1.050439854  1.675335901          NA
+#> 142  -1.01374513  -0.41477083  0.955815584  0.838347660          NA
+#> 143   0.96998425   1.31514539 -0.477412961           NA          NA
+#> 144  -1.06391436  -1.29218096  0.127733783           NA          NA
+#> 145   0.41285036   0.78733040  0.054639466 -5.626539119          NA
+#> 146   0.56335804   1.76435671           NA           NA          NA
+#> 147   0.99030770   0.05934454  1.088628360           NA          NA
+#> 148   1.38655284   2.91640834  0.260073060 -4.797317240          NA
+#> 149   0.74638397   0.27172593 -1.995670497  2.030117152          NA
+#> 150           NA           NA           NA           NA          NA
+#> 151  -1.01158390   0.42115019           NA           NA          NA
+#> 152   0.21909586   1.04951988           NA -5.331760840          NA
+#> 153           NA           NA  0.715058209 -5.383098468 78.22377360
+#> 154           NA           NA -2.230644316  1.494892807 52.90190477
+#> 155           NA           NA -1.297382253  1.389640057 39.81741136
+#> 156           NA           NA -0.552999318  0.394173774          NA
+#> 157           NA           NA  1.459441144  0.647056306  2.40391419
+#> 158           NA           NA           NA -0.990175820 34.96871134
+#> 159           NA           NA  0.484329648  1.704708476 -1.46722387
+#> 160           NA           NA -3.545374119  1.660769956 71.74283808
+#> 161           NA           NA -1.512565619 -1.686129525 44.91345326
+#> 162           NA           NA           NA           NA          NA
+#> 163           NA           NA           NA           NA          NA
+#> 164           NA           NA           NA           NA          NA
+#> 165           NA           NA           NA           NA          NA
+#> 166           NA           NA           NA           NA          NA
+#> 167           NA           NA           NA           NA          NA
+#> 168           NA           NA  0.177487552  1.144338459 33.60074931
+#> 169           NA           NA           NA  1.847600358 83.17622257
+#> 170           NA           NA -2.980224627           NA 50.05919618
+#> 171           NA           NA -5.637434550  1.360749374 71.78789682
+#> 172  -2.20783671  -0.62738456  1.512802160  0.747271090          NA
+#> 173  -2.65138607  -1.06342230 -1.926406529 -0.700661341          NA
+#> 174   1.49217623   1.26995956 -0.117646444 -0.709531023          NA
+#> 175           NA           NA           NA           NA          NA
+#> 176           NA           NA           NA           NA          NA
+#> 177           NA           NA           NA           NA          NA
+#> 178   0.32342048   1.61422625 -3.185275092  2.966566151          NA
+#> 179           NA           NA  0.905583407           NA 61.01600518
+#> 180           NA           NA           NA  0.805331024          NA
+#> 181           NA           NA -4.833391521           NA 29.91849446
+#> 182           NA           NA  0.855624526           NA 34.74507878
+#> 183           NA           NA -1.180482235 -5.946914643 12.96781754
+#> 184           NA           NA -0.206484097 -1.016099242 48.39113268
+#> 185           NA           NA           NA           NA          NA
+#> 186   0.39226317  -0.90086437           NA  0.873325585          NA
+#> 187           NA           NA           NA           NA          NA
+#> 188           NA           NA  0.444549164 -0.210851919 67.33655834
+#> 189           NA           NA  0.680433290           NA          NA
+#> 190           NA           NA           NA  1.166130507 59.45797363
+#> 191           NA           NA -1.578981001  1.454885738 54.27987972
+#> 192           NA           NA  0.642706626  0.971688852          NA
+#> 193           NA           NA -1.921783677 -5.131595597 42.65025952
+#> 194           NA           NA  0.813608732 -2.308113837          NA
+#> 195           NA           NA  0.462898660  0.718592553 51.46638283
+#> 196           NA           NA -0.239634842 -1.553901082 48.62899847
+#> 197           NA           NA -4.661528702 -5.518322710 40.77296018
+#> 198           NA           NA -0.614053025 -0.354433632          NA
+#> 199   0.75892628   0.28417795 -1.788650047  0.772208824          NA
+#> 200           NA           NA  0.089912840 -0.395729854 27.13738619
+#> 201           NA           NA  0.046950049           NA 16.33011705
+#> 202           NA           NA  0.460990949 -2.496350012  0.09561151
+#> 203           NA           NA -1.507373364 -1.811517307          NA
+#> 204  -2.22998510   2.65445120 -0.369317567  1.750322515          NA
+#> 205  -0.38422108   0.10938496 -1.093332464  0.987929909          NA
+#> 206   0.55747438  -0.73066910 -4.473443927  1.114371175          NA
+#> 207  -0.38422108   0.93698701  0.897626603           NA          NA
+#> 208   0.14306703           NA           NA           NA          NA
+#> 209  -2.31778124   0.08448092           NA           NA          NA
+#> 210   2.42832301   0.88717892  0.505067098  0.467480661          NA
+#> 211           NA           NA  1.225589278  1.966274655 93.67795993
+#> 212           NA           NA  1.826282591           NA 93.67795993
+#> 213           NA           NA           NA           NA 35.86038180
+#> 214           NA           NA -5.303752443  0.914115018 29.41461047
+#> 215           NA           NA  0.459877592 -5.217547495 36.89591438
+#> 216           NA           NA -0.703857512           NA 60.16343035
+#> 217  -0.35652401  -1.14691809  0.207923155 -1.223571059          NA
+#> 218  -0.88381212  -2.02432822 -0.122418880 -1.507201620          NA
+#> 219           NA           NA  0.354952849  0.119091333          NA
+#> 220  -1.44872715  -1.28389034 -0.264995144 -0.201101758          NA
+#> 221  -1.44872715  -0.45628829 -0.949387323  0.719859804          NA
+#> 222   0.76447496  -0.17309547  0.679141916 -5.962010089          NA
+#> 223  -0.94332368   2.50894301  0.196203398  1.198232085          NA
+#> 224           NA           NA           NA           NA          NA
+#> 225  -1.47061179  -0.02367121  0.301383660 -1.216766661          NA
+#> 226           NA           NA           NA -1.538916833  4.00831665
+#> 227  -1.21519702  -0.60201584  0.448633183           NA          NA
+#> 228           NA           NA  1.437751576  1.210959187 65.73023135
+#> 229           NA           NA  0.712623321  2.095358219 42.20114192
+#> 230           NA           NA  0.134524761  0.664886583 10.38913972
+#> 231           NA           NA  1.025937390  1.406780503 11.15884801
+#> 232           NA           NA  1.275920631 -2.266126570          NA
+#> 233           NA           NA  1.462573044           NA 35.05514675
+#> 234           NA           NA -4.949166525  1.911165906          NA
+#> 235   0.29426594   0.35911325  0.972104724           NA          NA
+#> 236   0.79950063  -0.49017998 -1.335409520  0.488873514          NA
+#> 237  -1.95033193  -0.37811178  1.025514299 -4.490823251          NA
+#> 238  -1.07134800   0.37477813  1.214393427  0.188489279          NA
+#> 239   1.27661952  -3.80058815  1.091071843  1.330895514          NA
+#> 240   0.82458524  -0.46527594  0.074110914           NA          NA
+#> 241   0.43526250   1.27709230  1.025514299  2.113786806          NA
+#> 242   0.86221216   0.39968217  0.259649969 -4.616574687          NA
+#> 243           NA           NA  0.758926185  0.765704492 27.83343641
+#> 244           NA           NA  0.304893154  0.524958967 52.28623141
+#> 245   0.22792695   0.25002557  1.656491782  1.425599462          NA
+#> 246           NA           NA           NA           NA          NA
+#> 247   0.26555387   0.28738163  1.095421187  0.862083352          NA
+#> 248           NA           NA           NA           NA          NA
+#> 249           NA           NA -0.151166601           NA 28.83331675
+#> 250           NA           NA -0.251893432 -0.966939309 41.33620057
+#> 251           NA           NA           NA           NA 10.72692754
+#> 252           NA           NA -1.289222398 -1.356512450 41.91157943
+#> 253           NA           NA -0.232638752  0.237652813 48.07208737
+#> 254           NA           NA -0.129685205 -5.962010089 44.97065759
+#> 255           NA           NA -1.955473255  0.363404249 33.19481456
+#> 256           NA           NA  0.552480259 -1.037009190 49.04235581
+#> 257   0.85227111  -0.91353336  0.012891059           NA          NA
+#> 258  -0.26501665  -1.07540965  0.245846335  0.085588190          NA
+#> 259  -0.20604007  -0.94626335  0.131023449 -4.731265109          NA
+#> 260           NA           NA -0.004711430  0.635518215 47.70208310
+#> 261           NA           NA  1.463686402  1.718103912 59.06075580
+#> 262           NA           NA  0.551905734 -4.607310425 53.31773408
+#> 263           NA           NA           NA           NA          NA
+#> 264           NA           NA           NA           NA          NA
+#> 265           NA           NA           NA           NA          NA
+#> 266           NA           NA           NA           NA          NA
+#> 267   0.37592721  -0.09791866  0.380837268  0.306941950          NA
+#> 268  -0.65356440  -0.17263079           NA           NA          NA
+#> 269           NA  -0.19753484           NA           NA          NA
+#> 270           NA           NA  0.268452744  0.063128215 67.91083680
+#> 271           NA           NA  0.622502889  1.095157029 21.58139326
+#> 272   0.02725005  -0.77680883  0.521776057  0.843654158          NA
+#> 273           NA           NA           NA           NA          NA
+#> 274  -0.10974781   0.35471951 -6.696832303  0.402058781          NA
+#> 275           NA           NA           NA           NA          NA
+#> 276  -1.20195095  -0.60985477           NA -3.574977539          NA
+#> 277           NA           NA -0.670218341  1.714177075  9.25877780
+#> 278           NA           NA  1.547602036           NA          NA
+#> 279           NA           NA -0.277072656 -1.849046616 61.14309056
+#> 280           NA           NA  0.450282314 -2.158990363 57.74847212
+#> 281           NA           NA  1.174297211 -1.817608757 26.25110812
+#> 282           NA           NA  0.179931035           NA 55.05999236
+#> 283           NA           NA  1.178750641  2.041560121          NA
+#> 284           NA           NA  1.157269246 -3.421333532 31.97098578
+#> 285           NA           NA  0.972843548  1.336918561 62.49977588
+#> 286           NA           NA  0.366583447  0.587830477          NA
+#> 287           NA           NA -0.274845941  1.146221916          NA
+#> 288   0.16625416   0.63696761           NA           NA          NA
+#> 289   1.63523773   1.50192572 -0.171892395  1.419603133          NA
+#> 290   1.10794962           NA -6.475111629  1.846428635          NA
+#> 291   2.92862902   0.53735143           NA           NA          NA
+#> 292  -0.73781439   0.68677570           NA           NA          NA
+#> 293  -0.31086473   0.63696761  0.326960729  1.983119244          NA
+#> 294           NA           NA  0.313053009 -0.695028666 43.04487085
+#> 295           NA           NA  1.098172020           NA          NA
+#> 296           NA           NA  0.395638518 -5.478904116 26.33215114
+#> 297   0.68948487   1.04098393  1.138908095  0.750816984          NA
+#> 298   0.77728101   0.30054604 -0.211734941 -3.975997249          NA
+#> 299  -1.60235853   1.97627342  1.368318186 -1.030005676          NA
+#> 300   0.19211376   1.47748635 -0.073184106  1.411332369          NA
+#> 301           NA           NA -6.725681050 -3.974596092 61.00922702
+#> 302           NA           NA  1.217787179  0.835592545 56.07235035
+#> 303           NA           NA  0.067165442  1.451639909 74.78041291
+#> 304           NA           NA  1.105607767  1.825839036          NA
+#> 305  -1.60348103  -1.72085362  1.167825237 -1.779067648          NA
+#> 306           NA           NA  0.741525747  1.507903092 21.76252493
+#> 307           NA           NA  1.235925441 -2.156134300 43.57001396
+#> 308           NA           NA  1.326685521  0.685979977          NA
+#> 309           NA           NA  0.289769839  1.555703647 76.23142128
+#> 310           NA           NA -0.599416075           NA 23.88721687
+#> 311           NA           NA -2.631111217  0.193922231 44.55609376
+#> 312           NA           NA  1.038606204           NA 37.55923474
+#> 313           NA           NA  0.004361792           NA 57.51350179
+#> 314           NA           NA -0.337176093 -0.131009773 55.41409221
+#> 315           NA           NA -2.412947384 -0.473771041 31.45399232
+#> 316           NA           NA           NA           NA          NA
+#> 317           NA           NA  2.250244745  2.284637118 50.38224965
+#> 318           NA           NA  2.040997580  1.336672539 67.01164478
+#> 319           NA           NA  1.362172189  0.680912343          NA
+#> 320           NA           NA  1.293373537  2.441981521 21.58601729
+#> 321           NA           NA  1.477799234           NA 21.66058537
+#> 322           NA           NA  1.644083609 -4.163318366 60.14435733
+#> 323           NA           NA -1.461223145 -4.634886249          NA
+#> 324           NA           NA  1.064871691  1.341952319          NA
+#> 325           NA           NA  1.595018257  1.731616373 58.13827807
+#> 326           NA           NA  1.240968112           NA 69.72148622
+#> 327           NA           NA           NA -3.688900248 40.69228685
+#> 328           NA           NA  1.407252487  0.983907950 82.07270812
+#> 329   1.13303424   1.47702167 -1.332542945 -4.063789205          NA
+#> 330  -0.70018747   0.72413176 -1.832509427  1.255909507          NA
+#> 331           NA           NA  0.499500310           NA 49.04235581
+#> 332           NA           NA -0.330969446  0.269711086 -4.54554721
+#> 333           NA           NA -0.124901114  1.917071322 62.27429083
+#> 334           NA           NA           NA  2.110823146          NA
+#> 335           NA           NA -0.021947568           NA 42.06694631
+#> 336           NA           NA  0.021015223  1.406871417 43.27673745
+#> 337           NA           NA  1.053890759  2.305264801 63.72584662
+#> 338           NA           NA -0.456356506 -0.903564410 65.85393476
+#> 339           NA           NA  1.120561660  0.454471996  7.62719231
+#> 340           NA           NA -1.786631504  0.689911022 72.44884224
+#> 341           NA           NA           NA  1.153299054 70.72724183
+#> 342           NA           NA -1.766263466  1.958068693          NA
+#> 343           NA           NA  0.103600732  1.648814775          NA
+#> 344           NA           NA  1.324242038 -4.651666036          NA
+#>     std_MINTTOTS   std_ANIMALS      std_VEG std_UDSVERFC std_UDSVERLC
+#> 1             NA  1.5198096793 -2.969440007           NA           NA
+#> 2             NA  1.4784477082  0.750873927           NA           NA
+#> 3             NA  0.3697706788  1.328040699           NA           NA
+#> 4             NA -1.6828977098 -1.171385550           NA           NA
+#> 5             NA  0.3330619076  0.397334640           NA           NA
+#> 6             NA -0.3633971458 -2.372753566           NA           NA
+#> 7             NA  0.4246659022           NA           NA           NA
+#> 8             NA            NA           NA           NA           NA
+#> 9             NA -2.5922323773  0.034035519           NA           NA
+#> 10            NA -1.1191914488 -1.337251182           NA           NA
+#> 11    0.06425940  1.0250809345 -1.351064071           NA  -1.37609084
+#> 12            NA            NA           NA           NA           NA
+#> 13            NA  1.2560005725 -0.946134599           NA           NA
+#> 14            NA  2.1356676151  0.907060438           NA           NA
+#> 15            NA  1.8928498558  1.906830937           NA           NA
+#> 16            NA -0.9312689128 -0.177321831           NA           NA
+#> 17    0.97782184            NA           NA  2.082829398  -1.66633239
+#> 18   -1.31105131 -1.5361239714 -2.121611278 -0.163306828   2.17778598
+#> 19            NA -1.5381053060           NA           NA           NA
+#> 20            NA  0.0289275639 -1.363828700           NA           NA
+#> 21            NA            NA  1.502949724           NA           NA
+#> 22   -0.82565711 -1.0016787232           NA  1.206445424   0.71179698
+#> 23   -4.15929674 -1.3231776122 -0.604008874           NA           NA
+#> 24            NA -0.7117790509 -3.463962849           NA           NA
+#> 25            NA -1.3141551311 -1.863219455           NA           NA
+#> 26            NA -1.5431651179 -1.487650199           NA           NA
+#> 27            NA -0.9888266032  1.948077916           NA           NA
+#> 28            NA  2.0031185981 -2.771895545           NA           NA
+#> 29            NA            NA -1.175549577           NA           NA
+#> 30            NA -0.6863990739  0.865430087           NA           NA
+#> 31            NA -0.8376128385 -2.189132965           NA           NA
+#> 32            NA            NA           NA           NA           NA
+#> 33            NA            NA           NA           NA           NA
+#> 34            NA            NA           NA           NA           NA
+#> 35    1.38603508 -2.1943712144  1.166914302           NA  -0.86074592
+#> 36   -1.82207714 -1.5575219310  0.167143802 -2.612648911   2.47143904
+#> 37            NA            NA           NA           NA           NA
+#> 38    1.38745424  2.2086785456 -0.589590517 -0.988892319   0.34672958
+#> 39            NA            NA           NA           NA           NA
+#> 40            NA  0.1293502644 -0.540540240           NA           NA
+#> 41            NA            NA           NA           NA           NA
+#> 42            NA            NA           NA           NA           NA
+#> 43            NA            NA  0.182972495           NA           NA
+#> 44            NA  0.5802583464 -1.270697041           NA           NA
+#> 45            NA -0.8264675329 -1.306539898           NA           NA
+#> 46   -2.01960363 -0.8286620409  2.837536996  0.295233641   3.06534192
+#> 47            NA -1.4469282101 -0.631979023  2.100044111   1.07752313
+#> 48            NA  0.2353707650  0.456468856           NA           NA
+#> 49    0.33614038  1.0010600305 -1.086022773 -0.477051860  -1.10635231
+#> 50            NA            NA           NA           NA           NA
+#> 51            NA            NA           NA           NA           NA
+#> 52            NA -0.7992175396 -1.952893538           NA           NA
+#> 53            NA -1.7246865796 -2.035770867  0.711757345  -1.91868366
+#> 54   -0.71101205 -1.5643795889 -2.195929719 -1.534378880   0.03003374
+#> 55            NA -1.6207071063  1.613219430           NA           NA
+#> 56            NA -0.0078722391  0.489132936           NA           NA
+#> 57            NA -0.8326440584 -0.955271261           NA           NA
+#> 58            NA -1.0548671322 -0.113853198           NA           NA
+#> 59            NA  0.3677893442 -1.899445834           NA           NA
+#> 60            NA -0.3560107340  0.301581708           NA           NA
+#> 61            NA -1.7213132954  0.447927671           NA           NA
+#> 62            NA -0.5621197221  0.177265714           NA           NA
+#> 63            NA -2.7790787729           NA           NA           NA
+#> 64            NA -1.5464676570           NA           NA           NA
+#> 65            NA  0.7458289242 -1.412022405           NA           NA
+#> 66            NA -0.5759274947 -0.739627456           NA           NA
+#> 67            NA -0.4385215027  0.113797080           NA           NA
+#> 68            NA  1.9623764126  0.017106863           NA           NA
+#> 69            NA -2.3628771253 -0.115426212           NA           NA
+#> 70            NA -2.9172156400 -2.523758051 -0.595946435   0.49740114
+#> 71    0.26216545  1.4949273460 -0.560059909  0.200878060  -0.35889974
+#> 72            NA -1.8227119352  0.180117822           NA           NA
+#> 73            NA -1.6256961732 -0.076731247           NA           NA
+#> 74            NA -1.4653891825  0.019958970           NA           NA
+#> 75            NA -4.1573655461 -2.000149957           NA           NA
+#> 76            NA            NA -0.638623090           NA           NA
+#> 77            NA  0.4016125251 -0.680061754           NA           NA
+#> 78   -0.59455942 -1.6556383183  0.286567874  0.329605526  -0.95886175
+#> 79    0.76658354 -0.2697410715           NA -0.979920544   0.36990011
+#> 80    1.22170907 -0.0360165382  1.169424601 -1.271695438   0.79043391
+#> 81            NA -0.6728658215 -3.224635349 -0.827701538   1.24905089
+#> 82            NA -1.8149693697 -0.879299093           NA           NA
+#> 83            NA -1.6368211922 -2.558027894           NA           NA
+#> 84            NA  0.4249404225 -0.191134720           NA           NA
+#> 85            NA -1.1649934461 -1.621726028           NA           NA
+#> 86            NA -1.9621497201  0.051901461           NA           NA
+#> 87            NA -1.1969876708  0.808635780           NA           NA
+#> 88            NA -1.3940034328 -0.218760496           NA           NA
+#> 89            NA -3.0435470714           NA           NA           NA
+#> 90            NA -0.5968471588           NA           NA           NA
+#> 91            NA -0.9770709102 -1.489192953           NA           NA
+#> 92    0.51796578 -0.3860236242 -1.746042022 -0.711967644   1.62776940
+#> 93    0.98066016  0.6081484119 -1.364876959  0.289409314  -1.14678235
+#> 94    0.97782184            NA -0.934056150  0.006356663  -0.71863191
+#> 95   -0.39985413 -0.4318256215 -4.085309420 -1.190850515  -1.46749044
+#> 96   -0.39938108  0.1821226632 -0.218760496  0.663625269  -0.74909844
+#> 97            NA            NA  2.764227815           NA           NA
+#> 98            NA -0.1572881577 -2.505286641           NA           NA
+#> 99            NA  1.9411822283  0.535463523           NA           NA
+#> 100           NA  0.3788639049  0.681809486           NA           NA
+#> 101           NA  1.3730359409 -0.991818003           NA           NA
+#> 102           NA -0.3862981444 -0.074924833           NA           NA
+#> 103   1.13789038 -0.3175951484  0.480211970 -1.891979869  -1.01681072
+#> 104  -0.69207282  0.8506916510 -0.436681200           NA   1.17644844
+#> 105           NA -3.1786467502 -0.963488341           NA           NA
+#> 106           NA -1.8911404109           NA           NA           NA
+#> 107           NA -2.3218807062 -0.922049676           NA           NA
+#> 108           NA  0.3080271958  0.146785264           NA           NA
+#> 109           NA -0.8969683749 -1.664971107           NA           NA
+#> 110           NA -2.6792034589 -0.505041756           NA           NA
+#> 111           NA            NA -2.573647197           NA           NA
+#> 112           NA            NA  0.022469270           NA           NA
+#> 113  -0.37906364 -2.4821876969 -1.789287101  0.240786957           NA
+#> 114  -1.29735661  0.9953930230 -2.601272973 -0.708256543  -1.05399348
+#> 115           NA  0.5279439564 -1.380496262 -0.586145141  -1.65813597
+#> 116           NA            NA  1.244882005           NA           NA
+#> 117           NA -1.1276051965  0.974220047           NA           NA
+#> 118  -0.83226486  0.9555543777  0.024961866 -2.192976070   0.78654941
+#> 119   0.54351891  0.9784553764 -0.474923384 -0.107781092           NA
+#> 120  -1.74677340  3.0402169911  1.121422583  0.157827073   2.00925818
+#> 121   1.46181188 -0.9229992476  0.080213419 -0.312333556  -0.36760967
+#> 122           NA  2.7377894618 -1.391816554  0.884873623           NA
+#> 123   1.91835657  1.5466016637 -2.029830687 -0.347222528   0.07577404
+#> 124   1.45850051 -0.8862904763           NA  0.318768321  -1.13170146
+#> 125   0.16557434 -1.3751358484 -1.879069592 -1.116345319   0.23438285
+#> 126  -2.12613713 -2.1402978977  0.960083055  0.738130466  -0.46877588
+#> 127   1.08812478 -0.5092765783 -0.942767726  0.603355947  -0.38499291
+#> 128           NA -1.1600043793           NA           NA           NA
+#> 129           NA -0.8026816266 -1.119330478           NA           NA
+#> 130           NA -2.0763801932 -0.404034824           NA           NA
+#> 131           NA  0.2234846342           NA           NA           NA
+#> 132  -1.92529927 -1.3297404631 -1.870468990 -0.493662036   0.17526328
+#> 133   0.82390299  0.3746983989 -0.113964171  0.633767199  -0.55836198
+#> 134   0.37208883 -1.4718610017  1.363661610 -1.551313326           NA
+#> 135           NA            NA           NA           NA           NA
+#> 136           NA -1.7971895297 -2.961333899  0.089887752  -1.37657970
+#> 137   0.36877746 -1.6321679924 -3.356311851  0.464103707  -1.45274603
+#> 138  -2.38420923  0.8145319202 -1.884281878 -0.040945893  -1.25390408
+#> 139           NA  0.7389198696 -0.885862446           NA           NA
+#> 140           NA -1.5336652797 -3.142252515           NA           NA
+#> 141           NA -3.0043796084 -1.913258722 -0.600977336  -0.67150234
+#> 142  -1.26610973 -0.5946629873  1.840276796 -1.328273419   1.41480333
+#> 143   1.48735002 -1.8363673293 -0.131638427  0.569813581  -0.43489784
+#> 144   0.10730878  0.6928433520 -0.269767310  0.944029536           NA
+#> 145  -3.22909067            NA  1.541797376  1.514878425           NA
+#> 146           NA -0.9747443103           NA  2.542422112  -0.25645105
+#> 147   1.35906280 -0.4753010190 -0.659341139  1.123217984   0.89770802
+#> 148   1.60342308 -0.9591589783 -1.624236328  0.546045704   0.51898951
+#> 149   1.59727339 -3.0300138190 -0.776407599 -0.490220226  -2.66005330
+#> 150           NA            NA           NA           NA           NA
+#> 151           NA -0.1939969290 -1.381200147 -1.769868466  -0.43632761
+#> 152  -7.11492000  0.0306343782 -0.061111945  0.628486765  -1.74281935
+#> 153           NA  0.0212666319  0.715142043           NA           NA
+#> 154           NA -1.1150259427 -3.880515423           NA           NA
+#> 155           NA -3.2821993247 -2.853119147           NA           NA
+#> 156           NA  1.1895534313  0.055097942           NA           NA
+#> 157           NA  0.1586726240  0.541170304           NA           NA
+#> 158           NA -1.5228652393  0.853270926           NA           NA
+#> 159           NA            NA  1.068681330           NA           NA
+#> 160           NA  2.6688119455 -0.789534306           NA           NA
+#> 161           NA  0.8727690888 -1.573894401           NA           NA
+#> 162           NA            NA           NA           NA           NA
+#> 163           NA            NA           NA           NA           NA
+#> 164           NA            NA           NA           NA           NA
+#> 165           NA            NA           NA           NA           NA
+#> 166           NA            NA           NA           NA           NA
+#> 167           NA            NA           NA           NA           NA
+#> 168           NA  3.7463183110 -2.665445492           NA           NA
+#> 169           NA  0.7176643384  0.866972841           NA           NA
+#> 170           NA -0.6655501548  0.634664040           NA           NA
+#> 171           NA  0.4798356459 -0.809740156           NA           NA
+#> 172  -2.49791703 -2.5093763434  4.557512776 -0.665724379  -0.03738217
+#> 173  -0.71811612 -2.0357196412 -0.616704094 -1.567678761  -2.86704125
+#> 174   0.65151796 -0.1433582433 -2.580402236 -0.518749714  -2.48459061
+#> 175           NA            NA           NA           NA           NA
+#> 176           NA            NA           NA           NA           NA
+#> 177           NA            NA           NA           NA           NA
+#> 178   1.57542618            NA  1.966135544  0.345721429   1.91474674
+#> 179           NA -0.6166199375           NA           NA           NA
+#> 180           NA  1.5919767623  0.604869772           NA           NA
+#> 181           NA -3.2820771829 -2.304033498           NA           NA
+#> 182           NA  0.5824425178  2.205118671           NA           NA
+#> 183           NA -2.5689247665 -1.474220833           NA           NA
+#> 184           NA  0.2350978988 -0.419198780           NA           NA
+#> 185           NA            NA           NA           NA           NA
+#> 186 -11.06517958 -3.5311025778           NA -1.263027312   0.33794070
+#> 187           NA            NA           NA           NA           NA
+#> 188           NA -0.0991106818           NA           NA           NA
+#> 189           NA  3.5191566286  0.238799256           NA           NA
+#> 190           NA -0.1326298864 -1.545564739           NA           NA
+#> 191           NA -0.8061879410  1.348839461           NA           NA
+#> 192           NA -1.3605264557 -1.573190516           NA           NA
+#> 193           NA -0.9776199507 -0.458600196           NA           NA
+#> 194           NA -2.4817607981  3.822808426           NA           NA
+#> 195           NA -0.6261081715  0.671555156           NA           NA
+#> 196           NA -0.3923836382           NA           NA           NA
+#> 197           NA  0.6704913938 -1.057323886           NA           NA
+#> 198           NA -1.8998067382  0.102605465           NA           NA
+#> 199   1.13930954  1.7212654676  0.264801566 -0.942936369   0.19066479
+#> 200           NA -1.1053836761  2.404981747           NA           NA
+#> 201           NA -3.1809530634 -3.960993426           NA           NA
+#> 202           NA -1.7560407321           NA           NA           NA
+#> 203           NA -1.4765142015 -1.690790469           NA           NA
+#> 204  -0.39370445 -0.3311284008 -0.053005837  0.768292186  -2.07924957
+#> 205   1.43767791  1.1304927019           NA           NA  -1.88040761
+#> 206   0.97876795 -1.4536132028           NA  0.254520342   0.71815208
+#> 207  -4.98043876 -1.0366806801 -1.920013762 -1.582510956   0.72576872
+#> 208           NA -0.9450766854 -0.066818725 -2.009060370   1.70393574
+#> 209           NA  0.6906591805 -3.231884884 -0.215640286  -0.23716503
+#> 210   0.06047498 -0.7342531508 -1.718416246 -1.848119121  -0.48932342
+#> 211           NA  0.5915357439  1.302038389           NA           NA
+#> 212           NA -1.5298356408 -0.468279318           NA           NA
+#> 213           NA  1.0617897058  0.093340126           NA           NA
+#> 214           NA -2.1958742534  0.405440748           NA           NA
+#> 215           NA -2.4754007841 -3.891928985           NA           NA
+#> 216           NA -0.3285475673           NA           NA           NA
+#> 217           NA  0.1112859540 -0.496935649  0.149873185  -0.18294819
+#> 218           NA -0.5713653266 -0.295338133 -1.961488522   0.73428576
+#> 219  -0.07833001 -3.1554712313 -2.363943573 -2.200929958  -0.69488160
+#> 220   0.37726858            NA  0.121669788  3.976154787   0.20711908
+#> 221   0.37726858 -3.4898929853 -0.392028350 -0.407509874  -0.50365628
+#> 222  -0.10386815  0.7131332804 -1.895242658 -1.468042746  -0.86451855
+#> 223           NA -1.4816556468  0.123707037           NA   0.20504807
+#> 224           NA -1.0509153515 -2.027775733  0.456210983  -0.32211861
+#> 225   0.36024539 -3.1493857375 -3.013733345 -0.671218251  -2.19466967
+#> 226           NA -1.0965649703  0.090829826           NA           NA
+#> 227   0.86553321 -1.4053525137 -3.183691179 -0.822974286   0.04688966
+#> 228           NA  1.8768579117           NA           NA           NA
+#> 229           NA  0.8459771044  3.137175797           NA           NA
+#> 230           NA -0.1023929343 -3.637590215           NA           NA
+#> 231           NA  0.3145395884  0.742656847           NA           NA
+#> 232           NA -0.7392422176 -0.326178094           NA           NA
+#> 233           NA -1.3302895036 -0.839876232           NA           NA
+#> 234           NA -2.1092593256           NA  2.017583291  -1.30024512
+#> 235   0.29387655 -1.6404496483  0.388452673  1.743796776   2.16318886
+#> 236   1.25150469  0.8328504641 -0.459205664 -0.311048113  -0.62985528
+#> 237   0.33888835  0.2508964042 -0.334889670  0.921048038   0.38639490
+#> 238   0.33605004 -0.4775568738 -0.674616069 -0.746319769  -0.13315514
+#> 239   1.25150469 -2.1223859658 -2.513998217 -1.003205691   1.02862057
+#> 240  -1.03973373  0.8786524615 -0.431579888 -0.985761205   1.04385383
+#> 241   0.79732526 -1.5222454538  0.178808468  2.305363194   0.62332002
+#> 242   0.79543305 -0.6287706385 -0.390141223           NA  -0.11792187
+#> 243           NA  0.7452798836           NA           NA           NA
+#> 244           NA -3.0076618609  1.038545254           NA           NA
+#> 245   0.25459661 -0.2505989667 -0.524217052 -1.092273793  -1.66539148
+#> 246           NA            NA           NA           NA           NA
+#> 247   0.25601577 -0.7729432567  0.287768820 -1.066107063  -0.22099086
+#> 248           NA            NA           NA           NA           NA
+#> 249           NA -1.9992853902 -2.124465951           NA           NA
+#> 250           NA -3.1675721896 -0.693874643           NA           NA
+#> 251           NA -0.8400918169 -0.854033494           NA           NA
+#> 252           NA -1.1745135709 -1.964307100           NA           NA
+#> 253           NA  0.6673312831 -0.381774021           NA           NA
+#> 254           NA -1.0600085776 -0.867846382           NA           NA
+#> 255           NA -3.5754114862  1.214571947           NA           NA
+#> 256           NA -0.7255868235           NA           NA           NA
+#> 257           NA  1.8585190811 -3.339646855 -0.022671888   0.84727373
+#> 258  -0.56514337 -2.3795091416 -3.005516264 -2.673972167   0.51133237
+#> 259   1.61573073 -2.0090497985  0.801215854  0.906009451  -1.00172983
+#> 260           NA -0.2717931511 -0.519558530           NA           NA
+#> 261           NA -0.4139136897 -1.395013035           NA           NA
+#> 262           NA -1.4447944970 -0.908940674           NA           NA
+#> 263           NA            NA           NA           NA           NA
+#> 264           NA            NA           NA           NA           NA
+#> 265           NA            NA           NA           NA           NA
+#> 266           NA            NA           NA           NA           NA
+#> 267  -1.32289475            NA  0.949616770 -1.359684488  -0.51285507
+#> 268           NA  0.1952290167 -0.674354974 -2.104175524           NA
+#> 269           NA -1.4266990766  1.352811802  0.877729495  -0.09993789
+#> 270           NA -0.3422029614  1.732173017           NA           NA
+#> 271           NA  0.9453033779  1.163223325           NA           NA
+#> 272  -3.87890437  2.1412057225  0.539022081 -0.539672103  -1.07648226
+#> 273           NA            NA           NA           NA           NA
+#> 274   0.94507730 -0.0706935165 -0.743338702 -0.798073240  -2.61004158
+#> 275           NA            NA           NA           NA           NA
+#> 276  -2.72762152            NA  0.645813942 -1.355456299  -0.79842358
+#> 277           NA  1.3495859017 -0.488736272           NA           NA
+#> 278           NA  0.5918102641  0.915166545           NA           NA
+#> 279           NA  0.1748777415 -0.639740758           NA           NA
+#> 280           NA  0.8713367948  0.332403966           NA           NA
+#> 281           NA  0.0007629781  0.658317476           NA           NA
+#> 282           NA  2.4932648881  0.103180673           NA           NA
+#> 283           NA -0.8650962919  1.776808162           NA           NA
+#> 284           NA  0.7568318014  0.777037663           NA           NA
+#> 285           NA -0.3656530006 -2.131179426           NA           NA
+#> 286           NA -2.2351133998 -2.722159086  1.871687677   1.11613566
+#> 287           NA  1.4165820834  0.304778189  0.913921933   1.55951937
+#> 288  -4.92509001 -0.7734922972 -0.222732837 -0.017677080   0.36727713
+#> 289   1.49444581  0.2802895088  0.332403966 -0.914387122  -0.32064833
+#> 290   1.49255360  1.3707800861  1.304548689  0.665758255  -0.11418975
+#> 291           NA -2.5328263826  1.207858471 -0.087455025  -0.16750618
+#> 292           NA  0.5002062694  0.346216854  1.632246241   0.87159391
+#> 293  -4.92509001 -0.3794607732  0.034116232  1.366638076   2.73652834
+#> 294           NA  0.6761499889 -0.127435251           NA           NA
+#> 295           NA -2.2928942137           NA           NA           NA
+#> 296           NA -1.2711066324 -1.911565846           NA           NA
+#> 297  -0.39419462 -0.8679818824 -0.759853576  0.473405937   0.38833614
+#> 298   0.98442746  1.0654669663 -1.176861496 -1.311291903           NA
+#> 299   1.44571980  1.1257781553 -0.657798385 -1.434232825  -1.27707460
+#> 300  -0.18680212  0.1106147718  1.782514943  2.123542697           NA
+#> 301           NA -1.2345200029  2.065941530           NA           NA
+#> 302           NA -0.6663737156 -0.002663911           NA           NA
+#> 303           NA -2.9409401995  1.705233421           NA           NA
+#> 304           NA  2.2868813798  0.108887454           NA           NA
+#> 305   1.19276607            NA  1.393132799  0.125570150  -0.19829333
+#> 306           NA -1.3221722169  0.610465580           NA           NA
+#> 307           NA -2.1011420388 -0.806312840           NA           NA
+#> 308           NA  1.6091578191  1.180121721           NA           NA
+#> 309           NA -1.9286727430  2.550207477           NA           NA
+#> 310           NA            NA -0.371822500           NA           NA
+#> 311           NA  0.8204546989  1.398495207           NA           NA
+#> 312           NA -0.0959211151 -1.385405888           NA           NA
+#> 313           NA  0.8865768615  0.370395045           NA           NA
+#> 314           NA  1.1049905830 -2.688907242           NA           NA
+#> 315           NA  2.0075586244 -2.106144663           NA           NA
+#> 316           NA            NA           NA           NA           NA
+#> 317           NA  1.8753428820  1.525495482           NA           NA
+#> 318           NA  1.2017848273 -0.717081698           NA           NA
+#> 319           NA  1.0552856093  2.928461014           NA           NA
+#> 320           NA  0.6420522878 -0.189400280           NA           NA
+#> 321           NA  2.9466316618 -0.106522950           NA           NA
+#> 322           NA -0.6225530528  0.650211368           NA           NA
+#> 323           NA  1.0040895871 -0.584378231           NA           NA
+#> 324           NA  0.2709217625  2.649752368           NA           NA
+#> 325           NA  2.1955519054 -0.333235943           NA           NA
+#> 326           NA -2.0471908639 -1.305380666           NA           NA
+#> 327           NA -0.7596845246  1.207858471           NA           NA
+#> 328           NA  0.2940972814           NA           NA           NA
+#> 329   1.03506280  0.8255347974  0.561627258  0.683202741   0.61181888
+#> 330   1.49633802  1.1599565515  2.442448071 -0.879498150   1.36829405
+#> 331           NA            NA  0.543569630           NA           NA
+#> 332           NA -1.2756074537 -3.076635659           NA           NA
+#> 333           NA -1.8294582747 -1.171496524           NA           NA
+#> 334           NA            NA  0.466288108           NA           NA
+#> 335           NA -1.3896247533 -1.400719816           NA           NA
+#> 336           NA  1.8680392059 -0.942273231           NA           NA
+#> 337           NA  0.3468083333  0.237064816           NA           NA
+#> 338           NA  0.1177983466  0.869483141           NA           NA
+#> 339           NA -0.5190509367  0.328159226           NA           NA
+#> 340           NA -0.4870567120 -2.102202582           NA           NA
+#> 341           NA  0.8462516247 -0.588733944           NA           NA
+#> 342           NA  0.3239073347 -2.345238763  1.865613818   1.15310968
+#> 343           NA  2.4819874906 -2.212705688  2.017832823   2.03226046
+#> 344           NA  0.1039905740  0.209439039  0.472576418  -1.46068329
+#>     std_UDSVERTN std_UDSBENTC std_UDSBENTD std_CRAFTVRS std_CRAFTURS
+#> 1             NA           NA           NA           NA           NA
+#> 2             NA           NA           NA           NA           NA
+#> 3             NA           NA           NA           NA           NA
+#> 4             NA           NA           NA           NA           NA
+#> 5             NA           NA           NA           NA           NA
+#> 6             NA           NA           NA           NA           NA
+#> 7             NA           NA           NA           NA           NA
+#> 8             NA           NA           NA           NA           NA
+#> 9             NA           NA           NA           NA           NA
+#> 10            NA           NA           NA           NA           NA
+#> 11  -0.573872396  -1.03835552  0.079270000 -0.297099285 -2.770290616
+#> 12            NA           NA           NA           NA           NA
+#> 13            NA           NA           NA           NA           NA
+#> 14            NA           NA           NA           NA           NA
+#> 15            NA           NA           NA           NA           NA
+#> 16            NA           NA           NA           NA           NA
+#> 17   0.898271177   1.18304494 -3.389702197           NA           NA
+#> 18  -0.062797500   0.48178777  0.445048650  1.681431243 -2.209477285
+#> 19            NA           NA           NA           NA           NA
+#> 20            NA           NA           NA           NA           NA
+#> 21            NA           NA           NA           NA           NA
+#> 22  -1.503894013   1.22767783 -1.122764864  0.904887827  0.622614823
+#> 23   1.430039529  -2.09031325  1.623614586  1.491629135  2.149463092
+#> 24            NA           NA           NA           NA           NA
+#> 25            NA           NA           NA           NA           NA
+#> 26            NA           NA           NA           NA           NA
+#> 27            NA           NA           NA           NA           NA
+#> 28            NA           NA           NA           NA           NA
+#> 29            NA           NA           NA           NA           NA
+#> 30            NA           NA           NA           NA           NA
+#> 31            NA           NA           NA           NA           NA
+#> 32            NA           NA           NA           NA           NA
+#> 33            NA           NA           NA           NA           NA
+#> 34            NA           NA           NA           NA           NA
+#> 35   0.500768953           NA -0.900603152           NA  1.457082682
+#> 36  -0.248391645   0.12092490  0.247294040  1.882377474           NA
+#> 37            NA           NA           NA           NA           NA
+#> 38   0.782484022   0.88939862 -2.287875889  0.406839385 -1.315561262
+#> 39            NA           NA           NA           NA           NA
+#> 40            NA           NA           NA           NA           NA
+#> 41            NA           NA           NA           NA           NA
+#> 42            NA           NA           NA           NA           NA
+#> 43            NA           NA           NA           NA           NA
+#> 44            NA           NA           NA           NA           NA
+#> 45            NA           NA           NA           NA           NA
+#> 46   2.188153113   0.93661843  0.683765496  0.760754119  1.095484788
+#> 47   0.208728198   1.29053418 -0.372087110 -0.325984160 -0.139481974
+#> 48            NA           NA           NA           NA           NA
+#> 49   1.673843267   1.78250498  1.621850982  0.666256489  1.451714581
+#> 50            NA           NA           NA           NA           NA
+#> 51            NA           NA           NA           NA           NA
+#> 52            NA           NA           NA           NA           NA
+#> 53   0.007324024  -1.26784697  1.146486019           NA           NA
+#> 54   0.707248760   1.07118245 -0.871221534 -2.861072513  1.826765701
+#> 55            NA           NA           NA           NA           NA
+#> 56            NA           NA           NA           NA           NA
+#> 57            NA           NA           NA           NA           NA
+#> 58            NA           NA           NA           NA           NA
+#> 59            NA           NA           NA           NA           NA
+#> 60            NA           NA           NA           NA           NA
+#> 61            NA           NA           NA           NA           NA
+#> 62            NA           NA           NA           NA           NA
+#> 63            NA           NA           NA           NA           NA
+#> 64            NA           NA           NA           NA           NA
+#> 65            NA           NA           NA           NA           NA
+#> 66            NA           NA           NA           NA           NA
+#> 67            NA           NA           NA           NA           NA
+#> 68            NA           NA           NA           NA           NA
+#> 69            NA           NA           NA           NA           NA
+#> 70   1.210219441  -1.60083242           NA -1.139286459           NA
+#> 71   0.931623753  -3.02015089  0.282420815           NA           NA
+#> 72            NA           NA           NA           NA           NA
+#> 73            NA           NA           NA           NA           NA
+#> 74            NA           NA           NA           NA           NA
+#> 75            NA           NA           NA           NA           NA
+#> 76            NA           NA           NA           NA           NA
+#> 77            NA           NA           NA           NA           NA
+#> 78   0.302543607  -1.75556756 -4.082007480  1.232228168 -0.644321919
+#> 79   0.548331567  -0.79210860 -0.311781189  1.347029704  1.245196494
+#> 80   0.231713003   0.66922021  1.705926364           NA  1.171876843
+#> 81  -1.191194709  -9.22851535 -2.368200028 -0.212106454  1.150928371
+#> 82            NA           NA           NA           NA           NA
+#> 83            NA           NA           NA           NA           NA
+#> 84            NA           NA           NA           NA           NA
+#> 85            NA           NA           NA           NA           NA
+#> 86            NA           NA           NA           NA           NA
+#> 87            NA           NA           NA           NA           NA
+#> 88            NA           NA           NA           NA           NA
+#> 89            NA           NA           NA           NA           NA
+#> 90            NA           NA           NA           NA           NA
+#> 91            NA           NA           NA           NA           NA
+#> 92  -0.150056236  -0.36230456 -2.733986760 -0.215819809 -0.351372988
+#> 93  -0.199292098   1.23345735  0.785546679 -1.954234532 -0.817918195
+#> 94  -1.273797132  -3.37738495 -0.463472997 -1.509760741  1.082083046
+#> 95   0.343566913  -0.37910870  0.507459848  0.262093209 -2.054761450
+#> 96  -1.692006799  -1.89084993  0.898519119 -1.708077512  0.759779437
+#> 97            NA           NA           NA           NA           NA
+#> 98            NA           NA           NA           NA           NA
+#> 99            NA           NA           NA           NA           NA
+#> 100           NA           NA           NA           NA           NA
+#> 101           NA           NA           NA           NA           NA
+#> 102           NA           NA           NA           NA           NA
+#> 103 -1.338811494  -1.73788808 -0.005520252  0.476045698           NA
+#> 104           NA   1.36961507           NA  1.037556785  0.235187989
+#> 105           NA           NA           NA           NA           NA
+#> 106           NA           NA           NA           NA           NA
+#> 107           NA           NA           NA           NA           NA
+#> 108           NA           NA           NA           NA           NA
+#> 109           NA           NA           NA           NA           NA
+#> 110           NA           NA           NA           NA           NA
+#> 111           NA           NA           NA           NA           NA
+#> 112           NA           NA           NA           NA           NA
+#> 113 -0.035596264   1.05527625  0.748948752  0.923839145 -1.834793905
+#> 114 -1.467229850   1.03007004 -2.984679612 -1.409525892 -3.268249938
+#> 115  0.060388346   0.38762736 -2.264972267  0.191409300 -0.317543984
+#> 116           NA           NA           NA           NA           NA
+#> 117           NA           NA           NA           NA           NA
+#> 118  0.993669035  -2.22564429           NA -0.300350973  0.294759813
+#> 119 -3.086204262  -1.45717057  2.499902944  1.027029186  0.024827384
+#> 120  0.142917334   0.85665265  0.772132178  1.390223501           NA
+#> 121  0.645266357           NA -3.642492244 -0.431789290  0.336656757
+#> 122 -0.716560240           NA           NA -0.884622888 -0.452192060
+#> 123 -0.028480758  -1.46557264 -0.817385527  1.513302011  1.135979809
+#> 124 -0.821270723   0.78943609 -0.893227391 -2.303960922 -0.017069560
+#> 125  1.680875148  -0.33361351 -0.282709318 -1.087883656 -0.809640476
+#> 126 -1.121310908  -2.60542638  0.839907253 -2.728299289  1.444087082
+#> 127  1.530048184  -6.31336186 -1.808235116  0.496331922  0.437677016
+#> 128           NA           NA           NA           NA           NA
+#> 129           NA           NA           NA           NA           NA
+#> 130           NA           NA           NA           NA           NA
+#> 131           NA           NA           NA           NA           NA
+#> 132  0.208518449           NA           NA -1.877912374  0.217513108
+#> 133 -1.861958758   1.17291826 -1.690113619 -0.254216354 -0.374722930
+#> 134 -2.506408871  -0.98966772 -3.530856825 -2.115709587 -3.312556945
+#> 135           NA           NA           NA           NA           NA
+#> 136 -2.352462526  -0.20438987  0.934328838 -3.574528062 -3.000727572
+#> 137 -2.311952538   0.47166109 -0.415813322  0.298934926 -1.423029940
+#> 138  0.710867471   1.18972240 -0.542216427  0.916646067 -1.755807784
+#> 139           NA           NA           NA           NA           NA
+#> 140           NA           NA           NA           NA           NA
+#> 141  0.450886836  -0.13777900  1.003449016           NA           NA
+#> 142 -0.618825571   1.51852201 -3.243159447 -3.097223952  1.392040750
+#> 143  2.499979049   0.80886278  0.566310780 -0.079269319 -2.190400482
+#> 144 -2.698028651  -0.03522956 -2.246945981 -1.152132651  0.228517146
+#> 145 -0.619898078   0.34649236  1.268771964 -0.128659186 -0.997180940
+#> 146 -0.259650146           NA           NA -0.193219048 -0.310676779
+#> 147  1.366439772   1.17378056  0.007902332  0.927484533  1.049459603
+#> 148  2.241832161   1.42842955  1.105246363 -1.706842816 -0.532712356
+#> 149 -1.449128471  -0.20094064  0.410819640  1.317153032 -0.388470757
+#> 150           NA           NA           NA           NA           NA
+#> 151  1.849800115           NA           NA  0.757960538  0.017626739
+#> 152           NA   1.28559438 -0.787638794 -2.838224796           NA
+#> 153           NA           NA           NA           NA           NA
+#> 154           NA           NA           NA           NA           NA
+#> 155           NA           NA           NA           NA           NA
+#> 156           NA           NA           NA           NA           NA
+#> 157           NA           NA           NA           NA           NA
+#> 158           NA           NA           NA           NA           NA
+#> 159           NA           NA           NA           NA           NA
+#> 160           NA           NA           NA           NA           NA
+#> 161           NA           NA           NA           NA           NA
+#> 162           NA           NA           NA           NA           NA
+#> 163           NA           NA           NA           NA           NA
+#> 164           NA           NA           NA           NA           NA
+#> 165           NA           NA           NA           NA           NA
+#> 166           NA           NA           NA           NA           NA
+#> 167           NA           NA           NA           NA           NA
+#> 168           NA           NA           NA           NA           NA
+#> 169           NA           NA           NA           NA           NA
+#> 170           NA           NA           NA           NA           NA
+#> 171           NA           NA           NA           NA           NA
+#> 172  0.757106280  -0.14790568 -0.954748906 -2.360307722  0.284161916
+#> 173 -3.937955035  -1.30662908  0.367512732  1.663069912 -0.103786127
+#> 174 -2.892747002   0.11268938  1.161481230 -2.724063915  0.892149703
+#> 175           NA           NA           NA           NA           NA
+#> 176           NA           NA           NA           NA           NA
+#> 177           NA           NA           NA           NA           NA
+#> 178  1.210355755  -2.02891185 -3.347175416 -1.994483947 -1.916869614
+#> 179           NA           NA           NA           NA           NA
+#> 180           NA           NA           NA           NA           NA
+#> 181           NA           NA           NA           NA           NA
+#> 182           NA           NA           NA           NA           NA
+#> 183           NA           NA           NA           NA           NA
+#> 184           NA           NA           NA           NA           NA
+#> 185           NA           NA           NA           NA           NA
+#> 186 -0.260883154  -0.33102659 -4.698906367  0.808443566 -1.304006185
+#> 187           NA           NA           NA           NA           NA
+#> 188           NA           NA           NA           NA           NA
+#> 189           NA           NA           NA           NA           NA
+#> 190           NA           NA           NA           NA           NA
+#> 191           NA           NA           NA           NA           NA
+#> 192           NA           NA           NA           NA           NA
+#> 193           NA           NA           NA           NA           NA
+#> 194           NA           NA           NA           NA           NA
+#> 195           NA           NA           NA           NA           NA
+#> 196           NA           NA           NA           NA           NA
+#> 197           NA           NA           NA           NA           NA
+#> 198           NA           NA           NA           NA           NA
+#> 199  1.370509333  -0.95261022  1.899214861  0.006492486  0.743630140
+#> 200           NA           NA           NA           NA           NA
+#> 201           NA           NA           NA           NA           NA
+#> 202           NA           NA           NA           NA           NA
+#> 203           NA           NA           NA           NA           NA
+#> 204  0.968078166           NA -0.992785329 -2.761902638           NA
+#> 205 -0.481007167  -0.31189215 -2.948081684 -2.309069041 -0.008120907
+#> 206 -1.000807937  -4.88072411  1.415981495  1.969387297 -3.103068460
+#> 207  1.052217522   0.44817950  0.343926166  2.142624648 -4.494627550
+#> 208  0.448277396           NA           NA  1.186798611           NA
+#> 209           NA           NA           NA  0.806884682 -0.029069379
+#> 210 -0.132604489   1.17464287 -1.586089568 -3.331773532  0.791202145
+#> 211           NA           NA           NA           NA           NA
+#> 212           NA           NA           NA           NA           NA
+#> 213           NA           NA           NA           NA           NA
+#> 214           NA           NA           NA           NA           NA
+#> 215           NA           NA           NA           NA           NA
+#> 216           NA           NA           NA           NA           NA
+#> 217 -0.649935511   1.01994336 -1.650869683  0.340651126  1.163484055
+#> 218 -0.557070281   0.98633509  0.442679733           NA -0.280446215
+#> 219 -1.460177223   0.21786137 -2.508830089 -0.855290716 -1.132140446
+#> 220 -2.662450982  -0.59262269 -1.197399215 -1.070327101  0.487454130
+#> 221 -0.618151397   0.16744896 -3.757849765 -0.740572013 -0.073359201
+#> 222 -0.248440537  -2.02296578  0.232161238 -2.032198407           NA
+#> 223 -1.514282524  -0.36838938 -0.094906125           NA -4.606442068
+#> 224 -2.214207260           NA           NA -1.462327514  0.087151589
+#> 225  0.750651015  -1.16206930  0.169750041  1.365670155  1.240200958
+#> 226           NA           NA           NA           NA           NA
+#> 227  0.459612710   0.63069472           NA  0.019813667  0.910222133
+#> 228           NA           NA           NA           NA           NA
+#> 229           NA           NA           NA           NA           NA
+#> 230           NA           NA           NA           NA           NA
+#> 231           NA           NA           NA           NA           NA
+#> 232           NA           NA           NA           NA           NA
+#> 233           NA           NA           NA           NA           NA
+#> 234 -2.142814445   1.51245024  1.723831224           NA           NA
+#> 235  1.345540534   1.28627709 -3.454336640 -0.215043220  2.499043697
+#> 236 -1.029259544   0.70545103  0.655575226 -0.097383695 -1.260912273
+#> 237  1.093572904   0.02099801  1.248879465  0.637364743  2.198235832
+#> 238  1.041217662  -0.02941441  2.194531689 -1.885957259  1.854983752
+#> 239  0.759502593  -0.81469226  1.021353876 -0.921771415  0.141121053
+#> 240  0.138110720   0.72225517  0.706136468 -0.740174258 -0.118337140
+#> 241 -2.100645198  -1.49914529  1.614658115           NA  0.515795841
+#> 242 -0.219017831   0.74746138 -1.412693569  0.768803059  1.034712228
+#> 243           NA           NA           NA           NA           NA
+#> 244           NA           NA           NA           NA           NA
+#> 245  1.047547222   0.64577424  0.975266829 -1.337603231  0.606465525
+#> 246           NA           NA           NA           NA           NA
+#> 247  1.584799740  -0.84916285  0.685330042  2.149904614  0.637888233
+#> 248           NA           NA           NA           NA           NA
+#> 249           NA           NA           NA           NA           NA
+#> 250           NA           NA           NA           NA           NA
+#> 251           NA           NA           NA           NA           NA
+#> 252           NA           NA           NA           NA           NA
+#> 253           NA           NA           NA           NA           NA
+#> 254           NA           NA           NA           NA           NA
+#> 255           NA           NA           NA           NA           NA
+#> 256           NA           NA           NA           NA           NA
+#> 257 -0.442896870  -1.20407964  0.409125586  1.323871121           NA
+#> 258 -2.089557917           NA  0.446256162  0.555683456 -0.069961949
+#> 259  0.722353086   0.09830561 -3.878966222 -0.038558236  2.073869398
+#> 260           NA           NA           NA           NA           NA
+#> 261           NA           NA           NA           NA           NA
+#> 262           NA           NA           NA           NA           NA
+#> 263           NA           NA           NA           NA           NA
+#> 264           NA           NA           NA           NA           NA
+#> 265           NA           NA           NA           NA           NA
+#> 266           NA           NA           NA           NA           NA
+#> 267 -1.660949129   0.30938619  0.122090366 -0.113270423 -1.862819361
+#> 268  0.458763938           NA           NA  0.001448280 -1.364851445
+#> 269  0.696849639   1.00224129           NA           NA -0.264173256
+#> 270           NA           NA           NA           NA           NA
+#> 271           NA           NA           NA           NA           NA
+#> 272  0.141320899   0.51134114 -1.623895008  0.012537756 -1.523968905
+#> 273           NA           NA           NA           NA           NA
+#> 274 -0.450550236   0.71961958 -0.104521295 -0.828665732  1.884137242
+#> 275           NA           NA           NA           NA           NA
+#> 276  1.753302187   0.62719682 -4.040394627  0.728151833 -0.754739339
+#> 277           NA           NA           NA           NA           NA
+#> 278           NA           NA           NA           NA           NA
+#> 279           NA           NA           NA           NA           NA
+#> 280           NA           NA           NA           NA           NA
+#> 281           NA           NA           NA           NA           NA
+#> 282           NA           NA           NA           NA           NA
+#> 283           NA           NA           NA           NA           NA
+#> 284           NA           NA           NA           NA           NA
+#> 285           NA           NA           NA           NA           NA
+#> 286 -0.801436649   0.95169795           NA           NA           NA
+#> 287 -1.347415040   0.15801803  0.163401553           NA           NA
+#> 288  0.177083775   0.90968761  0.138120932           NA  0.458950335
+#> 289  0.331030120   0.17482217 -0.883373155  1.694903224 -2.033286944
+#> 290  0.296126626   0.14121389 -0.252938339 -1.141454252 -0.392743896
+#> 291 -0.787104282           NA           NA -1.529727988 -2.989723534
+#> 292  0.850830890           NA           NA  0.219365135  0.781253944
+#> 293 -0.206222397   0.14961596  0.138120932  0.845436083 -1.503896321
+#> 294           NA           NA           NA           NA           NA
+#> 295           NA           NA           NA           NA           NA
+#> 296           NA           NA           NA           NA           NA
+#> 297  0.857034746  -1.76077702 -2.537901959  0.590357380 -3.283403455
+#> 298  0.534809689  -7.78253572  0.199512938 -0.010634148  1.276422839
+#> 299  1.839400995  -0.92912863           NA -1.177687060 -0.671278893
+#> 300 -0.001366944   0.15974264 -0.464131696 -1.069618479  0.794129651
+#> 301           NA           NA           NA           NA           NA
+#> 302           NA           NA           NA           NA           NA
+#> 303           NA           NA           NA           NA           NA
+#> 304           NA           NA           NA           NA           NA
+#> 305  0.204934643   0.23536126           NA -0.499747585           NA
+#> 306           NA           NA           NA           NA           NA
+#> 307           NA           NA           NA           NA           NA
+#> 308           NA           NA           NA           NA           NA
+#> 309           NA           NA           NA           NA           NA
+#> 310           NA           NA           NA           NA           NA
+#> 311           NA           NA           NA           NA           NA
+#> 312           NA           NA           NA           NA           NA
+#> 313           NA           NA           NA           NA           NA
+#> 314           NA           NA           NA           NA           NA
+#> 315           NA           NA           NA           NA           NA
+#> 316           NA           NA           NA           NA           NA
+#> 317           NA           NA           NA           NA           NA
+#> 318           NA           NA           NA           NA           NA
+#> 319           NA           NA           NA           NA           NA
+#> 320           NA           NA           NA           NA           NA
+#> 321           NA           NA           NA           NA           NA
+#> 322           NA           NA           NA           NA           NA
+#> 323           NA           NA           NA           NA           NA
+#> 324           NA           NA           NA           NA           NA
+#> 325           NA           NA           NA           NA           NA
+#> 326           NA           NA           NA           NA           NA
+#> 327           NA           NA           NA           NA           NA
+#> 328           NA           NA           NA           NA           NA
+#> 329  0.185809649   0.15801803 -2.031270347  0.853795890 -1.493422085
+#> 330  2.154695752   0.20843044  2.143978529  1.398587363 -0.028543344
+#> 331           NA           NA           NA           NA           NA
+#> 332           NA           NA           NA           NA           NA
+#> 333           NA           NA           NA           NA           NA
+#> 334           NA           NA           NA           NA           NA
+#> 335           NA           NA           NA           NA           NA
+#> 336           NA           NA           NA           NA           NA
+#> 337           NA           NA           NA           NA           NA
+#> 338           NA           NA           NA           NA           NA
+#> 339           NA           NA           NA           NA           NA
+#> 340           NA           NA           NA           NA           NA
+#> 341           NA           NA           NA           NA           NA
+#> 342  0.503752019  -1.62198372 -0.121394259           NA           NA
+#> 343 -1.619080429  -0.93753069  1.114194752           NA           NA
+#> 344 -1.421504716   1.40990080 -0.878232180           NA           NA
+#>     std_CRAFTDVR std_CRAFTDRE std_REY1REC std_REY2REC std_REY3REC std_REY4REC
+#> 1             NA           NA          NA          NA          NA          NA
+#> 2             NA           NA          NA          NA          NA          NA
+#> 3             NA           NA          NA          NA          NA          NA
+#> 4             NA           NA          NA          NA          NA          NA
+#> 5             NA           NA          NA          NA          NA          NA
+#> 6             NA           NA          NA          NA          NA          NA
+#> 7             NA           NA          NA          NA          NA          NA
+#> 8             NA           NA          NA          NA          NA          NA
+#> 9             NA           NA          NA          NA          NA          NA
+#> 10            NA           NA          NA          NA          NA          NA
+#> 11    0.38400432  -0.92462910          NA          NA          NA          NA
+#> 12            NA           NA          NA          NA          NA          NA
+#> 13            NA           NA          NA          NA          NA          NA
+#> 14            NA           NA          NA          NA          NA          NA
+#> 15            NA           NA          NA          NA          NA          NA
+#> 16            NA           NA          NA          NA          NA          NA
+#> 17   -0.18817905  -2.61767385          NA          NA          NA          NA
+#> 18    0.87970613           NA          NA          NA          NA          NA
+#> 19            NA           NA          NA          NA          NA          NA
+#> 20            NA           NA          NA          NA          NA          NA
+#> 21            NA           NA          NA          NA          NA          NA
+#> 22   -1.38853765  -0.61478861          NA          NA          NA          NA
+#> 23   -2.38187914           NA          NA          NA          NA          NA
+#> 24            NA           NA          NA          NA          NA          NA
+#> 25            NA           NA          NA          NA          NA          NA
+#> 26            NA           NA          NA          NA          NA          NA
+#> 27            NA           NA          NA          NA          NA          NA
+#> 28            NA           NA          NA          NA          NA          NA
+#> 29            NA           NA          NA          NA          NA          NA
+#> 30            NA           NA          NA          NA          NA          NA
+#> 31            NA           NA          NA          NA          NA          NA
+#> 32            NA           NA          NA          NA          NA          NA
+#> 33            NA           NA          NA          NA          NA          NA
+#> 34            NA           NA          NA          NA          NA          NA
+#> 35   -1.39232928   0.21835686          NA          NA          NA          NA
+#> 36    1.76896741  -2.42938089          NA          NA          NA          NA
+#> 37            NA           NA          NA          NA          NA          NA
+#> 38    1.77989335  -1.88200859          NA          NA          NA          NA
+#> 39            NA           NA          NA          NA          NA          NA
+#> 40            NA           NA          NA          NA          NA          NA
+#> 41            NA           NA          NA          NA          NA          NA
+#> 42            NA           NA          NA          NA          NA          NA
+#> 43            NA           NA          NA          NA          NA          NA
+#> 44            NA           NA          NA          NA          NA          NA
+#> 45            NA           NA          NA          NA          NA          NA
+#> 46   -2.36751151           NA          NA          NA          NA          NA
+#> 47    0.33030258  -0.87315177          NA          NA          NA          NA
+#> 48            NA           NA          NA          NA          NA          NA
+#> 49    1.02811490   1.26768268          NA          NA          NA          NA
+#> 50            NA           NA          NA          NA          NA          NA
+#> 51            NA           NA          NA          NA          NA          NA
+#> 52            NA           NA          NA          NA          NA          NA
+#> 53            NA           NA          NA          NA          NA          NA
+#> 54   -2.48105430  -2.59460505          NA          NA          NA          NA
+#> 55            NA           NA          NA          NA          NA          NA
+#> 56            NA           NA          NA          NA          NA          NA
+#> 57            NA           NA          NA          NA          NA          NA
+#> 58            NA           NA          NA          NA          NA          NA
+#> 59            NA           NA          NA          NA          NA          NA
+#> 60            NA           NA          NA          NA          NA          NA
+#> 61            NA           NA          NA          NA          NA          NA
+#> 62            NA           NA          NA          NA          NA          NA
+#> 63            NA           NA          NA          NA          NA          NA
+#> 64            NA           NA          NA          NA          NA          NA
+#> 65            NA           NA          NA          NA          NA          NA
+#> 66            NA           NA          NA          NA          NA          NA
+#> 67            NA           NA          NA          NA          NA          NA
+#> 68            NA           NA          NA          NA          NA          NA
+#> 69            NA           NA          NA          NA          NA          NA
+#> 70    1.21599564  -1.08428711          NA          NA          NA          NA
+#> 71   -0.30523249  -3.33738505          NA          NA          NA          NA
+#> 72            NA           NA          NA          NA          NA          NA
+#> 73            NA           NA          NA          NA          NA          NA
+#> 74            NA           NA          NA          NA          NA          NA
+#> 75            NA           NA          NA          NA          NA          NA
+#> 76            NA           NA          NA          NA          NA          NA
+#> 77            NA           NA          NA          NA          NA          NA
+#> 78    1.50317884   1.00660176          NA          NA          NA          NA
+#> 79   -0.75908433   1.06976321          NA          NA          NA          NA
+#> 80   -2.32267133   0.17867895          NA          NA          NA          NA
+#> 81            NA  -0.11410514          NA          NA          NA          NA
+#> 82            NA           NA          NA          NA          NA          NA
+#> 83            NA           NA          NA          NA          NA          NA
+#> 84            NA           NA          NA          NA          NA          NA
+#> 85            NA           NA          NA          NA          NA          NA
+#> 86            NA           NA          NA          NA          NA          NA
+#> 87            NA           NA          NA          NA          NA          NA
+#> 88            NA           NA          NA          NA          NA          NA
+#> 89            NA           NA          NA          NA          NA          NA
+#> 90            NA           NA          NA          NA          NA          NA
+#> 91            NA           NA          NA          NA          NA          NA
+#> 92    0.93568070  -3.45783025          NA          NA          NA          NA
+#> 93    0.86878020  -0.67004089          NA          NA          NA          NA
+#> 94            NA  -0.47911252          NA          NA          NA          NA
+#> 95    1.90523246  -4.01793451          NA          NA          NA          NA
+#> 96            NA  -0.53004037          NA          NA          NA          NA
+#> 97            NA           NA          NA          NA          NA          NA
+#> 98            NA           NA          NA          NA          NA          NA
+#> 99            NA           NA          NA          NA          NA          NA
+#> 100           NA           NA          NA          NA          NA          NA
+#> 101           NA           NA          NA          NA          NA          NA
+#> 102           NA           NA          NA          NA          NA          NA
+#> 103  -2.82608313  -0.82134246          NA          NA          NA          NA
+#> 104   1.06170494   0.34979393          NA          NA          NA          NA
+#> 105           NA           NA          NA          NA          NA          NA
+#> 106           NA           NA          NA          NA          NA          NA
+#> 107           NA           NA          NA          NA          NA          NA
+#> 108           NA           NA          NA          NA          NA          NA
+#> 109           NA           NA          NA          NA          NA          NA
+#> 110           NA           NA          NA          NA          NA          NA
+#> 111           NA           NA          NA          NA          NA          NA
+#> 112           NA           NA          NA          NA          NA          NA
+#> 113  -0.80179333   1.71087506          NA          NA          NA          NA
+#> 114  -0.50410327   1.67267916          NA          NA          NA          NA
+#> 115   0.80549741  -0.28763467          NA          NA          NA          NA
+#> 116           NA           NA          NA          NA          NA          NA
+#> 117           NA           NA          NA          NA          NA          NA
+#> 118  -1.28359609   0.68368685          NA          NA          NA          NA
+#> 119   0.87537104  -1.70946269          NA          NA          NA          NA
+#> 120   0.75384085  -3.26245584          NA          NA          NA          NA
+#> 121   3.05619004  -3.27518781          NA          NA          NA          NA
+#> 122  -1.02002872   2.40219553          NA          NA          NA          NA
+#> 123   1.19491298           NA          NA          NA          NA          NA
+#> 124  -0.98590602  -0.95843005          NA          NA          NA          NA
+#> 125  -2.09504821  -0.93868716          NA          NA          NA          NA
+#> 126  -2.08412228  -0.12399469          NA          NA          NA          NA
+#> 127  -0.31159759   1.35265775          NA          NA          NA          NA
+#> 128           NA           NA          NA          NA          NA          NA
+#> 129           NA           NA          NA          NA          NA          NA
+#> 130           NA           NA          NA          NA          NA          NA
+#> 131           NA           NA          NA          NA          NA          NA
+#> 132  -0.84537268   0.60146920          NA          NA          NA          NA
+#> 133  -1.86955411  -2.64456870          NA          NA          NA          NA
+#> 134           NA  -1.12972036          NA          NA          NA          NA
+#> 135           NA           NA          NA          NA          NA          NA
+#> 136  -3.00568469  -1.89348497          NA          NA          NA          NA
+#> 137   0.68543651  -3.62472562          NA          NA          NA          NA
+#> 138  -0.85629861  -0.21322327          NA          NA          NA          NA
+#> 139           NA           NA          NA          NA          NA          NA
+#> 140           NA           NA          NA          NA          NA          NA
+#> 141           NA           NA          NA          NA          NA          NA
+#> 142   0.68961282  -0.40673333          NA          NA          NA          NA
+#> 143   0.92040238   0.20429879          NA          NA          NA          NA
+#> 144  -2.49353574  -1.25962169          NA          NA          NA          NA
+#> 145  -1.45220492           NA          NA          NA          NA          NA
+#> 146  -2.47773124   0.88860277          NA          NA     78.0337    44.68338
+#> 147   0.28754195  -0.76624609          NA          NA          NA          NA
+#> 148           NA   1.24087818          NA          NA          NA          NA
+#> 149   1.49185113   1.07536264          NA          NA          NA          NA
+#> 150           NA           NA          NA          NA          NA          NA
+#> 151  -0.69031276   0.42618571          NA          NA          NA          NA
+#> 152  -0.20419200  -1.91608706          NA          NA          NA          NA
+#> 153           NA           NA          NA          NA          NA          NA
+#> 154           NA           NA          NA          NA          NA          NA
+#> 155           NA           NA          NA          NA          NA          NA
+#> 156           NA           NA          NA          NA          NA          NA
+#> 157           NA           NA          NA          NA          NA          NA
+#> 158           NA           NA          NA          NA          NA          NA
+#> 159           NA           NA          NA          NA          NA          NA
+#> 160           NA           NA          NA          NA          NA          NA
+#> 161           NA           NA          NA          NA          NA          NA
+#> 162           NA           NA          NA          NA          NA          NA
+#> 163           NA           NA          NA          NA          NA          NA
+#> 164           NA           NA          NA          NA          NA          NA
+#> 165           NA           NA          NA          NA          NA          NA
+#> 166           NA           NA          NA          NA          NA          NA
+#> 167           NA           NA          NA          NA          NA          NA
+#> 168           NA           NA          NA          NA          NA          NA
+#> 169           NA           NA          NA          NA          NA          NA
+#> 170           NA           NA          NA          NA          NA          NA
+#> 171           NA           NA          NA          NA          NA          NA
+#> 172   1.12858815   0.68509834          NA          NA          NA          NA
+#> 173  -3.31650461           NA          NA          NA          NA          NA
+#> 174  -1.13434072  -3.99920956          NA          NA          NA          NA
+#> 175           NA           NA          NA          NA          NA          NA
+#> 176           NA           NA          NA          NA          NA          NA
+#> 177           NA           NA          NA          NA          NA          NA
+#> 178   0.69597792   0.24962722          NA          NA          NA          NA
+#> 179           NA           NA          NA          NA          NA          NA
+#> 180           NA           NA          NA          NA          NA          NA
+#> 181           NA           NA          NA          NA          NA          NA
+#> 182           NA           NA          NA          NA          NA          NA
+#> 183           NA           NA          NA          NA          NA          NA
+#> 184           NA           NA          NA          NA          NA          NA
+#> 185           NA           NA          NA          NA          NA          NA
+#> 186           NA   0.41915800          NA          NA          NA          NA
+#> 187           NA           NA          NA          NA          NA          NA
+#> 188           NA           NA          NA          NA          NA          NA
+#> 189           NA           NA          NA          NA          NA          NA
+#> 190           NA           NA          NA          NA          NA          NA
+#> 191           NA           NA          NA          NA          NA          NA
+#> 192           NA           NA          NA          NA          NA          NA
+#> 193           NA           NA          NA          NA          NA          NA
+#> 194           NA           NA          NA          NA          NA          NA
+#> 195           NA           NA          NA          NA          NA          NA
+#> 196           NA           NA          NA          NA          NA          NA
+#> 197           NA           NA          NA          NA          NA          NA
+#> 198           NA           NA          NA          NA          NA          NA
+#> 199  -0.14956231   1.35541477          NA          NA          NA          NA
+#> 200           NA           NA          NA          NA          NA          NA
+#> 201           NA           NA          NA          NA          NA          NA
+#> 202           NA           NA          NA          NA          NA          NA
+#> 203           NA           NA          NA          NA          NA          NA
+#> 204   0.56016420  -0.64457697          NA          NA          NA          NA
+#> 205  -0.65110305           NA          NA          NA          NA          NA
+#> 206   1.15554433  -3.92881076          NA          NA          NA          NA
+#> 207   1.82740601   0.09372371          NA          NA          NA          NA
+#> 208  -3.08590837           NA          NA    68.38180          NA    23.58862
+#> 209           NA   0.60290012          NA          NA          NA          NA
+#> 210  -1.85144436   0.57743619          NA          NA          NA          NA
+#> 211           NA           NA          NA          NA          NA          NA
+#> 212           NA           NA          NA          NA          NA          NA
+#> 213           NA           NA          NA          NA          NA          NA
+#> 214           NA           NA          NA          NA          NA          NA
+#> 215           NA           NA          NA          NA          NA          NA
+#> 216           NA           NA          NA          NA          NA          NA
+#> 217  -2.68118014  -0.49277703          NA          NA          NA          NA
+#> 218  -0.08114089  -1.34566539          NA          NA          NA          NA
+#> 219  -3.39674558   2.38408499          NA          NA          NA          NA
+#> 220   0.83378118  -2.77138998          NA          NA          NA          NA
+#> 221  -1.97519576  -1.16746897          NA          NA          NA          NA
+#> 222   0.06091358  -2.16468228          NA          NA          NA          NA
+#> 223  -3.23418412  -0.08972967          NA          NA          NA          NA
+#> 224  -3.31066568  -4.18865593          NA    46.12835          NA          NA
+#> 225  -3.27788787  -2.01189870          NA          NA          NA          NA
+#> 226           NA           NA          NA          NA          NA          NA
+#> 227  -0.81425748   0.19008482          NA          NA          NA          NA
+#> 228           NA           NA          NA          NA          NA          NA
+#> 229           NA           NA          NA          NA          NA          NA
+#> 230           NA           NA          NA          NA          NA          NA
+#> 231           NA           NA          NA          NA          NA          NA
+#> 232           NA           NA          NA          NA          NA          NA
+#> 233           NA           NA          NA          NA          NA          NA
+#> 234           NA           NA          NA          NA          NA          NA
+#> 235   0.94375809  -1.69926132          NA          NA          NA          NA
+#> 236  -0.89021286   1.63419190          NA          NA          NA          NA
+#> 237   0.19952420  -1.99370277          NA          NA          NA          NA
+#> 238   0.79490433  -1.53545422          NA          NA          NA          NA
+#> 239  -0.55974499  -3.17757112          NA          NA          NA          NA
+#> 240           NA           NA          NA          NA          NA          NA
+#> 241   1.68662963  -0.12246159          NA          NA          NA          NA
+#> 242  -0.33988137   3.03445256          NA          NA          NA          NA
+#> 243           NA           NA          NA          NA          NA          NA
+#> 244           NA           NA          NA          NA          NA          NA
+#> 245   2.16369552   1.00334637          NA          NA          NA          NA
+#> 246           NA           NA          NA          NA          NA          NA
+#> 247  -2.76054480   2.11082293          NA          NA          NA          NA
+#> 248           NA           NA          NA          NA          NA          NA
+#> 249           NA           NA          NA          NA          NA          NA
+#> 250           NA           NA          NA          NA          NA          NA
+#> 251           NA           NA          NA          NA          NA          NA
+#> 252           NA           NA          NA          NA          NA          NA
+#> 253           NA           NA          NA          NA          NA          NA
+#> 254           NA           NA          NA          NA          NA          NA
+#> 255           NA           NA          NA          NA          NA          NA
+#> 256           NA           NA          NA          NA          NA          NA
+#> 257  -1.34971030  -1.54091819          NA          NA          NA          NA
+#> 258   0.16059190  -0.10251272          NA          NA          NA          NA
+#> 259  -0.38468697   1.29614989          NA          NA          NA          NA
+#> 260           NA           NA          NA          NA          NA          NA
+#> 261           NA           NA          NA          NA          NA          NA
+#> 262           NA           NA          NA          NA          NA          NA
+#> 263           NA           NA          NA          NA          NA          NA
+#> 264           NA           NA          NA          NA          NA          NA
+#> 265           NA           NA          NA          NA          NA          NA
+#> 266           NA           NA          NA          NA          NA          NA
+#> 267  -3.32533374           NA          NA          NA          NA          NA
+#> 268  -1.40808211  -0.01195805          NA          NA          NA          NA
+#> 269  -1.42993398           NA          NA          NA          NA          NA
+#> 270           NA           NA          NA          NA          NA          NA
+#> 271           NA           NA          NA          NA          NA          NA
+#> 272   1.82364660   1.06695510          NA          NA          NA          NA
+#> 273           NA           NA          NA          NA          NA          NA
+#> 274  -2.68873119   1.58092000          NA          NA          NA          NA
+#> 275           NA           NA          NA          NA          NA          NA
+#> 276   1.48716589   0.10426755          NA          NA          NA          NA
+#> 277           NA           NA          NA          NA          NA          NA
+#> 278           NA           NA          NA          NA          NA          NA
+#> 279           NA           NA          NA          NA          NA          NA
+#> 280           NA           NA          NA          NA          NA          NA
+#> 281           NA           NA          NA          NA          NA          NA
+#> 282           NA           NA          NA          NA          NA          NA
+#> 283           NA           NA          NA          NA          NA          NA
+#> 284           NA           NA          NA          NA          NA          NA
+#> 285           NA           NA          NA          NA          NA          NA
+#> 286           NA           NA          NA          NA          NA          NA
+#> 287           NA           NA          NA          NA          NA          NA
+#> 288   0.88627968  -3.11807981          NA          NA          NA          NA
+#> 289   1.24952537   1.99919927          NA          NA          NA          NA
+#> 290   1.70152344  -2.86349160          NA          NA          NA          NA
+#> 291  -1.67963688  -1.08137418          NA          NA          NA          NA
+#> 292   1.92138706  -0.12663011          NA          NA          NA          NA
+#> 293   0.39057787   0.62440254          NA          NA          NA          NA
+#> 294           NA           NA          NA          NA          NA          NA
+#> 295           NA           NA          NA          NA          NA          NA
+#> 296           NA           NA          NA          NA          NA          NA
+#> 297   0.91342918  -1.48850832          NA          NA          NA          NA
+#> 298   0.32897499           NA          NA          NA          NA          NA
+#> 299   0.19557362   0.57748728          NA          NA          NA          NA
+#> 300   0.75008143           NA          NA          NA          NA          NA
+#> 301           NA           NA          NA          NA          NA          NA
+#> 302           NA           NA          NA          NA          NA          NA
+#> 303           NA           NA          NA          NA          NA          NA
+#> 304           NA           NA          NA          NA          NA          NA
+#> 305  -2.12579602   2.36980607          NA          NA          NA          NA
+#> 306           NA           NA          NA          NA          NA          NA
+#> 307           NA           NA          NA          NA          NA          NA
+#> 308           NA           NA          NA          NA          NA          NA
+#> 309           NA           NA          NA          NA          NA          NA
+#> 310           NA           NA          NA          NA          NA          NA
+#> 311           NA           NA          NA          NA          NA          NA
+#> 312           NA           NA          NA          NA          NA          NA
+#> 313           NA           NA          NA          NA          NA          NA
+#> 314           NA           NA          NA          NA          NA          NA
+#> 315           NA           NA          NA          NA          NA          NA
+#> 316           NA           NA          NA          NA          NA          NA
+#> 317           NA           NA          NA          NA          NA          NA
+#> 318           NA           NA          NA          NA          NA          NA
+#> 319           NA           NA          NA          NA          NA          NA
+#> 320           NA           NA          NA          NA          NA          NA
+#> 321           NA           NA          NA          NA          NA          NA
+#> 322           NA           NA          NA          NA          NA          NA
+#> 323           NA           NA          NA          NA          NA          NA
+#> 324           NA           NA          NA          NA          NA          NA
+#> 325           NA           NA          NA          NA          NA          NA
+#> 326           NA           NA          NA          NA          NA          NA
+#> 327           NA           NA          NA          NA          NA          NA
+#> 328           NA           NA          NA          NA          NA          NA
+#> 329   0.23626987   1.17177484          NA          NA          NA          NA
+#> 330  -2.34191751   1.24816662          NA          NA          NA          NA
+#> 331           NA           NA          NA          NA          NA          NA
+#> 332           NA           NA          NA          NA          NA          NA
+#> 333           NA           NA          NA          NA          NA          NA
+#> 334           NA           NA          NA          NA          NA          NA
+#> 335           NA           NA          NA          NA          NA          NA
+#> 336           NA           NA          NA          NA          NA          NA
+#> 337           NA           NA          NA          NA          NA          NA
+#> 338           NA           NA          NA          NA          NA          NA
+#> 339           NA           NA          NA          NA          NA          NA
+#> 340           NA           NA          NA          NA          NA          NA
+#> 341           NA           NA          NA          NA          NA          NA
+#> 342           NA           NA          NA          NA          NA          NA
+#> 343           NA           NA          NA          NA          NA          NA
+#> 344           NA           NA          NA          NA          NA          NA
+#>     std_REY5REC std_REY6REC std_REYDREC  std_NACCMMSE   std_BOSTON  std_LOGIMEM
+#> 1            NA          NA          NA   0.955436618  0.384098955  0.867730171
+#> 2            NA          NA          NA   0.877749073 -0.719736955  0.949894390
+#> 3            NA          NA          NA   0.650084785 -1.628534248  0.595345167
+#> 4            NA          NA          NA  -0.075543617 -8.559113463  0.894438100
+#> 5            NA          NA          NA  -0.849957224 -0.505898131 -2.849212627
+#> 6            NA          NA          NA  -7.240406898 -0.103048018 -1.214862095
+#> 7            NA          NA          NA  -9.661218128 -0.103048018 -1.214862095
+#> 8            NA          NA          NA            NA           NA           NA
+#> 9            NA          NA          NA  -1.821322215 -0.669943835  0.788656984
+#> 10           NA          NA          NA  -0.046641278 -1.158570119 -1.620766487
+#> 11           NA          NA          NA            NA           NA           NA
+#> 12           NA          NA          NA            NA           NA           NA
+#> 13           NA          NA          NA   1.164365530  1.162090972  0.834632954
+#> 14           NA          NA          NA   1.229412469  1.230822350 -1.555274743
+#> 15           NA          NA          NA  -6.872481767  1.196456661 -1.031030599
+#> 16           NA          NA          NA  -8.262367658 -0.644978249 -0.066519486
+#> 17           NA          NA          NA            NA           NA           NA
+#> 18           NA          NA          NA            NA           NA           NA
+#> 19           NA          NA          NA -22.009896728  0.941506598 -3.744208435
+#> 20           NA          NA          NA  -1.175888349  0.786860998 -2.726529198
+#> 21           NA          NA          NA  -1.934040221  0.504290796 -0.025204949
+#> 22           NA          NA          NA            NA           NA           NA
+#> 23           NA          NA          NA            NA           NA           NA
+#> 24           NA          NA          NA  -2.499975977  0.143539133  0.513180948
+#> 25           NA          NA          NA  -1.333470168 -3.161527116  0.705227404
+#> 26           NA          NA          NA  -6.337709977 -5.672186707 -3.648932807
+#> 27           NA          NA          NA   1.038555857  0.796349171 -3.605800137
+#> 28           NA          NA          NA  -1.496087517 -0.994524415 -2.307513397
+#> 29           NA          NA          NA   0.182833576 -0.591674302  1.473108189
+#> 30           NA          NA          NA   0.973508917           NA           NA
+#> 31           NA          NA          NA   1.006032387           NA -3.081555993
+#> 32           NA          NA          NA            NA           NA           NA
+#> 33           NA          NA          NA            NA           NA           NA
+#> 34           NA          NA          NA            NA           NA           NA
+#> 35           NA          NA          NA            NA           NA           NA
+#> 36           NA          NA          NA            NA           NA           NA
+#> 37           NA          NA          NA            NA           NA           NA
+#> 38           NA          NA          NA            NA           NA           NA
+#> 39           NA          NA          NA            NA           NA           NA
+#> 40           NA          NA          NA   0.880673776  0.566994846 -0.837483765
+#> 41           NA          NA          NA            NA           NA           NA
+#> 42           NA          NA          NA            NA           NA           NA
+#> 43           NA          NA          NA  -0.284021468 -6.827521170  0.636659705
+#> 44           NA          NA          NA   1.219245506  0.643458984  0.006156874
+#> 45           NA          NA          NA   1.479433264 -0.083971709           NA
+#> 46           NA          NA          NA            NA           NA           NA
+#> 47           NA          NA          NA            NA           NA           NA
+#> 48           NA          NA          NA -10.779246652 -1.830499334  1.178206656
+#> 49           NA          NA          NA            NA           NA           NA
+#> 50           NA          NA          NA            NA           NA           NA
+#> 51           NA          NA          NA            NA           NA           NA
+#> 52           NA          NA          NA   0.848846734 -4.779092948  1.318827921
+#> 53           NA          NA          NA   0.751276324 -6.552783690 -2.474117286
+#> 54           NA          NA          NA            NA           NA           NA
+#> 55           NA          NA          NA            NA -3.951887981 -0.453695892
+#> 56           NA          NA          NA  -4.891488702  0.271375664  1.112874729
+#> 57           NA          NA          NA -15.267838554  0.057536840 -0.453695892
+#> 58           NA          NA          NA  -2.034535333 -2.556131747 -1.762488118
+#> 59           NA          NA          NA  -7.578978627           NA -2.595070498
+#> 60           NA          NA          NA -10.712777655           NA -0.524801852
+#> 61           NA          NA          NA -13.263682764  0.135806372 -0.842380215
+#> 62           NA          NA          NA   0.437985804 -0.215495207           NA
+#> 63           NA          NA          NA   1.633031138  0.373661661  0.117864782
+#> 64           NA          NA          NA  -0.224769038 -1.888793417  1.635140923
+#> 65           NA          NA          NA  -6.668376370 -0.980714346 -1.258790093
+#> 66           NA          NA          NA            NA  0.590205019 -0.799247544
+#> 67           NA          NA          NA   0.665650093  0.359183350  0.042574962
+#> 68           NA          NA          NA   0.551817949 -0.095215296 -3.488248173
+#> 69           NA          NA          NA  -0.915700591  0.059430304  0.591466346
+#> 70           NA          NA          NA            NA           NA           NA
+#> 71           NA          NA          NA            NA           NA           NA
+#> 72           NA          NA          NA   0.571700814 -0.427716669  1.996564544
+#> 73           NA          NA          NA   0.571700814 -6.107735166 -1.759409802
+#> 74           NA          NA          NA  -0.121404119  1.029038182 -2.789412660
+#> 75           NA          NA          NA   0.132237806 -4.310746181 -0.748134931
+#> 76           NA          NA          NA  -0.886101824 -1.192935808           NA
+#> 77           NA          NA          NA   0.678987125  0.091990599  0.226411636
+#> 78           NA          NA          NA            NA           NA           NA
+#> 79           NA          NA          NA            NA           NA           NA
+#> 80           NA          NA          NA            NA           NA           NA
+#> 81           NA          NA          NA            NA           NA           NA
+#> 82           NA          NA          NA  -5.586404200  0.065319581           NA
+#> 83           NA          NA          NA   0.532631511 -0.062655001 -1.975315710
+#> 84           NA          NA          NA  -2.630069857  0.340195112  2.610157523
+#> 85           NA          NA          NA -10.569346744 -1.192935808 -0.023386816
+#> 86           NA          NA          NA  -1.032457438 -0.011106468 -2.493398043
+#> 87           NA          NA          NA  -1.048719173 -0.696526782  0.451562848
+#> 88           NA          NA          NA  -0.241782096           NA -3.840979263
+#> 89           NA          NA          NA  -0.821054885 -0.455966960           NA
+#> 90           NA          NA          NA  -1.709300636  0.126356288 -1.907535799
+#> 91           NA          NA          NA  -5.067142821 -2.684056348  0.457724658
+#> 92           NA          NA          NA            NA           NA           NA
+#> 93           NA          NA          NA            NA           NA           NA
+#> 94           NA          NA          NA            NA           NA           NA
+#> 95           NA          NA          NA            NA           NA           NA
+#> 96           NA          NA          NA            NA           NA           NA
+#> 97           NA          NA          NA  -4.012658591  0.231070717 -2.019713741
+#> 98           NA          NA          NA  -2.252428824 -0.282521153 -3.573960742
+#> 99           NA          NA          NA  -1.494276952 -0.334069686 -1.446175117
+#> 100          NA          NA          NA  -0.010496678  0.196705028  1.187369222
+#> 101          NA          NA          NA   0.942796013  0.351350628 -0.098593897
+#> 102          NA          NA          NA   0.005765057 -0.788468333  0.925247150
+#> 103          NA          NA          NA            NA           NA           NA
+#> 104          NA          NA          NA            NA           NA           NA
+#> 105          NA          NA          NA -10.133504867 -0.301409430 -0.074499429
+#> 106          NA          NA          NA  -1.322243963           NA  1.242272740
+#> 107          NA          NA          NA  -0.401474742  0.752495309 -1.129149527
+#> 108          NA          NA          NA -19.719179377 -4.207737184 -1.378947978
+#> 109          NA          NA          NA   0.437985804 -0.549613943 -1.385109788
+#> 110          NA          NA          NA  -5.356929346 -1.706615748           NA
+#> 111          NA          NA          NA  -4.566254004 -1.055561122           NA
+#> 112          NA          NA          NA  -1.305982228  0.315279507 -1.702688151
+#> 113          NA          NA          NA            NA           NA           NA
+#> 114          NA          NA          NA            NA           NA           NA
+#> 115          NA          NA          NA            NA           NA           NA
+#> 116          NA          NA          NA   1.306737198           NA  1.383842093
+#> 117          NA          NA          NA -14.041328993  1.818223805  2.719099693
+#> 118          NA          NA          NA            NA           NA           NA
+#> 119          NA          NA          NA            NA           NA           NA
+#> 120          NA          NA          NA            NA           NA           NA
+#> 121          NA          NA          NA            NA           NA           NA
+#> 122          NA          NA          NA            NA           NA           NA
+#> 123          NA          NA          NA            NA           NA           NA
+#> 124          NA          NA          NA            NA           NA           NA
+#> 125          NA          NA          NA            NA           NA           NA
+#> 126          NA          NA          NA            NA           NA           NA
+#> 127          NA          NA          NA            NA           NA           NA
+#> 128          NA          NA          NA   0.220037418 -0.707682299 -0.327376197
+#> 129          NA          NA          NA  -0.473067515 -1.589758593 -3.235366228
+#> 130          NA          NA          NA  -0.538114454 -0.990252500 -0.845458531
+#> 131          NA          NA          NA   0.642842525 -4.270353164 -2.581724073
+#> 132          NA          NA          NA            NA           NA           NA
+#> 133          NA          NA          NA            NA           NA           NA
+#> 134          NA          NA          NA            NA           NA           NA
+#> 135          NA          NA          NA            NA           NA           NA
+#> 136          NA          NA          NA            NA           NA           NA
+#> 137          NA          NA          NA            NA           NA           NA
+#> 138          NA          NA          NA            NA           NA           NA
+#> 139          NA          NA          NA  -9.209114516  0.805661204 -1.528096781
+#> 140          NA          NA          NA  -7.530193423 -0.796201093  0.106253751
+#> 141          NA          NA          NA            NA  0.137423734 -1.796380663
+#> 142          NA          NA          NA            NA           NA           NA
+#> 143          NA          NA          NA            NA           NA           NA
+#> 144          NA          NA          NA            NA           NA           NA
+#> 145          NA          NA          NA            NA           NA           NA
+#> 146          NA    38.15922          NA            NA           NA           NA
+#> 147          NA          NA          NA            NA           NA           NA
+#> 148          NA          NA          NA            NA           NA           NA
+#> 149          NA          NA          NA            NA           NA           NA
+#> 150          NA          NA          NA            NA           NA           NA
+#> 151    74.33338    53.45945          NA            NA           NA           NA
+#> 152          NA          NA          NA            NA           NA           NA
+#> 153          NA          NA          NA  -3.120791710  0.635538192  1.075191280
+#> 154          NA          NA          NA  -1.474394087  0.001666411 -0.253904510
+#> 155          NA          NA          NA   0.139480066 -7.683064497           NA
+#> 156          NA          NA          NA   0.237050476  0.438882212 -3.168056350
+#> 157          NA          NA          NA -12.706466221 -2.936670828 -1.302392797
+#> 158          NA          NA          NA   0.269573945 -0.863227039 -2.350881085
+#> 159          NA          NA          NA   0.220788741  0.755818103 -0.759663223
+#> 160          NA          NA          NA  -1.509787364  1.446366606 -0.274920662
+#> 161          NA          NA          NA   1.701699208 -8.594378292 -1.622501881
+#> 162          NA          NA          NA            NA           NA           NA
+#> 163          NA          NA          NA            NA           NA           NA
+#> 164          NA          NA          NA            NA           NA           NA
+#> 165          NA          NA          NA            NA           NA           NA
+#> 166          NA          NA          NA            NA           NA           NA
+#> 167          NA          NA          NA            NA           NA           NA
+#> 168          NA          NA          NA   0.282214550  0.171877493 -1.384557016
+#> 169          NA          NA          NA  -1.910932392  0.412437316  0.311411616
+#> 170          NA          NA          NA   0.662725390  0.408926490 -3.804008403
+#> 171          NA          NA          NA  -2.451190773 -1.475506009  1.068234142
+#> 172          NA          NA          NA            NA           NA           NA
+#> 173          NA          NA          NA            NA           NA           NA
+#> 174          NA          NA          NA            NA           NA           NA
+#> 175          NA          NA          NA            NA           NA           NA
+#> 176          NA          NA          NA            NA           NA           NA
+#> 177          NA          NA          NA            NA           NA           NA
+#> 178          NA          NA          NA            NA           NA           NA
+#> 179          NA          NA          NA  -4.546015982 -1.673061129 -2.728507148
+#> 180          NA          NA          NA  -0.094675159 -1.751330661 -1.534971180
+#> 181          NA          NA          NA  -5.067142821 -0.679343938 -3.566533571
+#> 182          NA          NA          NA  -0.368199949  0.913886459 -1.817396815
+#> 183          NA          NA          NA   0.083848767           NA -1.944264104
+#> 184          NA          NA          NA   0.116372237  0.093519891  0.750898335
+#> 185          NA          NA          NA            NA           NA           NA
+#> 186          NA          NA          NA            NA           NA           NA
+#> 187          NA          NA          NA            NA           NA           NA
+#> 188          NA          NA          NA  -0.551451486 -7.405434451 -1.565862969
+#> 189          NA          NA          NA -12.872649804  1.343457571  1.287771138
+#> 190          NA          NA          NA  -1.305230905  1.444661174 -0.793555767
+#> 191          NA          NA          NA  -0.416985154  1.196456661  0.578672692
+#> 192          NA          NA          NA -11.020999295  1.410295485 -0.001027742
+#> 193          NA          NA          NA   1.043987552 -4.238780079  0.856201878
+#> 194          NA          NA          NA  -3.840625602 -7.823850047 -2.282388585
+#> 195          NA          NA          NA -20.060675810 -3.566220713 -0.971778226
+#> 196          NA          NA          NA  -1.614955191 -2.350025684 -2.088046424
+#> 197          NA          NA          NA  -5.454499755 -0.807356610 -3.087240231
+#> 198          NA          NA          NA   0.047704167           NA -1.264709348
+#> 199          NA          NA          NA            NA           NA           NA
+#> 200          NA          NA          NA   0.630201920 -0.961914140  1.012777852
+#> 201          NA          NA          NA  -2.532499447 -3.232013907           NA
+#> 202          NA          NA          NA  -0.079164748 -2.195292013 -0.828238461
+#> 203          NA          NA          NA   0.646463655 -0.276493825 -0.859047512
+#> 204          NA          NA          NA            NA           NA           NA
+#> 205          NA          NA          NA            NA           NA           NA
+#> 206          NA          NA          NA            NA           NA           NA
+#> 207          NA          NA          NA            NA           NA           NA
+#> 208          NA          NA          NA            NA           NA           NA
+#> 209          NA          NA          NA            NA           NA           NA
+#> 210          NA          NA          NA            NA           NA           NA
+#> 211          NA          NA          NA   0.585092741 -2.272655292 -0.420521115
+#> 212          NA          NA          NA -21.169684859  1.771135219 -0.676481376
+#> 213          NA          NA          NA   0.630201920  0.040442066 -2.474912613
+#> 214          NA          NA          NA   0.695248859 -0.559064027 -0.303994318
+#> 215          NA          NA          NA  -0.030379543           NA  0.263382496
+#> 216          NA          NA          NA            NA -5.803572154  0.019193083
+#> 217          NA          NA          NA            NA           NA           NA
+#> 218          NA          NA          NA            NA           NA           NA
+#> 219          NA          NA          NA            NA           NA           NA
+#> 220          NA          NA          NA            NA           NA           NA
+#> 221          NA          NA          NA            NA           NA           NA
+#> 222          NA          NA          NA            NA           NA           NA
+#> 223          NA          NA          NA            NA           NA           NA
+#> 224          NA    45.87245          NA            NA           NA           NA
+#> 225          NA          NA          NA            NA           NA           NA
+#> 226          NA          NA          NA  -0.606031201 -6.262292696 -1.951933830
+#> 227          NA          NA          NA            NA           NA           NA
+#> 228          NA          NA          NA   0.493617104 -0.272982999 -0.499601840
+#> 229          NA          NA          NA -10.029088363           NA -3.194764279
+#> 230          NA          NA          NA  -2.880486817 -1.429984804  1.054645161
+#> 231          NA          NA          NA  -5.285036312  0.257791716 -0.548896320
+#> 232          NA          NA          NA   1.121675096 -1.130231758 -1.103949514
+#> 233          NA          NA          NA   0.314738020 -0.796113023  0.505753777
+#> 234          NA          NA          NA  -0.345843443  0.026770047  1.634345595
+#> 235          NA          NA          NA            NA           NA           NA
+#> 236          NA          NA          NA            NA           NA           NA
+#> 237          NA          NA          NA            NA           NA           NA
+#> 238          NA          NA          NA            NA           NA           NA
+#> 239          NA          NA          NA            NA           NA           NA
+#> 240          NA          NA          NA            NA           NA           NA
+#> 241          NA          NA          NA            NA           NA           NA
+#> 242          NA          NA          NA            NA           NA           NA
+#> 243          NA          NA          NA  -8.626616763 -2.201319341 -3.543151692
+#> 244          NA          NA          NA -17.186709383  1.101092354  2.702114640
+#> 245          NA          NA          NA            NA           NA           NA
+#> 246          NA          NA          NA            NA           NA           NA
+#> 247          NA          NA          NA            NA           NA           NA
+#> 248          NA          NA          NA            NA           NA           NA
+#> 249          NA          NA          NA -20.994481801 -4.465391781 -0.803591221
+#> 250          NA          NA          NA   0.662725390 -0.259310980 -0.584601820
+#> 251          NA          NA          NA  -0.837316620 -2.143743480 -1.078036913
+#> 252          NA          NA          NA -16.266691485 -5.588027898 -3.797846593
+#> 253          NA          NA          NA  -0.079164748 -2.863529483  1.318032594
+#> 254          NA          NA          NA   0.760295799 -1.158570119  1.866923978
+#> 255          NA          NA          NA  -0.014117808 -0.790085695  0.001260425
+#> 256          NA          NA          NA   0.857866208 -0.387235582 -2.120363391
+#> 257          NA          NA          NA            NA           NA           NA
+#> 258          NA          NA          NA            NA           NA           NA
+#> 259          NA          NA          NA            NA           NA           NA
+#> 260          NA          NA          NA   0.894010808 -2.373147786 -1.726782619
+#> 261          NA          NA          NA   0.265952815           NA -1.927286590
+#> 262          NA          NA          NA  -0.573507731  0.454447695           NA
+#> 263          NA          NA          NA            NA           NA           NA
+#> 264          NA          NA          NA            NA           NA           NA
+#> 265          NA          NA          NA            NA           NA           NA
+#> 266          NA          NA          NA            NA           NA           NA
+#> 267          NA          NA          NA            NA           NA           NA
+#> 268    32.53794          NA          NA            NA           NA           NA
+#> 269          NA          NA          NA            NA           NA           NA
+#> 270          NA          NA          NA  -1.966563691 -0.532431098  1.572174723
+#> 271          NA          NA          NA  -0.417736477  0.735312464 -1.940162982
+#> 272          NA          NA          NA            NA           NA           NA
+#> 273          NA          NA          NA            NA           NA           NA
+#> 274          NA          NA          NA            NA           NA           NA
+#> 275          NA          NA          NA            NA           NA           NA
+#> 276          NA          NA          NA            NA           NA           NA
+#> 277          NA          NA          NA  -1.031706115  1.118275199           NA
+#> 278          NA          NA          NA   0.353807323           NA -0.619759725
+#> 279          NA          NA          NA  -2.890202719           NA -3.308760354
+#> 280          NA          NA          NA   0.272498648 -5.590632470  0.959134516
+#> 281          NA          NA          NA -12.557185904  0.509418984           NA
+#> 282          NA          NA          NA  -0.501914959  0.457870451 -3.589367856
+#> 283          NA          NA          NA  -5.489893032 -3.706199971 -0.961985328
+#> 284          NA          NA          NA  -4.650432486 -0.664765666 -2.559364999
+#> 285          NA          NA          NA   0.900556641  0.568612208  0.086502960
+#> 286          NA          NA          NA   1.111959195  1.126107921 -1.174812919
+#> 287          NA          NA          NA  -4.601647281  1.057376543 -1.199460159
+#> 288          NA          NA          NA            NA           NA           NA
+#> 289          NA          NA          NA            NA           NA           NA
+#> 290          NA          NA          NA            NA           NA           NA
+#> 291          NA          NA          NA            NA           NA           NA
+#> 292    73.75457          NA          NA            NA           NA           NA
+#> 293          NA          NA          NA            NA           NA           NA
+#> 294          NA          NA          NA   1.105413362 -1.147414603 -1.378395206
+#> 295          NA          NA          NA   1.235507241  0.326523094 -1.865668490
+#> 296          NA          NA          NA   1.121675096  0.874480653  0.505753777
+#> 297          NA          NA          NA            NA           NA           NA
+#> 298          NA          NA          NA            NA           NA           NA
+#> 299          NA          NA          NA            NA           NA           NA
+#> 300          NA          NA          NA            NA           NA           NA
+#> 301          NA          NA          NA  -4.275716157  0.098736149  0.555843585
+#> 302          NA          NA          NA  -4.291977892 -2.591396576  1.622817303
+#> 303          NA          NA          NA  -0.351938214  1.599306774 -0.469815595
+#> 304          NA          NA          NA -15.748789611  1.530575396           NA
+#> 305          NA          NA          NA            NA           NA           NA
+#> 306          NA          NA          NA  -1.399576350  1.248093265           NA
+#> 307          NA          NA          NA   1.974527571  1.736857600 -0.557588852
+#> 308          NA          NA          NA  -2.942609054  1.458609294  0.047471411
+#> 309          NA          NA          NA  -6.163115100 -2.916065227  0.273417950
+#> 310          NA          NA          NA   0.178549369           NA -3.525689067
+#> 311          NA          NA          NA  -2.274785331           NA -2.733161041
+#> 312          NA          NA          NA            NA  1.324381262 -2.714675611
+#> 313          NA          NA          NA  -0.849205901  0.289364800           NA
+#> 314          NA          NA          NA  -9.691931033  0.523041022  1.243855856
+#> 315          NA          NA          NA -23.328552662  0.608955244 -1.139890030
+#> 316          NA          NA          NA            NA           NA           NA
+#> 317          NA          NA          NA   2.387650127  0.343298898  0.838824353
+#> 318          NA          NA          NA  -2.372663659 -0.239024350  0.064781758
+#> 319          NA          NA          NA  -9.072086295           NA -1.369064803
+#> 320          NA          NA          NA  -3.693518665 -6.205704045 -2.122651557
+#> 321          NA          NA          NA  -6.823696563 -1.759063422  0.328874241
+#> 322          NA          NA          NA  -1.191398761  1.564941085 -1.286990861
+#> 323          NA          NA          NA  -2.242261861  0.973079683  1.839988571
+#> 324          NA          NA          NA  -4.484194007 -3.515571320           NA
+#> 325          NA          NA          NA  -1.520254589 -0.433743998 -0.718348686
+#> 326          NA          NA          NA   0.965603581 -0.365012620  0.111150200
+#> 327          NA          NA          NA   0.900556641 -7.116118700           NA
+#> 328          NA          NA          NA  -2.278406461 -6.062213961  0.909840036
+#> 329          NA          NA          NA            NA           NA           NA
+#> 330          NA          NA          NA            NA           NA           NA
+#> 331          NA          NA          NA -13.667001172  0.615120624  1.367327074
+#> 332          NA          NA          NA   0.256933341 -4.237162717 -0.634366334
+#> 333          NA          NA          NA   0.148499541 -1.954732190  0.062878525
+#> 334          NA          NA          NA -11.841724465 -0.497977339 -2.040259860
+#> 335          NA          NA          NA   0.987960087  0.418464644 -2.875920556
+#> 336          NA          NA          NA  -7.953394696  0.683852001 -1.559148386
+#> 337          NA          NA          NA  -2.125956075  0.204625820 -1.759652358
+#> 338          NA          NA          NA   0.132237806 -0.301321359 -2.357838222
+#> 339          NA          NA          NA   0.099714336 -2.006280724 -1.297026315
+#> 340          NA          NA          NA   0.262331685           NA  0.374295077
+#> 341          NA          NA          NA   1.036745292  0.470013178 -2.052583480
+#> 342          NA          NA          NA   1.085530497 -4.490219316 -0.156110876
+#> 343          NA          NA          NA  -3.095510501  0.701034846 -2.089554340
+#> 344          NA          NA          NA  -0.544605392 -6.512114571  0.374295077
+#>     std_MEMUNITS    std_DIGIF std_DIGIFLEN   std_DIGIB  std_DIGIBLEN
+#> 1    -2.23770537 -0.439251831 -3.615332533 -1.93835631 -0.0234381012
+#> 2             NA           NA -0.823468870  0.45910628 -0.8900198748
+#> 3     0.11819935 -1.616829814 -1.860008024  0.31021555 -1.0404520297
+#> 4    -1.87694638  0.443418886 -0.892286292 -1.55873798  1.5548130825
+#> 5    -3.08473446  0.464126042           NA -2.01800008 -0.1180561714
+#> 6    -2.99694924  1.007660557 -2.705387673 -0.53386327  0.7721042251
+#> 7     0.16114408 -3.009301064  0.083081820          NA            NA
+#> 8             NA           NA           NA          NA            NA
+#> 9    -0.68998014 -0.153220142  0.884709292 -1.18727463 -1.9370291608
+#> 10    2.01850192 -0.061374564  0.010870227 -1.58544473            NA
+#> 11            NA           NA           NA          NA            NA
+#> 12            NA           NA           NA          NA            NA
+#> 13    1.84247173 -0.452247942 -1.305986311 -1.03558943  1.2280101357
+#> 14    0.38995476 -0.410833630 -5.922849945 -0.03198482  0.4238109705
+#> 15   -0.85494671 -0.933660989  1.497775942 -0.05325492 -1.2920388991
+#> 16   -1.41600462 -1.660917374 -0.987437026  0.24096859 -1.9434458953
+#> 17            NA           NA           NA          NA            NA
+#> 18            NA           NA           NA          NA            NA
+#> 19   -0.70320233 -0.382644180  1.089981657          NA  0.7489584179
+#> 20   -0.49808596 -0.475826382           NA -3.56959108 -0.1949277483
+#> 21   -1.91202457 -2.453246458 -1.744366117 -0.17396053 -0.1626922865
+#> 22            NA           NA           NA          NA            NA
+#> 23            NA           NA           NA          NA            NA
+#> 24            NA  0.420038482 -0.004422533  0.31541396 -1.0210500370
+#> 25    0.79782451 -0.344733005 -0.744878963  0.09284133 -0.7674947623
+#> 26    1.88634417 -1.452509190  0.108147066 -0.49404139 -0.8749463015
+#> 27    1.21492274 -0.877913942           NA -1.86119262 -0.7997302241
+#> 28   -0.09044599  0.053851418 -0.821342765 -0.97457359  0.8194132602
+#> 29    1.41377698  0.597385932  1.068222418 -0.93203338 -0.8319656858
+#> 30   -2.50685518 -1.421448456           NA  1.94052477 -1.6898906206
+#> 31    1.75108825 -0.898621098  0.146378967  1.00073047 -4.2099396554
+#> 32            NA           NA           NA          NA            NA
+#> 33            NA           NA           NA          NA            NA
+#> 34            NA           NA           NA          NA            NA
+#> 35            NA           NA           NA          NA            NA
+#> 36            NA           NA           NA          NA            NA
+#> 37            NA           NA           NA          NA            NA
+#> 38            NA           NA           NA          NA            NA
+#> 39            NA           NA           NA          NA            NA
+#> 40            NA -0.675019575 -1.519226919  0.12925758 -0.7176645964
+#> 41            NA           NA           NA          NA            NA
+#> 42            NA           NA           NA          NA            NA
+#> 43   -0.61858539  1.105682519 -1.687447284 -0.58524577            NA
+#> 44            NA -2.258694990 -0.662894885 -0.75915422 -4.0530907660
+#> 45            NA -0.084556932  1.318426861 -0.58899339  0.3547306011
+#> 46            NA           NA           NA          NA            NA
+#> 47            NA           NA           NA          NA            NA
+#> 48    1.78444279  1.440375034 -0.034213613  0.06565792  0.9454104883
+#> 49            NA           NA           NA          NA            NA
+#> 50            NA           NA           NA          NA            NA
+#> 51            NA           NA           NA          NA            NA
+#> 52   -2.41537708  1.543514741  0.132354272          NA -0.0300066249
+#> 53   -0.23660162 -0.527087537 -1.772503671 -1.98065828 -0.9416573293
+#> 54            NA           NA           NA          NA            NA
+#> 55   -1.64921127 -1.216078878 -1.013682172          NA -0.4420662884
+#> 56   -3.67687437  1.222047089 -1.996696665 -1.96651384  1.1770771959
+#> 57    0.12059531 -2.722439486 -1.013682172 -0.45047188            NA
+#> 58    0.44214905 -1.805867465 -2.023976180 -1.83005093 -0.3995184884
+#> 59   -1.35380627 -1.425625649 -1.702740045  0.35454853  1.5659910521
+#> 60    1.24543682 -0.884764383 -1.698487835 -0.59068241 -0.9454011439
+#> 61   -0.20581631           NA  0.099320785 -1.63682723 -1.8785421561
+#> 62   -1.23164075 -1.982186990 -0.837815427 -1.16693008  0.6522520326
+#> 63   -0.27553645           NA -1.317973066          NA            NA
+#> 64   -2.31549413 -0.099917592  1.355800723 -1.03738219  2.0532667930
+#> 65   -2.33405501 -0.188290748 -1.966199309  1.14342109 -1.1413350452
+#> 66   -0.63647295 -1.899358366  0.152845446 -0.60131747  1.5853930448
+#> 67    1.30590408 -3.343597505 -1.660255934 -1.01803935  0.8026841875
+#> 68   -2.18323839  0.098768867 -0.784290765 -1.09248472 -1.8140712326
+#> 69   -3.37393473  0.191951068 -0.715473343 -0.51623705 -0.8701850664
+#> 70            NA           NA           NA          NA            NA
+#> 71            NA           NA           NA          NA            NA
+#> 72   -1.31022962 -0.369617354 -0.735018313 -1.51440501 -0.0746427401
+#> 73   -0.77239801  1.136743253 -0.735018313 -1.51440501 -1.7690023018
+#> 74            NA -0.799262511 -0.681493651  1.92376575  0.0005733374
+#> 75    0.12406790  0.052514794  0.094980410 -1.46845916 -0.0341832552
+#> 76    1.77607103 -3.596923138 -0.004422533 -0.64565044 -1.8682298178
+#> 77   -3.19373942 -0.113142454           NA -1.63861999 -1.9004652796
+#> 78            NA           NA           NA          NA            NA
+#> 79            NA           NA           NA          NA            NA
+#> 80            NA           NA           NA          NA            NA
+#> 81            NA           NA           NA          NA            NA
+#> 82   -0.47247126 -0.725648877  0.824484454  0.00607189 -0.4592281769
+#> 83            NA  0.295795547 -1.025668927          NA -1.9971716649
+#> 84   -3.20916506           NA -0.995083406 -0.25019866 -0.2598314875
+#> 85   -2.68718988 -0.584201923 -0.004422533  1.27647836 -1.0210500370
+#> 86   -1.26698915 -0.175263922 -1.932219617 -1.22189811 -1.1177564223
+#> 87   -1.50295679 -0.687737702 -1.010376166 -0.27146876 -1.9756813570
+#> 88   -1.41850376  0.818622905 -0.080886335 -1.71306536 -2.8228611379
+#> 89    0.32355406 -0.040667408 -1.832816674 -2.04470683 -0.9780694213
+#> 90    0.26308680  0.409684905 -1.871048575 -0.17575329 -2.7261547526
+#> 91   -3.00301452 -0.677384124 -0.073239955 -1.22189811  1.4237829203
+#> 92            NA           NA           NA          NA            NA
+#> 93            NA           NA           NA          NA            NA
+#> 94            NA           NA           NA          NA            NA
+#> 95            NA           NA           NA          NA            NA
+#> 96            NA           NA           NA          NA            NA
+#> 97   -2.75618445  1.007660557  0.083081820 -1.97545987 -1.7694351175
+#> 98    1.46817889 -1.911878457 -0.777590589 -0.91868000  0.0216308295
+#> 99   -2.99195096 -0.436578583 -0.800529729 -1.91164956 -1.7049641939
+#> 100   1.43649457 -1.523647612 -2.720680433 -1.51619777  1.5977936982
+#> 101  -2.96859711 -0.426225005  1.066096313 -1.90101450  0.0001405217
+#> 102   0.65310102 -0.006933426  1.004925271  0.89709827 -2.6273600523
+#> 103           NA           NA           NA          NA            NA
+#> 104           NA           NA           NA          NA            NA
+#> 105           NA -0.527594272  0.053442503 -3.62276634 -1.0958332987
+#> 106  -3.05961657  1.439472226  0.022856982 -0.30158115            NA
+#> 107  -3.46775240  0.005586665 -0.853108187  0.73392861 -1.0635978370
+#> 108  -3.43710225  1.543008006 -0.830169046  2.20743036 -0.1841825944
+#> 109           NA           NA -3.626284919 -2.12799448 -1.0421075291
+#> 110           NA  0.937352024 -0.906632849 -3.66530655  1.4027254282
+#> 111  -1.07239905 -0.077241959  0.015210602          NA -1.1495590683
+#> 112           NA -0.056534803  0.959993193 -1.25201050            NA
+#> 113           NA           NA           NA          NA            NA
+#> 114           NA           NA           NA          NA            NA
+#> 115           NA           NA           NA          NA            NA
+#> 116  -2.04637298 -3.100750569  1.796306633 -1.41056216            NA
+#> 117           NA  1.910097878 -0.070319409  0.98146378  1.7539380729
+#> 118           NA           NA           NA          NA            NA
+#> 119           NA           NA           NA          NA            NA
+#> 120           NA           NA           NA          NA            NA
+#> 121           NA           NA           NA          NA            NA
+#> 122           NA           NA           NA          NA            NA
+#> 123           NA           NA           NA          NA            NA
+#> 124           NA           NA           NA          NA            NA
+#> 125           NA           NA           NA          NA            NA
+#> 126           NA           NA           NA          NA            NA
+#> 127           NA           NA           NA          NA            NA
+#> 128  -0.55659138 -0.928543244 -1.212576223  0.89881489 -3.0828331471
+#> 129           NA -0.856068198 -0.229561731 -0.46833634 -2.1604372888
+#> 130   1.71976473 -0.395362307 -1.189637083 -0.51087655 -1.3562381236
+#> 131   0.89409987 -0.659350216 -1.943260168 -0.26627035 -1.1090995834
+#> 132           NA           NA           NA          NA            NA
+#> 133           NA           NA           NA          NA            NA
+#> 134           NA           NA           NA          NA            NA
+#> 135           NA           NA           NA          NA            NA
+#> 136           NA           NA           NA          NA            NA
+#> 137           NA           NA           NA          NA            NA
+#> 138           NA           NA           NA          NA            NA
+#> 139           NA  0.572501583 -1.710386425 -1.09768312 -0.1391136636
+#> 140           NA -0.892444713 -0.750311073 -0.09407852 -0.9433128288
+#> 141           NA -1.435979227 -6.357835580 -1.57821532 -0.9862934444
+#> 142           NA           NA           NA          NA            NA
+#> 143           NA           NA           NA          NA            NA
+#> 144           NA           NA           NA          NA            NA
+#> 145           NA           NA           NA          NA            NA
+#> 146           NA           NA           NA          NA            NA
+#> 147           NA           NA           NA          NA            NA
+#> 148           NA           NA           NA          NA            NA
+#> 149           NA           NA           NA          NA            NA
+#> 150           NA           NA           NA          NA            NA
+#> 151           NA           NA           NA          NA            NA
+#> 152           NA           NA           NA          NA            NA
+#> 153   1.54716563  0.580688648  0.162939793 -0.43271116 -1.6813855710
+#> 154  -0.40543763 -0.904964804 -1.680747108 -1.37250545 -0.8127154823
+#> 155  -2.57795097 -1.909205209 -2.610236939  0.06909115  0.0344642986
+#> 156   0.88783764  0.663517272 -1.634868827          NA -1.5954243396
+#> 157   1.61409613  0.642810116 -0.720671756 -1.32996524 -0.7697348666
+#> 158   1.11900812  0.182104225  0.239403596  0.15417156            NA
+#> 159  -2.33302094  1.155283896  0.216464455 -0.35826579 -1.6061694936
+#> 160   1.60890529  1.134774776 -0.308625262  0.66489230  1.4553138674
+#> 161           NA  0.622300996           NA  0.65425725  1.4445687135
+#> 162           NA           NA           NA          NA            NA
+#> 163           NA           NA           NA          NA            NA
+#> 164           NA           NA           NA          NA            NA
+#> 165           NA           NA           NA          NA            NA
+#> 166           NA           NA           NA          NA            NA
+#> 167           NA           NA           NA          NA            NA
+#> 168   1.25576624 -0.333042803 -1.653555758 -1.32476684  0.0968469070
+#> 169   0.87598254 -0.690212914 -2.475996265  0.74625269  0.2472790619
+#> 170   0.02545307  0.378624171 -2.823477547          NA -1.0640306527
+#> 171  -0.47276599 -2.059501796           NA -2.53587408 -0.1416347944
+#> 172           NA           NA           NA          NA            NA
+#> 173           NA           NA           NA          NA            NA
+#> 174           NA           NA           NA          NA            NA
+#> 175           NA           NA           NA          NA            NA
+#> 176           NA           NA           NA          NA            NA
+#> 177           NA           NA           NA          NA            NA
+#> 178           NA           NA           NA          NA            NA
+#> 179           NA -0.270723299  1.600484891 -0.21652832  0.7027521567
+#> 180  -2.51018314  1.489271639  1.416971765          NA -0.4023113182
+#> 181           NA -0.677384124 -1.932219617 -0.26083371 -0.2705766414
+#> 182  -0.37091799 -0.902600255  1.520715083 -0.98241416 -0.4126236565
+#> 183  -1.75052208 -0.178104491 -0.964409720 -1.35292437  0.4501824232
+#> 184  -3.51303236  0.344722867 -0.949116960 -1.33165427 -0.3755070498
+#> 185           NA           NA           NA          NA            NA
+#> 186           NA           NA           NA          NA            NA
+#> 187           NA           NA           NA          NA            NA
+#> 188  -0.92041642  0.893264464           NA -1.81242471            NA
+#> 189           NA -0.643760805 -0.147105073 -0.71653786  0.7031849724
+#> 190   2.33276258  0.520931729  1.459544041  2.29623081 -1.3457646687
+#> 191   1.59211263  0.070579417 -0.361203720 -0.53378712 -0.4448591182
+#> 192  -2.91639103  1.002344776 -1.344218213  0.35283191  2.0214641469
+#> 193   0.14865266 -1.344963539  0.224110835 -0.82816294  0.9461150030
+#> 194           NA -0.631130052 -1.882000961 -2.28752026 -1.2032848379
+#> 195   0.08931324  1.325582869 -2.849722693  0.54249767 -0.4098308267
+#> 196   0.05533090 -0.755372987 -1.044267693 -2.89567309  0.3621328768
+#> 197  -1.58061467 -2.639610862 -0.952511130  0.11514073 -0.3561050571
+#> 198  -3.63246468 -0.222192051 -0.091838721 -0.46110693 -0.4528114423
+#> 199           NA           NA           NA          NA            NA
+#> 200  -1.46584339 -1.650563796 -1.909280476 -1.18999295 -0.2383411796
+#> 201  -0.94720041 -1.107029281 -1.878694955 -0.66692054 -1.0425403448
+#> 202   1.28328104 -2.592682733           NA -0.64565044 -1.8682298178
+#> 203  -0.99474116 -0.635969813 -0.042654434 -1.17935790            NA
+#> 204           NA           NA           NA          NA            NA
+#> 205           NA           NA           NA          NA            NA
+#> 206           NA           NA           NA          NA            NA
+#> 207           NA           NA           NA          NA            NA
+#> 208           NA           NA           NA          NA            NA
+#> 209           NA           NA           NA          NA            NA
+#> 210           NA           NA           NA          NA            NA
+#> 211   1.65841121  0.696942555 -0.269447157  0.55489790 -1.1630970521
+#> 212   0.46751374 -0.286590694 -2.113134058 -0.86542859 -1.9887865251
+#> 213   0.50531657 -0.646323391 -0.979790645 -0.70946075 -1.0855209605
+#> 214  -0.66139400 -0.604909079 -0.949205124 -0.18638834 -0.1953605640
+#> 215  -2.17501015  0.953219419  0.018516608  0.82785131  1.5527247674
+#> 216  -1.69108460 -3.165111468 -0.064647371 -0.41336832 -1.2376086148
+#> 217           NA           NA           NA          NA            NA
+#> 218           NA           NA           NA          NA            NA
+#> 219           NA           NA           NA          NA            NA
+#> 220           NA           NA           NA          NA            NA
+#> 221           NA           NA           NA          NA            NA
+#> 222           NA           NA           NA          NA            NA
+#> 223           NA           NA           NA          NA            NA
+#> 224           NA           NA           NA          NA            NA
+#> 225           NA           NA           NA          NA            NA
+#> 226  -2.93711391 -1.389051098           NA  0.54418670 -2.4984182052
+#> 227           NA           NA           NA          NA            NA
+#> 228  -2.84892644 -1.704806897 -0.624662984 -0.70597896 -0.6106458729
+#> 229   0.64397901 -2.227634256 -0.639955744  0.71434753 -0.6321361808
+#> 230  -2.89583528 -0.793748694 -2.552460068 -0.32116223 -0.7073522582
+#> 231   0.61082972  1.225085694 -1.615323857  0.17000502  0.9977524575
+#> 232  -2.84119935 -0.814455850 -0.708773166  0.13809987  0.1183372148
+#> 233  -0.85314879  0.189784555  0.220716665 -0.34243233  1.8126967766
+#> 234  -0.86817217 -1.223393851  0.289534087 -0.24671686  0.2150436001
+#> 235           NA           NA           NA          NA            NA
+#> 236           NA           NA           NA          NA            NA
+#> 237           NA           NA           NA          NA            NA
+#> 238           NA           NA           NA          NA            NA
+#> 239           NA           NA           NA          NA            NA
+#> 240           NA           NA           NA          NA            NA
+#> 241           NA           NA           NA          NA            NA
+#> 242           NA           NA           NA          NA            NA
+#> 243  -2.67132917 -3.366471175  0.190131144 -0.38497254 -0.7718231817
+#> 244   1.67666456 -0.110271170  1.348154343 -0.08695284  0.3481620774
+#> 245           NA           NA           NA          NA            NA
+#> 246           NA           NA           NA          NA            NA
+#> 247           NA           NA           NA          NA            NA
+#> 248           NA           NA           NA          NA            NA
+#> 249  -2.87958087 -2.551268421 -2.762306505 -0.12257803 -1.8252492022
+#> 250  -0.71373191  0.880744373 -0.964497885  0.75340595 -2.7583902144
+#> 251  -0.91488416 -3.063742201 -0.910973223 -0.13321308 -0.9888145752
+#> 252  -3.19373942 -0.113142454 -0.027361674  0.28350880 -1.9004652796
+#> 253   0.29770106           NA -0.933912364 -1.60671484  0.6733095248
+#> 254   0.52324134 -0.563494767  0.010870227 -0.14384814 -1.8467395100
+#> 255  -0.70143734 -1.547028016 -2.762306505 -2.52523903 -1.8252492022
+#> 256  -3.12827388 -2.007733906  0.056748509  0.40049438 -0.0879090248
+#> 257           NA           NA           NA          NA            NA
+#> 258           NA           NA           NA          NA            NA
+#> 259           NA           NA           NA          NA            NA
+#> 260           NA -1.963646347  0.113667341 -0.49132306 -1.7264545018
+#> 261           NA -0.343396381  0.197777524 -0.37433749  0.0861017531
+#> 262           NA -1.368343942 -0.747005068  0.08492460  0.9117912261
+#> 263           NA           NA           NA          NA            NA
+#> 264           NA           NA           NA          NA            NA
+#> 265           NA           NA           NA          NA            NA
+#> 266           NA           NA           NA          NA            NA
+#> 267           NA           NA           NA          NA            NA
+#> 268           NA           NA           NA          NA            NA
+#> 269           NA           NA           NA          NA            NA
+#> 270   2.70025181  1.543008006 -0.830169046 -1.15629503 -0.1841825944
+#> 271  -2.98142566 -1.511127521 -1.790244398 -1.67936744 -0.2271632100
+#> 272           NA           NA           NA          NA            NA
+#> 273           NA           NA           NA          NA            NA
+#> 274           NA           NA           NA          NA            NA
+#> 275           NA           NA           NA          NA            NA
+#> 276           NA           NA           NA          NA            NA
+#> 277  -0.60198957  0.402202611 -1.432668770 -0.55684999  1.2060870121
+#> 278   0.21422042 -0.475628346  0.511367279  0.35803032  2.0408661397
+#> 279  -2.93907574 -0.988102126  1.433210729 -0.13313693 -1.3585981377
+#> 280   0.72536598  0.978964372  0.473135377  0.30485506 -0.5543989725
+#> 281           NA -0.475628346  0.511367279 -0.60303408  1.1936863588
+#> 282           NA  0.999671528  1.417917969 -1.59600363  0.3142711162
+#> 283           NA -1.101991484  0.419610716  1.67200629  0.2175647309
+#> 284  -3.01413559 -0.579164126           NA -1.18991680 -1.4553045230
+#> 285  -3.07543589 -1.143405796  0.389025195 -0.29266272  1.0217638961
+#> 286   0.97342707 -1.510929485 -1.370551524  0.32612516 -1.3800884456
+#> 287           NA -1.050223594  0.457842617 -0.19694725 -3.9646084039
+#> 288           NA           NA           NA          NA            NA
+#> 289           NA           NA           NA          NA            NA
+#> 290           NA           NA           NA          NA            NA
+#> 291           NA           NA           NA          NA            NA
+#> 292           NA           NA           NA          NA            NA
+#> 293           NA           NA           NA          NA            NA
+#> 294  -2.92085522 -0.824809428 -1.645909378  1.08852921  0.9547718418
+#> 295           NA  1.266500006  1.203731157 -0.74851917  0.1935532923
+#> 296           NA  0.691904758 -0.708773166 -1.30349673 -0.7288425660
+#> 297           NA           NA           NA          NA            NA
+#> 298           NA           NA           NA          NA            NA
+#> 299           NA           NA           NA          NA            NA
+#> 300           NA           NA           NA          NA            NA
+#> 301   1.83860652 -1.616631778 -0.510825319 -0.08695284 -0.4990177035
+#> 302   1.33372308  1.385735860  0.411018132 -0.09758790 -3.8984819809
+#> 303  -0.08427853 -0.390126474  0.598871632  1.91141408  0.4453012783
+#> 304   1.92296065  0.070579417  0.568286111          NA  0.4023206626
+#> 305           NA           NA           NA          NA            NA
+#> 306  -0.42185166 -0.322491189           NA  0.21082862 -1.8925129555
+#> 307  -2.32921217  0.272811215  0.701580581  1.26760848 -0.1014470085
+#> 308  -0.12345588 -0.540423061 -0.490334145 -0.69355114  0.2692021854
+#> 309   1.30693814           NA -0.407082001 -0.11706524 -0.5093300418
+#> 310           NA -2.072497907  1.398372999  0.76955380  0.2626336617
+#> 311  -0.48725647 -0.084724253 -1.405389255  0.26775149 -2.3003959888
+#> 312  -2.92618647 -1.057903924 -0.452960283  0.78018885 -0.5738009653
+#> 313           NA  0.539472372 -0.377442684  0.08864463  1.3586074821
+#> 314   1.69308292 -2.014077613  0.088602096 -2.45327375 -0.0794039751
+#> 315           NA  0.046171087  0.126833997 -0.47796969 -0.8728579864
+#> 316           NA           NA           NA          NA            NA
+#> 317   0.78397442  0.442509049  2.277258714  0.01527713  0.5175727367
+#> 318   2.74240901  2.000637547  1.386000784 -0.89261201  0.5712985063
+#> 319   2.34839346  2.347454080  2.200794912  3.27265200  1.2573009784
+#> 320  -2.11757184 -0.964721722 -2.243122523 -0.08516008 -1.3242743609
+#> 321   0.93424961  0.603760353  1.520715083  2.86184343 -3.8013427800
+#> 322   2.11471972  0.593406775 -0.345910960  0.44854738 -0.4233688104
+#> 323  -0.93896895  0.438103105 -0.460606663 -0.19151060  1.1098134425
+#> 324   0.08955576  0.049872261 -1.305986311 -2.95771822  0.3808303548
+#> 325  -3.07543589 -0.641285593  0.389025195 -0.29266272 -0.6725956657
+#> 326   0.21548426 -3.110472294  1.349100547          NA  0.2175647309
+#> 327  -2.05044449  0.362954812  1.318515026 -1.25372711  1.0217638961
+#> 328           NA -1.112345062 -0.517525495  1.18083904            NA
+#> 329           NA           NA           NA          NA            NA
+#> 330           NA           NA           NA          NA            NA
+#> 331   0.59017185  1.004987309  0.056748509 -2.48269882  0.7592707561
+#> 332   1.15545238  1.199371456 -0.656106544 -2.21114763  0.1440041529
+#> 333   2.11295151 -0.941372033 -0.826863041  1.90590129 -4.2593370056
+#> 334  -0.59156211 -1.371017190 -0.773338379 -0.90284654  0.0517779762
+#> 335           NA -0.920664877  0.117919551  1.44663919 -0.0019477934
+#> 336   0.86805004 -1.464199392 -0.842155801  0.44303458 -0.8921081899
+#> 337  -0.31535001 -0.346069629 -0.758045618 -0.40104424 -1.6210912777
+#> 338  -0.59822648 -0.449605409 -1.763999252 -0.50739476 -1.7285428169
+#> 339  -1.63051417  1.036048043  0.079687650 -1.00919706  1.6386859987
+#> 340  -0.05373050 -0.366776785  1.085641283          NA -1.6425815855
+#> 341   0.70067900 -1.391724346  0.140858692 -3.32677764 -1.6640718934
+#> 342  -2.95333537 -0.858543410           NA -0.41167929  0.0625231301
+#> 343  -0.13921770 -0.951725611 -0.834509421 -0.02686256  0.8129965257
+#> 344   0.91495887 -0.868896988 -0.773338379 -0.42231434  0.0517779762
+
+
+## Create copy to compare to modify
+new_demo_data <- data.table::copy(demo_data)
+
+## Add std_ cols
+add_standardized_scores_dt(
+  new_demo_data,
+  sex = "SEX",
+  education = "EDUC",
+  age = "NACCAGE",
+  race = "RACE",
+  delay = "MEMTIME"
+)
+#> 'methods' not specified. Will use the following defaults:
+#> MOCATOTS: regression (updated_2025.06 version)
+#> OTRAILA: regression (updated_2025.06 version)
+#> OTRAILB: regression (updated_2025.06 version)
+#> OTRLARR: regression (updated_2025.06 version)
+#> OTRLBRR: regression (updated_2025.06 version)
+#> DIGFORCT: regression (updated_2025.06 version)
+#> DIGFORSL: regression (updated_2025.06 version)
+#> DIGBACCT: regression (updated_2025.06 version)
+#> DIGBACLS: regression (updated_2025.06 version)
+#> TRAILA: regression (updated_2025.06 version)
+#> TRAILB: regression (updated_2025.06 version)
+#> WAIS: T-score
+#> MINTTOTS: regression (updated_2025.06 version)
+#> ANIMALS: regression (updated_2025.06 version)
+#> VEG: regression (updated_2025.06 version)
+#> UDSVERFC: regression (updated_2025.06 version)
+#> UDSVERLC: regression (updated_2025.06 version)
+#> UDSVERTN: regression (updated_2025.06 version)
+#> UDSBENTC: regression (updated_2025.06 version)
+#> UDSBENTD: regression (updated_2025.06 version)
+#> CRAFTVRS: regression (updated_2025.06 version)
+#> CRAFTURS: regression (updated_2025.06 version)
+#> CRAFTDVR: regression (updated_2025.06 version)
+#> CRAFTDRE: regression (updated_2025.06 version)
+#> REY1REC: T-score
+#> REY2REC: T-score
+#> REY3REC: T-score
+#> REY4REC: T-score
+#> REY5REC: T-score
+#> REY6REC: T-score
+#> REYDREC: T-score
+#> NACCMMSE: regression (nacc_legacy version)
+#> BOSTON: regression (nacc_legacy version)
+#> LOGIMEM: regression (nacc_legacy version)
+#> MEMUNITS: regression (nacc_legacy version)
+#> DIGIF: regression (nacc_legacy version)
+#> DIGIFLEN: regression (nacc_legacy version)
+#> DIGIB: regression (nacc_legacy version)
+#> DIGIBLEN: regression (nacc_legacy version)
+#> [1] "Using regression (updated_2025.06) for variable MOCATOTS"
+#> [1] "Using regression (updated_2025.06) for variable OTRAILA"
+#> [1] "Using regression (updated_2025.06) for variable OTRAILB"
+#> [1] "Using regression (updated_2025.06) for variable OTRLARR"
+#> [1] "Using regression (updated_2025.06) for variable OTRLBRR"
+#> [1] "Using regression (updated_2025.06) for variable DIGFORCT"
+#> [1] "Using regression (updated_2025.06) for variable DIGFORSL"
+#> [1] "Using regression (updated_2025.06) for variable DIGBACCT"
+#> [1] "Using regression (updated_2025.06) for variable DIGBACLS"
+#> [1] "Using regression (updated_2025.06) for variable TRAILA"
+#> [1] "Using regression (updated_2025.06) for variable TRAILB"
+#> [1] "Using T-score (NA) for variable WAIS"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using regression (updated_2025.06) for variable MINTTOTS"
+#> [1] "Using regression (updated_2025.06) for variable ANIMALS"
+#> [1] "Using regression (updated_2025.06) for variable VEG"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERFC"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERLC"
+#> [1] "Using regression (updated_2025.06) for variable UDSVERTN"
+#> [1] "Using regression (updated_2025.06) for variable UDSBENTC"
+#> [1] "Using regression (updated_2025.06) for variable UDSBENTD"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTVRS"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTURS"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTDVR"
+#> [1] "Using regression (updated_2025.06) for variable CRAFTDRE"
+#> [1] "Using T-score (NA) for variable REY1REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY2REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY3REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY4REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY5REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REY6REC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using T-score (NA) for variable REYDREC"
+#> ! For T-scores, education must be a numeric vector of values between 8 and 20. Values outside this interval has been truncated.
+#> ! For T-scores, age must be a numeric vector of values between 30 and 91. Values outside this range has been truncated.
+#> [1] "Using regression (nacc_legacy) for variable NACCMMSE"
+#> [1] "Using regression (nacc_legacy) for variable BOSTON"
+#> [1] "Using regression (nacc_legacy) for variable LOGIMEM"
+#> [1] "Using regression (nacc_legacy) for variable MEMUNITS"
+#> [1] "Using regression (nacc_legacy) for variable DIGIF"
+#> [1] "Using regression (nacc_legacy) for variable DIGIFLEN"
+#> [1] "Using regression (nacc_legacy) for variable DIGIB"
+#> [1] "Using regression (nacc_legacy) for variable DIGIBLEN"
+#>          NACCID NACCAGE   SEX  EDUC BIRTHYR BIRTHMO VISITYR VISITMO VISITDAY
+#>          <char>   <num> <num> <num>   <num>   <num>   <num>   <num>    <num>
+#>   1: NACC074283      84     2    18    1927       3    2011      10        5
+#>   2: NACC005366      65     2    16    1957       7    2023       5       10
+#>   3: NACC005366      51     2    16    1957       7    2009       5       15
+#>   4: NACC005366      56     2    16    1957       7    2013       9        4
+#>   5: NACC005366      58     2    16    1957       7    2015      10       27
+#>  ---                                                                        
+#> 340: NACC005149      91     2    18    1924       8    2016       3       21
+#> 341: NACC005149      89     2    18    1924       8    2013      10       11
+#> 342: NACC005149      92     2    18    1924       8    2016      10       22
+#> 343: NACC005149      83     2    18    1924       8    2008       2       28
+#> 344: NACC005149      91     2    18    1924       8    2016       6       11
+#>       RACE HANDED CDRGLOB MOCATOTS MOCBTOTS TRAILA TRAILARR TRAILALI OTRAILA
+#>      <num>  <num>   <num>    <num>    <num>  <num>    <num>    <num>   <num>
+#>   1:     1      2     1.0       -4       -4     27       -4       -4      -4
+#>   2:     1      2     0.5       -4       -4     31        0       24      -4
+#>   3:     1      2     0.5       -4       -4     27        0       24      -4
+#>   4:     1      2     2.0       -4       -4    100        0       24      -4
+#>   5:     1      2     0.0       -4       -4     30        0       24      -4
+#>  ---                                                                        
+#> 340:     1      2     2.0       -4       -4     73        0       24      -4
+#> 341:     1      2     0.5       -4       -4    997        0       24      -4
+#> 342:     1      2     0.0       -4       -4     73        0       96      -4
+#> 343:     1      2     0.0       -4       -4     40        0       24      -4
+#> 344:     1      2     0.0       -4       -4     23        0       24      -4
+#>      OTRLARR DIGFORCT DIGFORSL DIGBACCT DIGBACLS  WAIS MINTTOTS ANIMALS   VEG
+#>        <num>    <num>    <num>    <num>    <num> <num>    <num>   <num> <num>
+#>   1:      -4       -4       -4       -4       -4     0       -4      26     3
+#>   2:      -4       -4       -4       -4       -4    49       -4      27    18
+#>   3:      -4       -4       -4       -4       -4    43       -4      23    21
+#>   4:      -4       -4       -4       -4       -4    51       -4      12    11
+#>   5:      -4       -4       -4       -4       -4    43       -4      22    17
+#>  ---                                                                         
+#> 340:      -4       -4       -4       -4       -4    59       -4      15     6
+#> 341:      -4       -4       -4       -4       -4    59       -4      22    12
+#> 342:      -4       -4       -4       -4       -4    -4       -4      19     5
+#> 343:      -4       -4       -4       -4       -4    -4       -4      31     6
+#> 344:      -4       -4       -4       -4       -4    -4       -4      18    15
+#>      UDSVERTN UDSVERFC UDSVERLC UDSBENTC UDSBENTD CRAFTVRS CRAFTURS CRAFTDVR
+#>         <num>    <num>    <num>    <num>    <num>    <num>    <num>    <num>
+#>   1:       -4       -4       -4       -4       -4       -4       -4       -4
+#>   2:       -4       -4       -4       -4       -4       -4       -4       -4
+#>   3:       -4       -4       -4       -4       -4       -4       -4       -4
+#>   4:       -4       -4       -4       -4       -4       -4       -4       -4
+#>   5:       -4       -4       -4       -4       -4       -4       -4       -4
+#>  ---                                                                        
+#> 340:       -4       -4       -4       -4       -4       -4       -4       -4
+#> 341:       -4       -4       -4       -4       -4       -4       -4       -4
+#> 342:       31       22       18       13        9       -4       -4       -4
+#> 343:       15       23       22       14       13       -4       -4       -4
+#> 344:       16       16        7       17        7       -4       -4       -4
+#>      CRAFTDRE REY1REC REY2REC REY3REC REY4REC REY5REC REY6REC REYDREC REYTCOR
+#>         <num>   <num>   <num>   <num>   <num>   <num>   <num>   <num>   <num>
+#>   1:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>   2:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>   3:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>   4:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>   5:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>  ---                                                                         
+#> 340:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#> 341:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#> 342:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#> 343:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#> 344:       -4      -4      -4      -4      -4      -4      -4      -4      -4
+#>      TRAILB TRAILBLI TRAILBRR MOCACLOC MOCACLOH MOCACLON OTRAILB OTRLBRR
+#>       <num>    <num>    <num>    <num>    <num>    <num>   <num>   <num>
+#>   1:    150       -4       -4       -4       -4       -4      -4      -4
+#>   2:     98       96        0       -4       -4       -4      -4      -4
+#>   3:    996        6        1       -4       -4       -4      -4      -4
+#>   4:    997       24        0       -4       -4       -4      -4      -4
+#>   5:     39       24        0       -4       -4       -4      -4      -4
+#>  ---                                                                    
+#> 340:     97       24        1       -4       -4       -4      -4      -4
+#> 341:     77       24        6       -4       -4       -4      -4      -4
+#> 342:     50       24        0       -4       -4       -4      -4      -4
+#> 343:     51       24        1       -4       -4       -4      -4      -4
+#> 344:    300       24        5       -4       -4       -4      -4      -4
+#>      OTRLBLI NACCGDS CDRSUM UDSBENRS BILLS TAXES SHOPPING GAMES STOVE MEALPREP
+#>        <num>   <num>  <num>    <num> <num> <num>    <num> <num> <num>    <num>
+#>   1:      -4       1    2.0       -4     0     0        0     0     0        0
+#>   2:      -4       0    8.0       -4     0     0        0     0     0        1
+#>   3:      -4       1   13.0       -4     0     0        0     0     0        8
+#>   4:      -4      88    2.5       -4     0     0        0     0     0        0
+#>   5:      -4       5    0.0       -4     0     0        0     0     0        8
+#>  ---                                                                          
+#> 340:      -4       1    0.0       -4     1     0        0     0     0        0
+#> 341:      -4      10    0.0       -4     8     8        0     8     0        0
+#> 342:      -4       5    6.0        1     0     3        0     0     1        0
+#> 343:      -4       0    3.5        1     1     0        0     0     0        1
+#> 344:      -4       3    0.0        1     0     0        0     3     0        3
+#>      EVENTS PAYATTN REMDATES TRAVEL REYFPOS NACCUDSD NACCMMSE BOSTON LOGIMEM
+#>       <num>   <num>    <num>  <num>   <num>    <num>    <num>  <num>   <num>
+#>   1:      0       0        2      0      -4        1       30     29      17
+#>   2:      0       0        0      0      -4        1       30     26      17
+#>   3:      0       0        0      0      -4        1       30     24      16
+#>   4:      2       0        3      0      -4        4       29      3      17
+#>   5:      3       2        0      0      -4        4       28     27       3
+#>  ---                                                                        
+#> 340:      0       0        0      3      -4        1       29     95      15
+#> 341:      0       0        2      3      -4        4       30     29       6
+#> 342:      0       0        0      3      -4        1       30     14      13
+#> 343:      0       0        0      3      -4        4       25     30       6
+#> 344:      0       0        0      2      -4        3       28      8      15
+#>      MEMUNITS MEMTIME DIGIF DIGIFLEN DIGIB DIGIBLEN OTHCOG OTHCOGX OTHPSY
+#>         <num>   <num> <num>    <num> <num>    <num>  <num>  <char>  <num>
+#>   1:        3      35     8        3     3        5     -4              0
+#>   2:        2      -4    97        6     8        4     -4              0
+#>   3:       13      18     6        5     8        4     -4              0
+#>   4:        5       8    10        6     4        7     -4              0
+#>   5:        0      10    10       96     3        5     -4              1
+#>  ---                                                                     
+#> 340:       12      21     8        8    96        3     -4              0
+#> 341:       15      26     6        7     0        3     -4              0
+#> 342:        0      30     7       97     6        5      0              0
+#> 343:       12      15     7        6     7        6      0              0
+#> 344:       16      18     7        6     6        5      0              0
+#>       OTHPSYX COGOTH COGOTHIF         COGOTHX COGOTH2 COGOTH2F COGOTH2X COGOTH3
+#>        <char>  <num>    <num>          <char>   <num>    <num>   <char>   <num>
+#>   1:               0        7                      -4        8               -4
+#>   2:               0        7                       0        8                0
+#>   3:               1        7       delusions       0        8                0
+#>   4:               0        8                       0        8                0
+#>   5: DYSTHMIA      0        7                       0        7                0
+#>  ---                                                                           
+#> 340:               0        8                       0        8                0
+#> 341:               1        8 B 12 Deficiency       0        8                0
+#> 342:               0        8                       0        7                0
+#> 343:               0        7                       0        7                0
+#> 344:               0        7                       0        8                0
+#>      COGOTH3X ALCDEM ALCDEMIF ANXIET ANXIETIF BIPOLDX BIPOLDIF BRNINJ BRNINJIF
+#>        <char>  <num>    <num>  <num>    <num>   <num>    <num>  <num>    <num>
+#>   1:               0        7     -4       -4      -4       -4      0        7
+#>   2:               0        8     -4       -4      -4       -4      0        7
+#>   3:               0        7     -4       -4      -4       -4      0        8
+#>   4:               0        8     -4       -4      -4       -4      0        7
+#>   5:               0        8     -4       -4      -4       -4      0        7
+#>  ---                                                                          
+#> 340:               8        7     -4       -4      -4       -4      0        8
+#> 341:               0        8     -4       -4      -4       -4      0        7
+#> 342:               8        8      0        7       0        7      0        7
+#> 343:               0        7      0        7       0        8      0        7
+#> 344:               0        8      0        8       0        8      0        8
+#>       CORT CORTIF   CVD CVDIF DELIR DELIRIF DEMUN DEMUNIF   DEP DEPIF DOWNS
+#>      <num>  <num> <num> <num> <num>   <num> <num>   <num> <num> <num> <num>
+#>   1:     0      8    -4    -4    -4      -4     8       7     0     8     0
+#>   2:     0      8    -4    -4    -4      -4     8       8     0     7     0
+#>   3:     0      7    -4    -4    -4      -4     0       8     0     8     0
+#>   4:     0      7    -4    -4    -4      -4     0       7     0     8     0
+#>   5:     0      7    -4    -4    -4      -4     8       8     1     7     0
+#>  ---                                                                       
+#> 340:     0      7    -4    -4    -4      -4     0       8     0     3     0
+#> 341:     0      8    -4    -4    -4      -4     0       8     0     8     0
+#> 342:     0      7     0     7     0       7    -4      -4     0     7     0
+#> 343:     0      7     0     7     0       8    -4      -4     0     8     0
+#> 344:     0      8     0     8     0       7    -4      -4     0     8     0
+#>      DOWNSIF DYSILL DYSILLIF EPILEP EPILEPIF ESSTREM ESSTREIF FTLDMO FTLDMOIF
+#>        <num>  <num>    <num>  <num>    <num>   <num>    <num>  <num>    <num>
+#>   1:       8      0        8     -4       -4      -4       -4     -4       -4
+#>   2:       8      0        7     -4       -4      -4       -4     -4       -4
+#>   3:       7      0        7     -4       -4      -4       -4     -4       -4
+#>   4:       8      0        8     -4       -4      -4       -4     -4       -4
+#>   5:       7      0        8     -4       -4      -4       -4     -4       -4
+#>  ---                                                                         
+#> 340:       7      0        8     -4       -4      -4       -4     -4       -4
+#> 341:       8      0        7     -4       -4      -4       -4     -4       -4
+#> 342:       7      0        7      0        7       0        8      0        7
+#> 343:       8      0        8      0        8       0        8      0        7
+#> 344:       8      0        7      0        7       0        7      0        8
+#>      FTLDNOS FTLDNOIF   HIV HIVIF  HUNT HUNTIF HYCEPH HYCEPHIF IMPSUB IMPSUBIF
+#>        <num>    <num> <num> <num> <num>  <num>  <num>    <num>  <num>    <num>
+#>   1:      -4       -4    -4    -4     0      8      0        7     -4       -4
+#>   2:      -4       -4    -4    -4     0      8      0        7     -4       -4
+#>   3:      -4       -4    -4    -4     0      8      0        7     -4       -4
+#>   4:      -4       -4    -4    -4     0      8      0        8     -4       -4
+#>   5:      -4       -4    -4    -4     0      8      0        7     -4       -4
+#>  ---                                                                          
+#> 340:      -4       -4    -4    -4     0      7      0        7     -4       -4
+#> 341:      -4       -4    -4    -4     0      7      0        8     -4       -4
+#> 342:       0        8     0     8     0      8      0        7      0        8
+#> 343:       0        8     0     7     0      8      0        8      0        7
+#> 344:       0        7     0     8     0      7      0        7      0        7
+#>       MEDS MEDSIF   MSA MSAIF NACCALZD NACCALZP NACCLBDE NACCLBDP  NEOP NEOPIF
+#>      <num>  <num> <num> <num>    <num>    <num>    <num>    <num> <num>  <num>
+#>   1:     0      7    -4    -4        1        1        0        7     0      8
+#>   2:     0      8    -4    -4        8        7        0        7     0      8
+#>   3:     0      8    -4    -4        8        7        0        7     0      7
+#>   4:     0      8    -4    -4        1        7        8        7     0      7
+#>   5:     0      8    -4    -4        8        1        0        7     0      8
+#>  ---                                                                          
+#> 340:     0      8    -4    -4        1        1        8        8     0      8
+#> 341:     0      8    -4    -4        8        1        8        7     0      7
+#> 342:     0      8     0     8        0        8        8        8     0      8
+#> 343:     0      7     0     7        8        8        0        8     0      8
+#> 344:     0      8     0     7        0        7        0        3     0      8
+#>      OTHCOGIF OTHPSYIF POSSAD POSSADIF PPAPH PPAPHIF PRION PRIONIF PROBAD
+#>         <num>    <num>  <num>    <num> <num>   <num> <num>   <num>  <num>
+#>   1:       -4        8      0        7     1       7     0       8      0
+#>   2:       -4        8      0        8     1       7     0       7      0
+#>   3:       -4        7      8        7     0       8     0       8      8
+#>   4:       -4        7      1        7     0       8     0       7      1
+#>   5:       -4        8      0        1     0       8     0       7      1
+#>  ---                                                                     
+#> 340:       -4        7      0        7     0       8     0       7      1
+#> 341:       -4        8      8        8     0       7     0       7      8
+#> 342:        8        7     -4       -4    -4      -4     0       7     -4
+#> 343:        8        7     -4       -4    -4      -4     0       8     -4
+#> 344:        7        8     -4       -4    -4      -4     0       7     -4
+#>      PROBADIF   PSP PSPIF PTSDDX PTSDDXIF SCHIZOP SCHIZOIF STROKE STROKIF  VASC
+#>         <num> <num> <num>  <num>    <num>   <num>    <num>  <num>   <num> <num>
+#>   1:        7     0     7     -4       -4      -4       -4      0       7     0
+#>   2:        1     0     7     -4       -4      -4       -4      0       7     0
+#>   3:        7     0     8     -4       -4      -4       -4      0       2     8
+#>   4:        8     0     8     -4       -4      -4       -4      0       8     0
+#>   5:        8     0     8     -4       -4      -4       -4      0       7     8
+#>  ---                                                                           
+#> 340:        8     0     7     -4       -4      -4       -4      0       8     0
+#> 341:        1     0     8     -4       -4      -4       -4      0       8     0
+#> 342:       -4     0     8      0        8       0        8     -4      -4    -4
+#> 343:       -4     0     8      0        7       0        8     -4      -4    -4
+#> 344:       -4     0     8      0        8       0        8     -4      -4    -4
+#>      VASCIF VASCPS VASCPSIF std_MOCATOTS std_OTRAILA std_OTRAILB std_OTRLARR
+#>       <num>  <num>    <num>        <num>       <num>       <num>       <num>
+#>   1:      7     -4       -4           NA          NA          NA          NA
+#>   2:      1      8        7           NA          NA          NA          NA
+#>   3:      8      8        8           NA          NA          NA          NA
+#>   4:      8      8        8           NA          NA          NA          NA
+#>   5:      7      0        7           NA          NA          NA          NA
+#>  ---                                                                        
+#> 340:      7      8        8           NA          NA          NA          NA
+#> 341:      7      8        8           NA          NA          NA          NA
+#> 342:     -4     -4       -4           NA          NA          NA          NA
+#> 343:     -4     -4       -4           NA          NA          NA          NA
+#> 344:     -4     -4       -4           NA          NA          NA          NA
+#>      std_OTRLBRR std_DIGFORCT std_DIGFORSL std_DIGBACCT std_DIGBACLS std_TRAILA
+#>            <num>        <num>        <num>        <num>        <num>      <num>
+#>   1:          NA           NA           NA           NA           NA  0.9327959
+#>   2:          NA           NA           NA           NA           NA  0.4104428
+#>   3:          NA           NA           NA           NA           NA  0.3741602
+#>   4:          NA           NA           NA           NA           NA -4.0658750
+#>   5:          NA           NA           NA           NA           NA  0.3300840
+#>  ---                                                                           
+#> 340:          NA           NA           NA           NA           NA -1.7866315
+#> 341:          NA           NA           NA           NA           NA         NA
+#> 342:          NA           NA           NA           NA           NA -1.7662635
+#> 343:          NA           NA           NA           NA           NA  0.1036007
+#> 344:          NA           NA           NA           NA           NA  1.3242420
+#>       std_TRAILB  std_WAIS std_MINTTOTS std_ANIMALS    std_VEG std_UDSVERFC
+#>            <num>     <num>        <num>       <num>      <num>        <num>
+#>   1: -0.92475293  9.936317           NA   1.5198097 -2.9694400           NA
+#>   2:  0.07781661 42.777352           NA   1.4784477  0.7508739           NA
+#>   3:          NA 31.805875           NA   0.3697707  1.3280407           NA
+#>   4:          NA 42.616302           NA  -1.6828977 -1.1713856           NA
+#>   5:  1.41022966 34.813298           NA   0.3330619  0.3973346           NA
+#>  ---                                                                       
+#> 340:  0.68991102 72.448842           NA  -0.4870567 -2.1022026           NA
+#> 341:  1.15329905 70.727242           NA   0.8462516 -0.5887339           NA
+#> 342:  1.95806869        NA           NA   0.3239073 -2.3452388    1.8656138
+#> 343:  1.64881478        NA           NA   2.4819875 -2.2127057    2.0178328
+#> 344: -4.65166604        NA           NA   0.1039906  0.2094390    0.4725764
+#>      std_UDSVERLC std_UDSVERTN std_UDSBENTC std_UDSBENTD std_CRAFTVRS
+#>             <num>        <num>        <num>        <num>        <num>
+#>   1:           NA           NA           NA           NA           NA
+#>   2:           NA           NA           NA           NA           NA
+#>   3:           NA           NA           NA           NA           NA
+#>   4:           NA           NA           NA           NA           NA
+#>   5:           NA           NA           NA           NA           NA
+#>  ---                                                                 
+#> 340:           NA           NA           NA           NA           NA
+#> 341:           NA           NA           NA           NA           NA
+#> 342:     1.153110     0.503752   -1.6219837   -0.1213943           NA
+#> 343:     2.032260    -1.619080   -0.9375307    1.1141948           NA
+#> 344:    -1.460683    -1.421505    1.4099008   -0.8782322           NA
+#>      std_CRAFTURS std_CRAFTDVR std_CRAFTDRE std_REY1REC std_REY2REC std_REY3REC
+#>             <num>        <num>        <num>       <num>       <num>       <num>
+#>   1:           NA           NA           NA          NA          NA          NA
+#>   2:           NA           NA           NA          NA          NA          NA
+#>   3:           NA           NA           NA          NA          NA          NA
+#>   4:           NA           NA           NA          NA          NA          NA
+#>   5:           NA           NA           NA          NA          NA          NA
+#>  ---                                                                           
+#> 340:           NA           NA           NA          NA          NA          NA
+#> 341:           NA           NA           NA          NA          NA          NA
+#> 342:           NA           NA           NA          NA          NA          NA
+#> 343:           NA           NA           NA          NA          NA          NA
+#> 344:           NA           NA           NA          NA          NA          NA
+#>      std_REY4REC std_REY5REC std_REY6REC std_REYDREC std_NACCMMSE std_BOSTON
+#>            <num>       <num>       <num>       <num>        <num>      <num>
+#>   1:          NA          NA          NA          NA   0.95543662  0.3840990
+#>   2:          NA          NA          NA          NA   0.87774907 -0.7197370
+#>   3:          NA          NA          NA          NA   0.65008478 -1.6285342
+#>   4:          NA          NA          NA          NA  -0.07554362 -8.5591135
+#>   5:          NA          NA          NA          NA  -0.84995722 -0.5058981
+#>  ---                                                                        
+#> 340:          NA          NA          NA          NA   0.26233169         NA
+#> 341:          NA          NA          NA          NA   1.03674529  0.4700132
+#> 342:          NA          NA          NA          NA   1.08553050 -4.4902193
+#> 343:          NA          NA          NA          NA  -3.09551050  0.7010348
+#> 344:          NA          NA          NA          NA  -0.54460539 -6.5121146
+#>      std_LOGIMEM std_MEMUNITS  std_DIGIF std_DIGIFLEN   std_DIGIB std_DIGIBLEN
+#>            <num>        <num>      <num>        <num>       <num>        <num>
+#>   1:   0.8677302   -2.2377054 -0.4392518   -3.6153325 -1.93835631  -0.02343810
+#>   2:   0.9498944           NA         NA   -0.8234689  0.45910628  -0.89001987
+#>   3:   0.5953452    0.1181994 -1.6168298   -1.8600080  0.31021555  -1.04045203
+#>   4:   0.8944381   -1.8769464  0.4434189   -0.8922863 -1.55873798   1.55481308
+#>   5:  -2.8492126   -3.0847345  0.4641260           NA -2.01800008  -0.11805617
+#>  ---                                                                          
+#> 340:   0.3742951   -0.0537305 -0.3667768    1.0856413          NA  -1.64258159
+#> 341:  -2.0525835    0.7006790 -1.3917243    0.1408587 -3.32677764  -1.66407189
+#> 342:  -0.1561109   -2.9533354 -0.8585434           NA -0.41167929   0.06252313
+#> 343:  -2.0895543   -0.1392177 -0.9517256   -0.8345094 -0.02686256   0.81299653
+#> 344:   0.3742951    0.9149589 -0.8688970   -0.7733384 -0.42231434   0.05177798
+
+## Check number of columns of data w/ standardized scores
+ncol(new_demo_data)
+#> [1] 198
+## Check number of columns of original demo_data
+ncol(demo_data)
+#> [1] 159
+```

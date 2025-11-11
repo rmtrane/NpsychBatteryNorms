@@ -1,12 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   articles/comparison-tool: comparison-tool.html
   articles/lookup_tables: lookup_tables.html
   NpsychBatteryNorms: NpsychBatteryNorms.html
   articles/regression-coefficients: regression-coefficients.html
-last_built: 2025-10-22T17:25Z
+last_built: 2025-11-11T20:15Z
 urls:
   reference: https://rmtrane.github.io/NpsychBatteryNorms/reference
   article: https://rmtrane.github.io/NpsychBatteryNorms/articles
