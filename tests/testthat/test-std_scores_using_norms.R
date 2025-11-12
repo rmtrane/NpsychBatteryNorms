@@ -88,4 +88,23 @@ test_that("std_scores_using_norms", {
       -(raw_scores - m) / sd
     )
   )
+
+  expect_equal(
+    std_scores_using_norms(
+      raw_scores = raw_scores,
+      var_name = var_name,
+      education = educ,
+      age = age,
+      sex = s,
+      m_sd = normative_summaries$nacc[[var_name]]
+    ),
+    std_scores_using_norms(
+      raw_scores = raw_scores,
+      var_name = var_name,
+      education = rep(educ, length(raw_scores)),
+      age = rep(age, length(raw_scores)),
+      sex = rep(s, length(raw_scores)),
+      m_sd = normative_summaries$nacc[[var_name]]
+    )
+  )
 })

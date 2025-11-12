@@ -32,6 +32,15 @@ std_scores_using_norms <- function(
     age_group_type_needed <- "nacc"
   }
 
+  if (length(raw_scores) > 1 & length(age) == 1) {
+    age <- rep(age, length(raw_scores))
+  }
+
+  stopifnot(
+    "'age' must be of length 1 or same length as 'raw_scores'" = length(age) ==
+      length(raw_scores)
+  )
+
   # Create match_to data.frame with two columns: raw_scores and age groups. (We
   # will later add means and SDs to this data.frame for standardizing raw scores.)
   match_to <- data.frame(
@@ -53,10 +62,18 @@ std_scores_using_norms <- function(
         sex
       )
     )
+
+    if (length(raw_scores) > 1 & length(sex) == 1) {
+      sex <- rep(sex, length(raw_scores))
+    }
+
     stopifnot(
-      "'sex' must be same length as 'raw_scores'" = length(sex) ==
+      "'sex' must be of length 1 or same length as 'raw_scores'" = length(
+        sex
+      ) ==
         length(raw_scores)
     )
+
     stopifnot(
       "'sex' must be vector of 'm' and 'f'" = all(
         unique(sex) %in% c("f", "m", NA)
@@ -78,8 +95,15 @@ std_scores_using_norms <- function(
         education
       )
     )
+
+    if (length(raw_scores) > 1 & length(education) == 1) {
+      education <- rep(education, length(raw_scores))
+    }
+
     stopifnot(
-      "'eduction' must be same length as 'raw_scores'" = length(education) ==
+      "'eduction' must be of length 1 and same length as 'raw_scores'" = length(
+        education
+      ) ==
         length(raw_scores)
     )
     stopifnot(

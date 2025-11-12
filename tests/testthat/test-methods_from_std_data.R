@@ -22,6 +22,8 @@ test_that("methods_from_std_data", {
       std_data,
       std_cols = "std_ANIMALS"
     ),
-    list(ANIMALS = c(method = "regression", version = "nacc"))
+    list(
+      ANIMALS = c(method = "regression", version = "updated_2025.06")
+    )
   )
 })

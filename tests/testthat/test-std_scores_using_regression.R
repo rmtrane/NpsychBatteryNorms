@@ -90,4 +90,37 @@ testthat::test_that("std_scores_using_regression", {
       exp_res_tibble[[var]]
     )
   }
+
+  reg_coefs_to_use <- na.omit(unlist(tail(
+    reg_coefs$updated_2025.06[
+      reg_coefs$updated_2025.06$var_name == "ANIMALS",
+      -1
+    ],
+    n = 1
+  )))
+
+  expect_equal(
+    std_scores_using_regression(
+      raw_scores = c(27, 28, 29),
+      var_name = "ANIMALS",
+      reg_coefs = head(reg_coefs_to_use, -1),
+      age = 62,
+      education = 14,
+      sex = "m",
+      race = 0,
+      delay = NULL,
+      sd = reg_coefs_to_use[["rmse"]]
+    ),
+    std_scores_using_regression(
+      raw_scores = c(27, 28, 29),
+      var_name = "ANIMALS",
+      reg_coefs = head(reg_coefs_to_use, -1),
+      age = rep(62, 3),
+      education = rep(14, 3),
+      sex = rep("m", 3),
+      race = rep(0, 3),
+      delay = NULL,
+      sd = reg_coefs_to_use[["rmse"]]
+    )
+  )
 })

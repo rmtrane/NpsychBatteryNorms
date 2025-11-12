@@ -75,6 +75,30 @@ std_scores_using_regression <- function(
   stopifnot("'raw_scores' must be numeric" = is.numeric(raw_scores))
   stopifnot("'age' must be numeric" = is.numeric(age))
 
+  if (length(raw_scores) > 1) {
+    if (length(sex) == 1) {
+      sex <- rep(sex, length(raw_scores))
+    }
+    if (length(age) == 1) {
+      age <- rep(age, length(raw_scores))
+    }
+    if (length(education) == 1) {
+      education <- rep(education, length(raw_scores))
+    }
+
+    if (is.null(delay)) {
+      delay <- 0
+    }
+
+    if (length(delay) == 1) {
+      delay <- rep(delay, length(raw_scores))
+    }
+
+    if (length(race) == 1) {
+      race <- rep(race, length(raw_scores))
+    }
+  }
+
   stopifnot(
     "'raw_scores', 'sex', 'education', 'age', 'race', and 'delay' must all have the same length" = length(unique(c(
       length(raw_scores),

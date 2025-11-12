@@ -26,4 +26,21 @@ test_that("std_scores_using_T", {
         t_score_coefs$VEG[["intercept2"]]) /
         t_score_coefs$VEG[["sd"]]
   )
+
+  expect_equal(
+    std_scores_using_T(
+      raw_scores = c(27, 28, 29),
+      var_name = "ANIMALS",
+      age = 62,
+      education = 14,
+      sex = "m"
+    ),
+    std_scores_using_T(
+      raw_scores = c(27, 28, 29),
+      var_name = "ANIMALS",
+      age = rep(62, 3),
+      education = rep(14, 3),
+      sex = rep("m", 3)
+    )
+  )
 })

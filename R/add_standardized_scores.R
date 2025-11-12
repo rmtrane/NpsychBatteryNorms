@@ -52,7 +52,7 @@ add_standardized_scores <- function(
   ## If nothing is passed to methods...
   if (is.null(methods)) {
     # ... retrieve the default methods
-    methods <- NpsychBatteryNorms::default_methods
+    methods <- default_methods
 
     # Remove methods for things not present in supplied data
     methods <- methods[names(methods) %in% colnames(dat)]
