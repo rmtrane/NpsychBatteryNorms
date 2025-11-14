@@ -23,6 +23,8 @@ articles:
     #   - articles/norm_sample
     #   - articles/normative_summaries
     #   - articles/std-cog-scores
+  - title: "Supported Cognitive Scores and Methods"
+    contents: articles/supported_cog_scores_and_methods
   - title: "Lookup Tables"
     contents:
       - articles/lookup_tables

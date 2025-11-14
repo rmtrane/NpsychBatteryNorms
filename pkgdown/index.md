@@ -68,5 +68,11 @@ std_scores(
 :::
 ::::
 
+# Supported Cognitive Scores and Methods
+
+See [here](articles/supported_cog_scores_and_methods.html) for a
+complete table of supported cognitive scores and methods implemented for
+standardizing.
+
 For more details, see the [Get started
 page](articles/NpsychBatteryNorms.html)
