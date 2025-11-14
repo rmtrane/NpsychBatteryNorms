@@ -1,5 +1,10 @@
 # Articles
 
+### Supported Cognitive Scores and Methods
+
+- [Supported Cognitive Scores and
+  Methods](https://rmtrane.github.io/NpsychBatteryNorms/articles/supported_cog_scores_and_methods.md):
+
 ### Lookup Tables
 
 - [Means and Standard

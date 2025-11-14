@@ -57,5 +57,12 @@ std_scores(
 [1] -2.192308
 ```
 
+# Supported Cognitive Scores and Methods
+
+See
+[here](https://rmtrane.github.io/NpsychBatteryNorms/articles/supported_cog_scores_and_methods.md)
+for a complete table of supported cognitive scores and methods
+implemented for standardizing.
+
 For more details, see the [Get started
 page](https://rmtrane.github.io/NpsychBatteryNorms/articles/NpsychBatteryNorms.md)
